@@ -1,26 +1,24 @@
 <template>
-    <div>
-        로그인 처리 중...
-    </div>
+    <div>로그인 처리 중</div>
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
+import { getMe } from '../api/auth'
 
 const router = useRouter()
-const route = useRoute()
 
-onMounted(() => {
-    const token = route.query.token as string | undefined
+onMounted(async () => {
+    try {
+        const user = await getMe()
 
-    if (!token) {
-        router.push('/')
-        return
+        console.log('로그인 사용자:', user)
+
+        router.replace('/home')
+    } catch (error) {
+        console.error('로그인 확인 실패:', error)
+        // router.replace('/')
     }
-
-    localStorage.setItem('accessToken', token)
-
-    router.push('/')
 })
 </script>
