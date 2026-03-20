@@ -3,22 +3,17 @@
 </script>
 
 <template>
-  <router-view />
+  <div id="app-root">
+    <router-view />
+  </div>
 </template>v
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+<style>
+#app-root {
+  max-width: 47.5rem;
+  margin: 0 auto;
+  min-height: 100dvh;
+  overflow: hidden;
+  background-color: var(--bg-default);
 }
 </style>

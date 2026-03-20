@@ -1,0 +1,106 @@
+<script setup lang='ts'>
+import { PhHouseLine, PhBook, PhPenNib, PhSparkle, PhUser } from "@phosphor-icons/vue";
+
+</script>
+
+<template>
+    <nav>
+        <div class="wrap">
+            <div class="icon-container">
+                <div class="left-box">
+                    <div class="icon-box home">
+                        <button>
+                            <PhHouseLine :size='24'></PhHouseLine>
+                        </button>
+                    </div>
+                    <div class="icon-box timeline">
+                        <button>
+                            <PhBook :size='24'></PhBook>
+                        </button>
+                    </div>
+                </div>
+                <div class="fab-box">
+                    <div class="icon-box create">
+                        <button>
+                            <PhPenNib :size='24'></PhPenNib>
+                        </button>
+                    </div>
+                </div>
+                <div class="right-box">
+                    <div class="icon-box recommend">
+                        <button>
+                            <PhSparkle :size='24'></PhSparkle>
+                        </button>
+                    </div>
+                    <div class="icon-box profile">
+                        <button>
+                            <PhUser :size='24'></PhUser>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</template>
+
+<style>
+nav {
+    position: sticky;
+    width: 100%;
+    height: 7.2rem;
+    bottom: 0;
+    z-index: 999;
+    color: var(--btn-active-bg)
+}
+
+nav .wrap {
+    height: inherit;
+    background: var(--bg-elevated);
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0px 2px 6px #0000001e;
+}
+
+nav .wrap .icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    height: inherit;
+    padding-bottom: 10px;
+}
+
+nav .wrap .fab-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    background-color: var(--btn-active-bg);
+    color: var(--text-inverse);
+    border-radius: 64px;
+    margin-top: -56px;
+    box-shadow: 0px 0px 6px #00000073;
+}
+
+nav .wrap .fab-box button {
+    transform: rotate(90deg);
+}
+
+nav .wrap .icon-container .left-box,
+nav .wrap .icon-container .right-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: calc(100% - 64px - 32px);
+    height: 100%;
+}
+
+nav .wrap .icon-container .left-box .icon-box,
+nav .wrap .icon-container .right-box .icon-box {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+</style>

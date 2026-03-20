@@ -1,0 +1,26 @@
+section {
+  /* header 작업 전까지 임시값 */
+  padding-top: 6rem;
+  min-height: calc(100dvh - 7rem - 7.2rem);
+}
+
+.wrap {
+  padding: 0 1.6rem;
+}
+
+/* menu */
+
+/* btn */
+.active-btn {
+  background-color: var(--btn-active-bg);
+  color: var(--text-inverse);
+}
+
+.neutral-btn {
+  background-color: var(--btn-neutral-bg);
+}
+
+/* utility */
+.icon-box {
+  line-height: 0;
+}
