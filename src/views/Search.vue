@@ -17,7 +17,19 @@ import { PhMagnifyingGlass } from '@phosphor-icons/vue';
             </div>
             <div class="works-list-container">
                 <div class="work-box">
-                    작품 노출 박스
+                    <div class="img-box poster">poster</div>
+                    <p class="work-name">work name</p>
+                    <p class="release-date">release date</p>
+                    <p class="genre">genre</p>
+                    <div class="actor-box">
+                        <p class="actor">actor 1</p>
+                        <p class="actor">actor 2</p>
+                    </div>
+                    <div class="story-box">
+                        <p class="story">
+                            story
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
