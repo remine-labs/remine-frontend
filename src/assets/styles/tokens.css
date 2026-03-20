@@ -82,6 +82,7 @@ html {
   --color-brand: #a90101;
 
   /* background */
+  --bg-canvas: #fbfbfb;
   --bg-default: #f6f4f0;
   --bg-surface: #faeddb;
   --bg-elevated: #fafafa;
@@ -116,6 +117,7 @@ body {
     BlinkMacSystemFont,
     system-ui,
     sans-serif;
+  background-color: var(--bg-canvas);
   color: var(--text-main);
 }
 
@@ -162,6 +164,7 @@ body {
   :root {
     /* color */
     /* background */
+    --bg-canvas: #272727;
     --bg-default: #1e1e20;
     --bg-surface: #4f5560;
     --bg-elevated: #3d3e41;

@@ -50,6 +50,7 @@ nav {
     height: 7.2rem;
     bottom: 0;
     z-index: 999;
+    color: var(--btn-active-bg)
 }
 
 nav .wrap {
@@ -65,7 +66,7 @@ nav .wrap .icon-container {
     justify-content: space-between;
     gap: 16px;
     height: inherit;
-    padding-bottom: 15px;
+    padding-bottom: 10px;
 }
 
 nav .wrap .fab-box {
@@ -78,8 +79,12 @@ nav .wrap .fab-box {
     background-color: var(--btn-active-bg);
     color: var(--text-inverse);
     border-radius: 64px;
-    margin-top: -32px;
+    margin-top: -56px;
     box-shadow: 0px 0px 6px #00000073;
+}
+
+nav .wrap .fab-box button {
+    transform: rotate(90deg);
 }
 
 nav .wrap .icon-container .left-box,
