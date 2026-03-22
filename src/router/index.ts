@@ -22,7 +22,7 @@ const router = createRouter({
       component: DefaultLayout,
       children: [
         {
-          path: "/home",
+          path: "home",
           name: "home",
           component: Home,
         },
