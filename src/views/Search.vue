@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { PhMagnifyingGlass } from '@phosphor-icons/vue'
-import { api } from '../api/client' // 네 axios 인스턴스 경로에 맞게 수정
+import { api } from '../api/client'
 
 const query = ref('')
 const works = ref<any[]>([])
@@ -13,7 +13,7 @@ const searchWorks = async () => {
 
     loading.value = true
     error.value = ''
-
+    // TODO: search API 500 이슈로 추후 재확인 예정
     try {
         const res = await api.get('/api/tmdb/movies/search', {
             params: {
