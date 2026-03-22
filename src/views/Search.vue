@@ -1,5 +1,35 @@
-<script setup lang='ts'>
-import { PhMagnifyingGlass } from '@phosphor-icons/vue';
+<script setup lang="ts">
+import { ref } from 'vue'
+import { PhMagnifyingGlass } from '@phosphor-icons/vue'
+import { api } from '../api/client' // 네 axios 인스턴스 경로에 맞게 수정
+
+const query = ref('')
+const works = ref<any[]>([])
+const loading = ref(false)
+const error = ref('')
+
+const searchWorks = async () => {
+    if (!query.value.trim()) return
+
+    loading.value = true
+    error.value = ''
+
+    try {
+        const res = await api.get('/api/tmdb/movies/search', {
+            params: {
+                query: query.value,
+            },
+        })
+
+        console.log('search response:', res.data)
+        works.value = res.data
+    } catch (err) {
+        console.error('search failed:', err)
+        error.value = '검색 실패'
+    } finally {
+        loading.value = false
+    }
+}
 </script>
 
 <template>
@@ -7,27 +37,34 @@ import { PhMagnifyingGlass } from '@phosphor-icons/vue';
         <div class="wrap">
             <div class="search-container">
                 <div class="input-box">
-                    <input type="text">
+                    <input v-model="query" type="text" @keyup.enter="searchWorks">
                 </div>
                 <div class="icon-box">
-                    <button>
-                        <PhMagnifyingGlass :size='24'></PhMagnifyingGlass>
+                    <button @click="searchWorks">
+                        <PhMagnifyingGlass :size="24" />
                     </button>
                 </div>
             </div>
-            <div class="works-list-container">
+
+            <p v-if="loading">loading...</p>
+            <p v-if="error">{{ error }}</p>
+
+            <div v-for="work in works" :key="work.id" class="works-list-container">
                 <div class="work-box">
-                    <div class="img-box poster">poster</div>
-                    <p class="work-name">work name</p>
-                    <p class="release-date">release date</p>
-                    <p class="genre">genre</p>
+                    <div class="img-box poster">{{ work.posterPath }}</div>
+                    <p class="work-name">{{ work.title }}</p>
+                    <p class="release-date">{{ work.releaseDate }}</p>
+                    <p class="genre">{{ work.genre }}</p>
+
                     <div class="actor-box">
-                        <p class="actor">actor 1</p>
-                        <p class="actor">actor 2</p>
+                        <p v-for="actor in work.actors" :key="actor" class="actor">
+                            {{ actor }}
+                        </p>
                     </div>
+
                     <div class="story-box">
                         <p class="story">
-                            story
+                            {{ work.overview }}
                         </p>
                     </div>
                 </div>

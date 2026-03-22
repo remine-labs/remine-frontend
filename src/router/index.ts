@@ -23,12 +23,12 @@ const router = createRouter({
       component: DefaultLayout,
       children: [
         {
-          path: "/home",
+          path: "home",
           name: "home",
           component: Home,
         },
         {
-          path: "/search",
+          path: "search",
           name: "search",
           component: Search,
         },
