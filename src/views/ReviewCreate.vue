@@ -17,7 +17,7 @@
                     <button class="open-story-btn">
                         펼쳐보기
                     </button>
-                    <div class="stroy-text">
+                    <div class="story-text">
                         <p class="story">story</p>
                     </div>
                 </div>
@@ -35,8 +35,8 @@
                 <p class="start-date-text">시작일</p>
                 <div>date picker</div>
             </div>
-            <div class="start-date-box">
-                <p class="start-date-text">시작일</p>
+            <div class="end-date-box">
+                <p class="end-date-text">종료일</p>
                 <div>date picker</div>
                 <div class="input-box">
                     <input type="checkbox" id='same-start-date'>
@@ -47,13 +47,13 @@
         <div class="rating-container">
             <h2 class="description">rating</h2>
             <div class="rating-box">
-                star
+                star/5
             </div>
         </div>
         <div class="review-write-container">
             <h2 class="description">textarea review</h2>
             <div class="input-box">
-                <input type="textarea">
+                <textarea name="review-write" id="review-write" placeholder='감상을 자유롭게 작성해주세요.'></textarea>
             </div>
         </div>
         <div class="btn-box">
