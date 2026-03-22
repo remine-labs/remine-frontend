@@ -4,6 +4,7 @@ import OAuthCallback from "../views/OAuthCallback.vue";
 import Home from "../views/Home.vue";
 import DefaultLayout from "../components/DefaultLayout.vue";
 import ReviewCreate from "../views/ReviewCreate.vue";
+import ReviewRead from "../views/ReviewRead.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -31,6 +32,11 @@ const router = createRouter({
           path: "review/create",
           name: "reviewCreate",
           component: ReviewCreate,
+        },
+        {
+          path: "review/:reviewId",
+          name: "reviewRead",
+          component: ReviewRead,
         },
       ],
     },
