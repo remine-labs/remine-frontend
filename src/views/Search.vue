@@ -13,7 +13,6 @@ const searchWorks = async () => {
 
     loading.value = true
     error.value = ''
-    // TODO: search API 500 이슈로 추후 재확인 예정
     try {
         const res = await api.get('/api/tmdb/movies/search', {
             params: {
@@ -22,7 +21,7 @@ const searchWorks = async () => {
         })
 
         console.log('search response:', res.data)
-        works.value = res.data
+        works.value = res.data.results
     } catch (err) {
         console.error('search failed:', err)
         error.value = '검색 실패'
@@ -30,6 +29,7 @@ const searchWorks = async () => {
         loading.value = false
     }
 }
+
 </script>
 
 <template>
@@ -51,15 +51,17 @@ const searchWorks = async () => {
 
             <div v-for="work in works" :key="work.id" class="works-list-container">
                 <div class="work-box">
-                    <div class="img-box poster">{{ work.posterPath }}</div>
+                    <div class="img-box poster"><img :src="`https://image.tmdb.org/t/p/w200${work.poster_path}`"
+                            alt="" /></div>
                     <p class="work-name">{{ work.title }}</p>
-                    <p class="release-date">{{ work.releaseDate }}</p>
-                    <p class="genre">{{ work.genre }}</p>
+                    <p class="release-date">{{ work.release_date }}</p>
+                    <!-- <p class="genre">{{ work.genre }}</p> -->
 
                     <div class="actor-box">
-                        <p v-for="actor in work.actors" :key="actor" class="actor">
+                        <p>임시 공간</p>
+                        <!-- <p v-for="actor in work.actors" :key="actor" class="actor">
                             {{ actor }}
-                        </p>
+                        </p> -->
                     </div>
 
                     <div class="story-box">

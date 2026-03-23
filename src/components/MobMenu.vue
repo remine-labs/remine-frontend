@@ -1,6 +1,14 @@
 <script setup lang='ts'>
 import { PhHouseLine, PhBook, PhPenNib, PhSparkle, PhUser } from "@phosphor-icons/vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter()
+const goToHome = () => {
+    router.push('/home')
+}
+const goToSearch = () => {
+    router.push('/search')
+}
 </script>
 
 <template>
@@ -9,7 +17,7 @@ import { PhHouseLine, PhBook, PhPenNib, PhSparkle, PhUser } from "@phosphor-icon
             <div class="icon-container">
                 <div class="left-box">
                     <div class="icon-box home">
-                        <button>
+                        <button @click='goToHome'>
                             <PhHouseLine :size='24'></PhHouseLine>
                         </button>
                     </div>
@@ -19,7 +27,7 @@ import { PhHouseLine, PhBook, PhPenNib, PhSparkle, PhUser } from "@phosphor-icon
                         </button>
                     </div>
                 </div>
-                <div class="fab-box">
+                <div class="fab-box" @click='goToSearch'>
                     <div class="icon-box create">
                         <button>
                             <PhPenNib :size='24'></PhPenNib>
