@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { api } from '../api/client'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const work = history.state.work
+
+console.log('work', work)
 
 const rating = ref<number>(0)
 const startDate = ref('')
@@ -8,25 +15,29 @@ const endDate = ref('')
 const isWatching = ref(false)
 const isSameStartDate = ref(false)
 const comment = ref('')
-const videoId = 838209 // TMDB에서 파묘 id 값
-// 기생충 id 값 496243
 
 const submitReview = async () => {
+    // TODO: 작품 정보 직접 등록시 수정해야 할 부분
+    if (!work?.id) {
+        console.error('작품 정보가 없습니다.')
+        return
+    }
+
     const body = {
-        videoId,
+        videoId: work.id,
         comment: comment.value,
         startDate: startDate.value,
         endDate: endDate.value || null,
+        // rating: rating.value,
     }
 
     console.log(body)
 
     try {
         const res = await api.post('/api/reviews', body)
-        console.log("응답", res.data)
-
+        console.log('응답', res.data)
     } catch (err) {
-        console.error("에러", err)
+        console.error('에러', err)
     }
 }
 
@@ -35,23 +46,21 @@ const submitReview = async () => {
 <template>
     <section class="review-create-section">
         <div class="wrap">
-            <div class="work-info-container">
+            <div class="work-info-container" v-if="work">
                 <div class="img-box">
-                    poster
+                    <img :src="`https://image.tmdb.org/t/p/w200${work.poster_path}`" :alt="work.title" />
                 </div>
                 <div class="info-text-box">
-                    <p class="release-date">YY.MM.DD</p>
-                    <p class="genre">genre</p>
+                    <p class="work-title">{{ work.title }}</p>
+                    <p class="release-date">{{ work.release_date }}</p>
+                    <p class="genre">*genre*</p>
                     <div class="actor-box">
-                        <span class="actor-name">actor 1</span>
-                        <span class="actor-name">actor 2</span>
+                        <span class="actor-name">*actor 1*</span>
+                        <span class="actor-name">*actor 2*</span>
                     </div>
-                    <div class="story-box toggle">
-                        <button type='button' class="open-story-btn">
-                            펼쳐보기
-                        </button>
+                    <div class="story-box">
                         <div class="story-text">
-                            <p class="story">story</p>
+                            <p class="story">{{ work.overview }}</p>
                         </div>
                     </div>
                 </div>
