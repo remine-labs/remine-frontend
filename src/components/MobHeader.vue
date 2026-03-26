@@ -1,14 +1,42 @@
 <script setup lang="ts">
-import { PhBell } from "@phosphor-icons/vue";
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { PhBell, PhCaretLeft } from '@phosphor-icons/vue'
+
+// TODO: 추후 vue-router RouteMeta를 확장하는 방식 고려
+type HeaderMeta = {
+    title?: string
+    titleType?: 'dynamic'
+    showBack?: boolean
+}
+
+const route = useRoute()
+const router = useRouter()
+
+const header = computed<HeaderMeta>(() => route.meta.header as HeaderMeta)
+
+const title = computed(() => {
+    // 동적 타이틀이 필요한 페이지
+    if (header.value?.titleType === 'dynamic') {
+        return history.state.headerTitle ?? 'ReMine'
+    }
+
+    // 기본 정적 타이틀
+    return header.value?.title ?? 'ReMine'
+})
+
+const showBack = computed(() => header.value?.showBack)
 </script>
 
 <template>
     <header>
         <div class="header-section">
             <div class="wrap">
-                <div class="logo-box">
-                    <!-- 추후에 a태그 연결 -->
-                    <p class="logo">ReMine</p>
+                <div class="title-box">
+                    <button v-if="showBack" @click="router.back()">
+                        <PhCaretLeft :size='32'></PhCaretLeft>
+                    </button>
+                    <h1 class='logo'>{{ title }}</h1>
                 </div>
                 <div class="icon-box">
                     <button class='icon header-notice' type='button' aria-label='알림'>
@@ -36,5 +64,11 @@ import { PhBell } from "@phosphor-icons/vue";
     align-items: center;
     justify-content: space-between;
     background: var(--bg-elevated);
+}
+
+.header-section .title-box {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 </style>
