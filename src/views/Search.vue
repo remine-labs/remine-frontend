@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { PhMagnifyingGlass } from '@phosphor-icons/vue'
 import { api } from '../api/client'
+
+const router = useRouter()
 
 const query = ref('')
 const works = ref<any[]>([])
@@ -20,7 +23,6 @@ const searchWorks = async () => {
             },
         })
 
-        console.log('search response:', res.data)
         works.value = res.data.results
     } catch (err) {
         console.error('search failed:', err)
@@ -28,6 +30,21 @@ const searchWorks = async () => {
     } finally {
         loading.value = false
     }
+}
+
+const selectWork = (work: any) => {
+    router.push({
+        path: '/review/create',
+        state: {
+            work: {
+                id: work.id,
+                title: work.title,
+                overview: work.overview,
+                poster_path: work.poster_path,
+                release_date: work.release_date,
+            },
+        },
+    })
 }
 
 </script>
@@ -49,8 +66,8 @@ const searchWorks = async () => {
             <p v-if="loading">loading...</p>
             <p v-if="error">{{ error }}</p>
 
-            <div v-for="work in works" :key="work.id" class="works-list-container">
-                <div class="work-box">
+            <div class="works-list-container">
+                <div class="work-box" v-for="work in works" :key="work.id" @click='selectWork(work)'>
                     <div class="img-box poster"><img :src="`https://image.tmdb.org/t/p/w200${work.poster_path}`"
                             alt="" /></div>
                     <p class="work-name">{{ work.title }}</p>
