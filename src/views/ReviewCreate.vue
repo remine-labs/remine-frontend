@@ -24,11 +24,11 @@ const submitReview = async () => {
     }
 
     const body = {
-        videoId: work.id,
-        comment: comment.value,
+        workId: work.id,
+        comment: comment.value.trim(),
+        rating: rating.value,
         startDate: startDate.value,
-        endDate: endDate.value || null,
-        // rating: rating.value,
+        endDate: isWatching.value ? null : (endDate.value || null),
     }
 
     console.log(body)
