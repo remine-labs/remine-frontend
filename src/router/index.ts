@@ -28,21 +28,45 @@ const router = createRouter({
           path: "home",
           name: "home",
           component: Home,
+          meta: {
+            header: {
+              titleType: "ReMine",
+              showBack: false,
+            },
+          },
         },
         {
           path: "search",
           name: "search",
           component: Search,
+          meta: {
+            header: {
+              titleType: "ReMine",
+              showBack: false,
+            },
+          },
         },
         {
           path: "review/create",
           name: "reviewCreate",
           component: ReviewCreate,
+          meta: {
+            header: {
+              titleType: "dynamic",
+              showBack: true,
+            },
+          },
         },
         {
           path: "review/:reviewId",
           name: "reviewRead",
           component: ReviewRead,
+          meta: {
+            header: {
+              titleType: "ReMine",
+              showBack: true,
+            },
+          },
         },
       ],
     },

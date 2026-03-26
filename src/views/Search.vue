@@ -36,6 +36,7 @@ const selectWork = (work: any) => {
     router.push({
         path: '/review/create',
         state: {
+            headerTitle: work.title,
             work: {
                 id: work.id,
                 title: work.title,
