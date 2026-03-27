@@ -82,3 +82,9 @@ const selectWork = (work: any) => {
         </div>
     </section>
 </template>
+
+<style>
+.search-section .work-box {
+    cursor: pointer;
+}
+</style>

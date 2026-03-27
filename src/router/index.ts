@@ -5,7 +5,7 @@ import Home from "../views/Home.vue";
 import Search from "../views/Search.vue";
 import DefaultLayout from "../components/DefaultLayout.vue";
 import ReviewCreate from "../views/ReviewCreate.vue";
-import ReviewRead from "../views/ReviewRead.vue";
+import ReviewDetail from "../views/ReviewDetail.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -59,8 +59,8 @@ const router = createRouter({
         },
         {
           path: "review/:reviewId",
-          name: "reviewRead",
-          component: ReviewRead,
+          name: "reviewDetail",
+          component: ReviewDetail,
           meta: {
             header: {
               title: "ReMine",
