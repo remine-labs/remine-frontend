@@ -30,7 +30,7 @@ const router = createRouter({
           component: Home,
           meta: {
             header: {
-              titleType: "ReMine",
+              title: "ReMine",
               showBack: false,
             },
           },
@@ -41,7 +41,7 @@ const router = createRouter({
           component: Search,
           meta: {
             header: {
-              titleType: "ReMine",
+              title: "ReMine",
               showBack: false,
             },
           },
@@ -63,7 +63,7 @@ const router = createRouter({
           component: ReviewRead,
           meta: {
             header: {
-              titleType: "ReMine",
+              title: "ReMine",
               showBack: true,
             },
           },
