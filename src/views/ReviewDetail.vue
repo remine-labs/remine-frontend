@@ -45,7 +45,7 @@ onMounted(() => {
             <template v-else-if="review">
                 <div class="work-info-container">
                     <div class="img-box">
-                        <img :src="`https://image.tmdb.org/t/p/w200${review.workPosterPath}`" :alt="review.title" />
+                        <img :src="`https://image.tmdb.org/t/p/w200${review.workPosterPath}`" :alt="review.workTitle" />
                     </div>
                     <div class="info-text-box">
                         <p class="work-title">{{ review.workTitle }}</p>
