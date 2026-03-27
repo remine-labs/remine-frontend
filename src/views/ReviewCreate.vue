@@ -22,6 +22,8 @@ const submitReview = async () => {
 
     const body = {
         workId: work.id,
+        workTitle: work.title,
+        workPosterPath: work.poster_path,
         comment: comment.value.trim(),
         rating: rating.value,
         startDate: startDate.value,
@@ -49,17 +51,6 @@ const submitReview = async () => {
                 </div>
                 <div class="info-text-box">
                     <p class="work-title">{{ work.title }}</p>
-                    <p class="release-date">{{ work.release_date }}</p>
-                    <p class="genre">*genre*</p>
-                    <div class="actor-box">
-                        <span class="actor-name">*actor 1*</span>
-                        <span class="actor-name">*actor 2*</span>
-                    </div>
-                    <div class="story-box">
-                        <div class="story-text">
-                            <p class="story">{{ work.overview }}</p>
-                        </div>
-                    </div>
                 </div>
             </div>
             <form @submit.prevent='submitReview'>
