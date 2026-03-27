@@ -42,7 +42,6 @@ const selectWork = (work: any) => {
                 title: work.title,
                 overview: work.overview,
                 poster_path: work.poster_path,
-                release_date: work.release_date,
             },
         },
     })
@@ -73,15 +72,6 @@ const selectWork = (work: any) => {
                             alt="" /></div>
                     <p class="work-name">{{ work.title }}</p>
                     <p class="release-date">{{ work.release_date }}</p>
-                    <!-- <p class="genre">{{ work.genre }}</p> -->
-
-                    <div class="actor-box">
-                        <p>임시 공간</p>
-                        <!-- <p v-for="actor in work.actors" :key="actor" class="actor">
-                            {{ actor }}
-                        </p> -->
-                    </div>
-
                     <div class="story-box">
                         <p class="story">
                             {{ work.overview }}
@@ -92,3 +82,9 @@ const selectWork = (work: any) => {
         </div>
     </section>
 </template>
+
+<style>
+.search-section .work-box {
+    cursor: pointer;
+}
+</style>

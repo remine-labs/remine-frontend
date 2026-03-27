@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { api } from '../api/client'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const work = history.state.work
 
@@ -22,6 +25,8 @@ const submitReview = async () => {
 
     const body = {
         workId: work.id,
+        workTitle: work.title,
+        workPosterPath: work.poster_path,
         comment: comment.value.trim(),
         rating: rating.value,
         startDate: startDate.value,
@@ -32,11 +37,27 @@ const submitReview = async () => {
 
     try {
         const res = await api.post('/api/reviews', body)
-        console.log('응답', res.data)
-    } catch (err) {
-        console.error('에러', err)
+        const reviewId = res.data.reviewId
+        alert('저장되었습니다. 리뷰 페이지로 이동합니다.')
+        router.push({
+            name: 'reviewDetail',
+            params: { reviewId: reviewId },
+        })
+    } catch (err: any) {
+        let errorMsg = '알 수 없는 오류'
+
+        if (err.response) {
+            errorMsg = `${err.response.status} - ${err.response.data?.message || '서버 오류'}`
+        } else if (err.request) {
+            errorMsg = '서버 응답 없음 (네트워크 문제)'
+        } else {
+            errorMsg = err.message
+        }
+
+        alert(`저장 실패\n${errorMsg}`)
     }
 }
+
 
 </script>
 
@@ -49,17 +70,6 @@ const submitReview = async () => {
                 </div>
                 <div class="info-text-box">
                     <p class="work-title">{{ work.title }}</p>
-                    <p class="release-date">{{ work.release_date }}</p>
-                    <p class="genre">*genre*</p>
-                    <div class="actor-box">
-                        <span class="actor-name">*actor 1*</span>
-                        <span class="actor-name">*actor 2*</span>
-                    </div>
-                    <div class="story-box">
-                        <div class="story-text">
-                            <p class="story">{{ work.overview }}</p>
-                        </div>
-                    </div>
                 </div>
             </div>
             <form @submit.prevent='submitReview'>
@@ -100,7 +110,7 @@ const submitReview = async () => {
                     </div>
                 </div>
                 <div class="btn-box">
-                    <button type="submit" id='post-review-btn'>save</button>
+                    <button type="submit" id='post-review-btn' class='active-btn'>save</button>
                 </div>
             </form>
         </div>

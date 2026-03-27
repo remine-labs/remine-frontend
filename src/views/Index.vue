@@ -62,4 +62,11 @@ const loginProviders = [
     background-color: #ffff;
     border: #747775 solid 1px;
 }
+
+@media (prefers-color-scheme: dark) {
+    .login-container .google-oauth {
+        background-color: #222;
+        border: #747775 solid 1px;
+    }
+}
 </style>
