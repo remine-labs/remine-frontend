@@ -17,15 +17,17 @@ const fetchReviewDetail = async () => {
         const reviewId = route.params.reviewId
         const res = await api.get(`/api/reviews/${reviewId}`)
 
-        review.value = res.data
+        review.value = res.data.data
     } catch (err: any) {
         if (err.response) {
             errorMessage.value = `${err.response.status} - ${err.response.data?.message || '서버 오류'}`
         } else if (err.request) {
-            errorMessage.value = '서버 응답 없음'
+            errorMessage.value = '서버 응답 없음 (네트워크 문제)'
         } else {
             errorMessage.value = err.message
         }
+
+        alert(`리뷰 조회 실패\n${errorMessage.value}`)
     } finally {
         isLoading.value = false
     }

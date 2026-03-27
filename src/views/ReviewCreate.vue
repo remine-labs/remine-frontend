@@ -37,7 +37,7 @@ const submitReview = async () => {
 
     try {
         const res = await api.post('/api/reviews', body)
-        const reviewId = res.data.reviewId
+        const reviewId = res.data.data.reviewId
         alert('저장되었습니다. 리뷰 페이지로 이동합니다.')
         router.push({
             name: 'reviewDetail',
