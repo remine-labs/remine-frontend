@@ -1,13 +1,12 @@
-<template>
-    <div>로그인 처리 중</div>
-</template>
-
 <script setup lang="ts">
+import { ref } from 'vue'
+import Loader from '../components/Loader.vue'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getMe } from '../api/auth'
 
 const router = useRouter()
+const loading = ref(true)
 
 onMounted(async () => {
     try {
@@ -22,3 +21,9 @@ onMounted(async () => {
     }
 })
 </script>
+
+<template>
+    <Loader v-if="loading">
+        로그인 진행 중입니다.
+    </Loader>
+</template>
