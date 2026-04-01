@@ -2,8 +2,11 @@
     <section class="index-section">
         <div class="wrap">
             <div class="title-container">
-                <p class="slogun-text">과거의 내가 하는 맞춤 추천,</p>
                 <h1 class='logo'>ReMine</h1>
+                <p class="slogun-text">당신의 기록으로,</p>
+                <p class="slogun-text">OTT를 뛰어넘어</p>
+                <p class="slogun-text">당신만을 위한</p>
+                <p class="slogun-text">맞춤 추천 서비스</p>
             </div>
 
             <div class="login-container">
@@ -38,15 +41,16 @@ const loginProviders = [
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,500;1,500&display=swap');
 
 .title-container {
-    display: flex;
-    justify-content: center;
-    align-items: baseline;
-    gap: 0.8rem;
+    text-align: center;
 }
 
 .title-container .slogun-text {
     font-size: 2rem;
     font-weight: 500;
+}
+
+.title-container .logo {
+    margin: 2rem 0;
 }
 
 .login-container {
