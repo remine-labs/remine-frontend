@@ -85,6 +85,7 @@ html {
   --bg-canvas: #fbfbfb;
   --bg-default: #f6f4f0;
   --bg-surface: #faeddb;
+  --bg-overlay: #faeddb81;
   --bg-elevated: #fafafa;
 
   /* text */
@@ -167,6 +168,7 @@ body {
     --bg-canvas: #272727;
     --bg-default: #1e1e20;
     --bg-surface: #4f5560;
+    --bg-overlay: rgba(79, 85, 96, 0.7);
     --bg-elevated: #3d3e41;
 
     /* text */
