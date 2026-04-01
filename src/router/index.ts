@@ -6,6 +6,7 @@ import Search from "../views/Search.vue";
 import DefaultLayout from "../components/DefaultLayout.vue";
 import ReviewCreate from "../views/ReviewCreate.vue";
 import ReviewDetail from "../views/ReviewDetail.vue";
+import Timeline from "../views/Timeline.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -28,6 +29,17 @@ const router = createRouter({
           path: "home",
           name: "home",
           component: Home,
+          meta: {
+            header: {
+              title: "ReMine",
+              showBack: false,
+            },
+          },
+        },
+        {
+          path: "timeline",
+          name: "timeline",
+          component: Timeline,
           meta: {
             header: {
               title: "ReMine",

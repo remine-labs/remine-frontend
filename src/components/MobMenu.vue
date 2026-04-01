@@ -6,6 +6,9 @@ const router = useRouter()
 const goToHome = () => {
     router.push('/home')
 }
+const goToTimeline = () => {
+    router.push('/timeline')
+}
 const goToSearch = () => {
     router.push('/search')
 }
@@ -22,7 +25,7 @@ const goToSearch = () => {
                         </button>
                     </div>
                     <div class="icon-box timeline">
-                        <button>
+                        <button @click='goToTimeline'>
                             <PhBook :size='24'></PhBook>
                         </button>
                     </div>

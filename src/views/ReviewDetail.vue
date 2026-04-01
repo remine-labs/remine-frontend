@@ -51,6 +51,7 @@ onMounted(() => {
                     </div>
                     <div class="info-text-box">
                         <p class="work-title">{{ review.workTitle }}</p>
+                        <p class="release-date">{{ review.releaseDate }}</p>
                     </div>
                 </div>
 

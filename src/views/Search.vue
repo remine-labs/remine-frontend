@@ -40,6 +40,7 @@ const selectWork = (work: any) => {
             work: {
                 id: work.id,
                 title: work.title,
+                release_date: work.release_date,
                 overview: work.overview,
                 poster_path: work.poster_path,
             },
