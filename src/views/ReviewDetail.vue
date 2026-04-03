@@ -18,6 +18,14 @@ const fetchReviewDetail = async () => {
         const res = await api.get(`/api/reviews/${reviewId}`)
 
         review.value = res.data.data
+
+        history.replaceState(
+            {
+                ...history.state,
+                headerTitle: res.data.data.workTitle
+            },
+            ''
+        )
     } catch (err: any) {
         if (err.response) {
             errorMessage.value = `${err.response.status} - ${err.response.data?.message || '서버 오류'}`

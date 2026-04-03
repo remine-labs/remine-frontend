@@ -75,7 +75,7 @@ const router = createRouter({
           component: ReviewDetail,
           meta: {
             header: {
-              title: "ReMine",
+              titleType: "dynamic",
               showBack: true,
             },
           },
