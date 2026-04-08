@@ -4,9 +4,10 @@ import OAuthCallback from "../views/OAuthCallback.vue";
 import Home from "../views/Home.vue";
 import Search from "../views/Search.vue";
 import DefaultLayout from "../components/DefaultLayout.vue";
+import Timeline from "../views/Timeline.vue";
 import ReviewCreate from "../views/ReviewCreate.vue";
 import ReviewDetail from "../views/ReviewDetail.vue";
-import Timeline from "../views/Timeline.vue";
+import ReviewEdit from "../views/ReviewEdit.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -73,6 +74,17 @@ const router = createRouter({
           path: "review/:reviewId",
           name: "reviewDetail",
           component: ReviewDetail,
+          meta: {
+            header: {
+              titleType: "dynamic",
+              showBack: true,
+            },
+          },
+        },
+        {
+          path: "review/:reviewId/edit",
+          name: "reviewEdit",
+          component: ReviewEdit,
           meta: {
             header: {
               titleType: "dynamic",

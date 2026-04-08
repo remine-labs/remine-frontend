@@ -118,3 +118,11 @@ const submitReview = async () => {
         </div>
     </section>
 </template>
+
+<style>
+.review-create-section .review-write-container textarea {
+    width: 100%;
+    height: 150px;
+    resize: vertical;
+}
+</style>

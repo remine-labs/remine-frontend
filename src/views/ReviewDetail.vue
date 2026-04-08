@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api/client'
 
 const route = useRoute()
+const router = useRouter()
 
 const review = ref<any>(null)
 const isLoading = ref(true)
 const errorMessage = ref('')
+
+const goToEdit = () => {
+    router.push(`/review/${route.params.reviewId}/edit`)
+}
 
 const fetchReviewDetail = async () => {
     try {
@@ -98,6 +103,9 @@ onMounted(() => {
                     </div>
                 </div>
             </template>
+            <div class="btn-box">
+                <button id='review-edit-btn' @click='goToEdit'>edit</button>
+            </div>
         </div>
     </section>
 </template>
