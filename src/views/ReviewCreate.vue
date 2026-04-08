@@ -27,6 +27,7 @@ const submitReview = async () => {
         workId: work.id,
         workTitle: work.title,
         workPosterPath: work.poster_path,
+        releaseDate: work.release_date,
         comment: comment.value.trim(),
         rating: rating.value,
         startDate: startDate.value,
@@ -70,6 +71,7 @@ const submitReview = async () => {
                 </div>
                 <div class="info-text-box">
                     <p class="work-title">{{ work.title }}</p>
+                    <p class="release-date">{{ work.release_date }}</p>
                 </div>
             </div>
             <form @submit.prevent='submitReview'>
@@ -116,3 +118,11 @@ const submitReview = async () => {
         </div>
     </section>
 </template>
+
+<style>
+.review-create-section .review-write-container textarea {
+    width: 100%;
+    height: 150px;
+    resize: vertical;
+}
+</style>

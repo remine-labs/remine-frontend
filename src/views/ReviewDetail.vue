@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api/client'
 
 const route = useRoute()
+const router = useRouter()
 
 const review = ref<any>(null)
 const isLoading = ref(true)
 const errorMessage = ref('')
+
+const goToEdit = () => {
+    router.push(`/review/${route.params.reviewId}/edit`)
+}
 
 const fetchReviewDetail = async () => {
     try {
@@ -18,6 +23,14 @@ const fetchReviewDetail = async () => {
         const res = await api.get(`/api/reviews/${reviewId}`)
 
         review.value = res.data.data
+
+        history.replaceState(
+            {
+                ...history.state,
+                headerTitle: res.data.data.workTitle
+            },
+            ''
+        )
     } catch (err: any) {
         if (err.response) {
             errorMessage.value = `${err.response.status} - ${err.response.data?.message || '서버 오류'}`
@@ -51,6 +64,7 @@ onMounted(() => {
                     </div>
                     <div class="info-text-box">
                         <p class="work-title">{{ review.workTitle }}</p>
+                        <p class="release-date">{{ review.releaseDate }}</p>
                     </div>
                 </div>
 
@@ -89,6 +103,9 @@ onMounted(() => {
                     </div>
                 </div>
             </template>
+            <div class="btn-box">
+                <button id='review-edit-btn' @click='goToEdit'>edit</button>
+            </div>
         </div>
     </section>
 </template>
