@@ -6,12 +6,27 @@ import { api } from '../api/client'
 const route = useRoute()
 const router = useRouter()
 
-const review = ref<any>(null)
+const review = ref<ReviewDetail | null>(null)
 const isLoading = ref(true)
 const errorMessage = ref('')
 
 const goToEdit = () => {
     router.push(`/review/${route.params.reviewId}/edit`)
+}
+
+export interface ReviewDetail {
+    reviewId: number
+    workId: number
+    workTitle: string
+    workPosterPath: string
+    releaseDate: String
+    comment: string
+    rating: number
+    startDate: string
+    endDate: string | null
+    createdAt: string
+    updatedAt: string
+    tags: string[]
 }
 
 const fetchReviewDetail = async () => {
@@ -90,8 +105,10 @@ onMounted(() => {
 
                 <div class="tags-container">
                     <h3 class="description">Tags Type</h3>
-                    <div class="tags-box">
-                        <p class="tag">tag</p>
+                    <div class="tags-box" v-if='review?.tags?.length'>
+                        <span v-for="tag in review.tags" :key="tag" class="tag-item">
+                            {{ tag }}
+                        </span>
                     </div>
                 </div>
 
