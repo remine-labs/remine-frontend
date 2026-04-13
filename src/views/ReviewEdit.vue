@@ -49,7 +49,7 @@ const handleEditSubmit = async () => {
             rating: review.value.rating,
             startDate: review.value.startDate,
             endDate: review.value.endDate || null,
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString() //TODO: 추후 삭제
         })
 
         alert('수정되었습니다. 리뷰 페이지로 이동합니다.')
