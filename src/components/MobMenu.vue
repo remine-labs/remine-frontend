@@ -16,37 +16,39 @@ const goToSearch = () => {
 
 <template>
     <nav>
-        <div class="wrap">
-            <div class="icon-container">
-                <div class="left-box">
-                    <div class="icon-box home">
-                        <button @click='goToHome'>
-                            <PhHouseLine :size='24'></PhHouseLine>
-                        </button>
+        <div class="nav-section">
+            <div class="wrap">
+                <div class="icon-container">
+                    <div class="left-box">
+                        <div class="icon-box home">
+                            <button @click='goToHome'>
+                                <PhHouseLine :size='24'></PhHouseLine>
+                            </button>
+                        </div>
+                        <div class="icon-box timeline">
+                            <button @click='goToTimeline'>
+                                <PhBook :size='24'></PhBook>
+                            </button>
+                        </div>
                     </div>
-                    <div class="icon-box timeline">
-                        <button @click='goToTimeline'>
-                            <PhBook :size='24'></PhBook>
-                        </button>
+                    <div class="fab-box" @click='goToSearch'>
+                        <div class="icon-box create">
+                            <button>
+                                <PhPenNib :size='24'></PhPenNib>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="fab-box" @click='goToSearch'>
-                    <div class="icon-box create">
-                        <button>
-                            <PhPenNib :size='24'></PhPenNib>
-                        </button>
-                    </div>
-                </div>
-                <div class="right-box">
-                    <div class="icon-box recommend">
-                        <button>
-                            <PhSparkle :size='24'></PhSparkle>
-                        </button>
-                    </div>
-                    <div class="icon-box profile">
-                        <button>
-                            <PhUser :size='24'></PhUser>
-                        </button>
+                    <div class="right-box">
+                        <div class="icon-box recommend">
+                            <button>
+                                <PhSparkle :size='24'></PhSparkle>
+                            </button>
+                        </div>
+                        <div class="icon-box profile">
+                            <button>
+                                <PhUser :size='24'></PhUser>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -56,11 +58,17 @@ const goToSearch = () => {
 
 <style>
 nav {
-    position: sticky;
-    width: 100%;
-    height: 7.2rem;
+    position: fixed;
     bottom: 0;
+    width: 100%;
+    max-width: 47.5rem;
     z-index: 999;
+    overflow: hidden;
+    padding-top: 56px;
+}
+
+.nav-section {
+    height: 7.2rem;
     color: var(--btn-active-bg)
 }
 

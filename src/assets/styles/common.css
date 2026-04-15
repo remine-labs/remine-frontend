@@ -1,7 +1,7 @@
 section {
-  /* header 작업 전까지 임시값 */
-  padding: 6rem 0;
-  min-height: calc(100dvh - 7rem - 7.2rem);
+  padding-top: 8rem;
+  padding-bottom: 10rem;
+  min-height: 100dvh;
 }
 
 .wrap {
