@@ -287,6 +287,7 @@ onMounted(() => {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 786b1d2 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
 =======
@@ -300,6 +301,9 @@ onMounted(() => {
 =======
 </template>
 >>>>>>> e34e984 (:spakrles: design-system feat: header/nav fixed 고정 적용)
+=======
+    <<<<<<< HEAD </template>
+>>>>>>> 08ae8d9 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
 
 <style>
 .profile-section .date-box {
