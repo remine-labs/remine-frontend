@@ -49,12 +49,15 @@ const goToProfile = () => {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> d76a651 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
 =======
 >>>>>>> d9d7398 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
 =======
 >>>>>>> d6033a7 (:spakrles: design-system feat: header/nav fixed 고정 적용)
+=======
+>>>>>>> a045fa0 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
                     <div class="right-box">
                         <div class="icon-box recommend">
                             <button>
@@ -81,8 +84,11 @@ const goToProfile = () => {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> d9d7398 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+>>>>>>> a045fa0 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
 =======
                 </div>
                 <div class="fab-box" @click='goToSearch'>
@@ -104,12 +110,15 @@ const goToProfile = () => {
                         </button>
 >>>>>>> 663ccce (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> d76a651 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
 =======
 >>>>>>> d9d7398 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
 =======
 >>>>>>> d6033a7 (:spakrles: design-system feat: header/nav fixed 고정 적용)
+=======
+>>>>>>> a045fa0 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
                     </div>
                 </div>
             </div>
