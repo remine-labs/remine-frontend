@@ -3,12 +3,15 @@ import { PhHouseLine, PhBook, PhPenNib, PhSparkle, PhUser } from "@phosphor-icon
 import { useRouter } from "vue-router";
 
 const router = useRouter()
+
 const goToHome = () => {
     router.push('/home')
 }
+
 const goToTimeline = () => {
     router.push('/timeline')
 }
+
 const goToSearch = () => {
     router.push('/search')
 }
