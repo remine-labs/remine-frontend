@@ -45,7 +45,6 @@ const goToProfile = () => {
                             </button>
                         </div>
                     </div>
-<<<<<<< HEAD
                     <div class="right-box">
                         <div class="icon-box recommend">
                             <button>
@@ -57,26 +56,6 @@ const goToProfile = () => {
                                 <PhUser :size='24'></PhUser>
                             </button>
                         </div>
-=======
-                </div>
-                <div class="fab-box" @click='goToSearch'>
-                    <div class="icon-box create">
-                        <button>
-                            <PhPenNib :size='24'></PhPenNib>
-                        </button>
-                    </div>
-                </div>
-                <div class="right-box">
-                    <div class="icon-box recommend">
-                        <button>
-                            <PhSparkle :size='24'></PhSparkle>
-                        </button>
-                    </div>
-                    <div class="icon-box profile" @click='goToProfile'>
-                        <button>
-                            <PhUser :size='24'></PhUser>
-                        </button>
->>>>>>> 663ccce (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
                     </div>
                 </div>
             </div>
