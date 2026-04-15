@@ -83,7 +83,7 @@ onMounted(async () => {
             </div>
         </div>
     </section>
-</template>
+    <<<<<<< HEAD </template>
 
 <style>
 .profile-section .date-box {
