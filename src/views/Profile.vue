@@ -111,7 +111,11 @@ onMounted(async () => {
     cursor: pointer;
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 </style>
 =======
 </style>
 >>>>>>> c5f0c50 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
+=======
+</style>
+>>>>>>> cb61985 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
