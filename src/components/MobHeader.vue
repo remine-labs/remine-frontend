@@ -49,13 +49,22 @@ const showBack = computed(() => header.value?.showBack)
 </template>
 
 <style>
-.header-section {
-    position: sticky;
+header {
+    position: fixed;
     width: 100%;
-    height: 7rem;
+    max-width: 47.5rem;
     top: 0;
-    box-shadow: 0px 2px 6px #0000001e;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    overflow: hidden;
     z-index: 999;
+}
+
+.header-section {
+    height: 7rem;
+    box-shadow: 0px 2px 6px #0000001e;
+    margin-bottom: 6px;
 }
 
 .header-section .wrap {
