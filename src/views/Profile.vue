@@ -3,10 +3,13 @@ import { onMounted, ref } from 'vue'
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 786b1d2 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
 =======
 >>>>>>> a045fa0 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+>>>>>>> c04db05 (:spakrles: design-system feat: header/nav fixed 고정 적용)
 import { getMe, type MeResponse } from "../api/auth"
 import { api } from '../api/client'
 import router from '../router';
@@ -16,6 +19,7 @@ const user = ref<MeResponse | null>(null);
 const toGoReviewDetail = (reviewId: number) => {
     router.push(`/review/${reviewId}`)
 }
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -28,6 +32,8 @@ import { api } from '../api/client';
 import { api } from '../api/client';
 >>>>>>> 663ccce (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
 >>>>>>> a045fa0 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+>>>>>>> c04db05 (:spakrles: design-system feat: header/nav fixed 고정 적용)
 
 interface HistoryItem {
     reviewId: number,
@@ -37,6 +43,7 @@ interface HistoryItem {
 }
 
 const now = new Date()
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -56,6 +63,10 @@ const month = ref(now.getMonth() + 1)
 =======
 >>>>>>> 663ccce (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
 >>>>>>> a045fa0 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+const year = ref(now.getFullYear())
+const month = ref(now.getMonth() + 1)
+>>>>>>> c04db05 (:spakrles: design-system feat: header/nav fixed 고정 적용)
 
 const historyList = ref<HistoryItem[]>([])
 
@@ -67,6 +78,7 @@ const getHistory = async () => {
                 month: month.value,
             }
         })
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -83,6 +95,9 @@ const getHistory = async () => {
         historyList.value = res.data
 >>>>>>> 663ccce (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
 >>>>>>> a045fa0 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+        historyList.value = res.data.data
+>>>>>>> c04db05 (:spakrles: design-system feat: header/nav fixed 고정 적용)
         console.log(res.data)
         console.log(res.request?.responseURL)
         console.log(res.headers['content-type'])
@@ -96,8 +111,11 @@ const getHistory = async () => {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> a045fa0 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+>>>>>>> c04db05 (:spakrles: design-system feat: header/nav fixed 고정 적용)
 onMounted(async () => {
     getHistory();
 =======
@@ -126,6 +144,7 @@ onMounted(async () => {
 });
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> a045fa0 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
 =======
@@ -139,6 +158,8 @@ onMounted(() => {
 =======
 >>>>>>> 663ccce (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
 >>>>>>> a045fa0 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+>>>>>>> c04db05 (:spakrles: design-system feat: header/nav fixed 고정 적용)
 </script>
 
 <template>
@@ -147,6 +168,7 @@ onMounted(() => {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             <div class="user-container" v-if='user'>
 =======
             <div class="user-container">
@@ -160,6 +182,9 @@ onMounted(() => {
             <div class="user-container">
 >>>>>>> 663ccce (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
 >>>>>>> a045fa0 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+            <div class="user-container" v-if='user'>
+>>>>>>> c04db05 (:spakrles: design-system feat: header/nav fixed 고정 적용)
                 <div class="user-info-box">
                     <div class="img-box profile-img">
                         img
@@ -167,6 +192,7 @@ onMounted(() => {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                     <p class="username">{{ user.name }}</p>
 =======
                     <p class="username">username</p>
@@ -180,6 +206,9 @@ onMounted(() => {
                     <p class="username">username</p>
 >>>>>>> 663ccce (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
 >>>>>>> a045fa0 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+                    <p class="username">{{ user.name }}</p>
+>>>>>>> c04db05 (:spakrles: design-system feat: header/nav fixed 고정 적용)
                     <button>edit</button>
                 </div>
                 <button>setting</button>
@@ -194,8 +223,11 @@ onMounted(() => {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> a045fa0 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+>>>>>>> c04db05 (:spakrles: design-system feat: header/nav fixed 고정 적용)
                     <div class="date-box" v-for='item in historyList' :key='item.reviewId'
                         @click='toGoReviewDetail(item.reviewId)'>
 <<<<<<< HEAD
@@ -230,6 +262,7 @@ onMounted(() => {
                             <img v-if="item.workPosterPath"
                                 :src="'https://image.tmdb.org/t/p/w200' + item.workPosterPath" :alt='item.workTitle'>
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> bdc6746 (:bug: profile fix: 코드 리뷰 기반 수정)
 =======
 =======
@@ -240,6 +273,8 @@ onMounted(() => {
                             <img :src="`https://image.tmdb.org/t/p/w200${item.workPosterPath}`" :alt='item.workTitle'>
 >>>>>>> 663ccce (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
 >>>>>>> a045fa0 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+>>>>>>> c04db05 (:spakrles: design-system feat: header/nav fixed 고정 적용)
                         </div>
                     </div>
                 </div>
@@ -249,10 +284,13 @@ onMounted(() => {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 786b1d2 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
 =======
 >>>>>>> a045fa0 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+>>>>>>> c04db05 (:spakrles: design-system feat: header/nav fixed 고정 적용)
 </template>
 
 <style>
@@ -278,7 +316,10 @@ onMounted(() => {
 >>>>>>> 786b1d2 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
 =======
 </style>
+<<<<<<< HEAD
 =======
 </template>
 >>>>>>> 663ccce (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
 >>>>>>> a045fa0 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+>>>>>>> c04db05 (:spakrles: design-system feat: header/nav fixed 고정 적용)
