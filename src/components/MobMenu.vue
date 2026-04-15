@@ -3,12 +3,15 @@ import { PhHouseLine, PhBook, PhPenNib, PhSparkle, PhUser } from "@phosphor-icon
 import { useRouter } from "vue-router";
 
 const router = useRouter()
+
 const goToHome = () => {
     router.push('/home')
 }
+
 const goToTimeline = () => {
     router.push('/timeline')
 }
+
 const goToSearch = () => {
     router.push('/search')
 }
@@ -48,7 +51,11 @@ const goToProfile = () => {
                                 <PhSparkle :size='24'></PhSparkle>
                             </button>
                         </div>
+<<<<<<< HEAD
                         <div class="icon-box profile">
+=======
+                        <div class="icon-box profile" @click='goToProfile'>
+>>>>>>> a717be5 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
                             <button>
                                 <PhUser :size='24'></PhUser>
                             </button>
