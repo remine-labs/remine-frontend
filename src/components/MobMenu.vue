@@ -54,6 +54,7 @@ const goToProfile = () => {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> d76a651 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
 =======
@@ -70,6 +71,8 @@ const goToProfile = () => {
 >>>>>>> e34e984 (:spakrles: design-system feat: header/nav fixed 고정 적용)
 =======
 >>>>>>> 08ae8d9 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+>>>>>>> fd1131d (:spakrles: design-system feat: header/nav fixed 고정 적용)
                     <div class="right-box">
                         <div class="icon-box recommend">
                             <button>
@@ -93,6 +96,7 @@ const goToProfile = () => {
                                 <PhUser :size='24'></PhUser>
                             </button>
                         </div>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -149,6 +153,8 @@ const goToProfile = () => {
 >>>>>>> e34e984 (:spakrles: design-system feat: header/nav fixed 고정 적용)
 =======
 >>>>>>> 08ae8d9 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+>>>>>>> fd1131d (:spakrles: design-system feat: header/nav fixed 고정 적용)
                     </div>
                 </div>
             </div>
