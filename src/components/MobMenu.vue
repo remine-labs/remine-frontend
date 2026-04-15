@@ -63,6 +63,7 @@ const goToProfile = () => {
                         </div>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                         <div class="icon-box profile">
 =======
                         <div class="icon-box profile" @click='goToProfile'>
@@ -70,6 +71,9 @@ const goToProfile = () => {
 =======
                         <div class="icon-box profile" @click='goToProfile'>
 >>>>>>> d76a651 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+                        <div class="icon-box profile" @click='goToProfile'>
+>>>>>>> 00e64a6 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
                             <button>
                                 <PhUser :size='24'></PhUser>
                             </button>
