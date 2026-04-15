@@ -54,6 +54,9 @@ header {
     width: 100%;
     max-width: 47.5rem;
     top: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
     overflow: hidden;
     z-index: 999;
 }
