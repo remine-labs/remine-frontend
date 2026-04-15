@@ -54,9 +54,12 @@ header {
     width: 100%;
     max-width: 47.5rem;
     top: 0;
+<<<<<<< HEAD
     left: 0;
     right: 0;
     margin: 0 auto;
+=======
+>>>>>>> 7b324f8 (:spakrles: design-system feat: header/nav fixed 고정 적용)
     overflow: hidden;
     z-index: 999;
 }
