@@ -12,6 +12,10 @@ const goToTimeline = () => {
 const goToSearch = () => {
     router.push('/search')
 }
+
+const goToProfile = () => {
+    router.push('/profile')
+}
 </script>
 
 <template>
