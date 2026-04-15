@@ -67,7 +67,7 @@ nav {
     max-width: 47.5rem;
     z-index: 999;
     overflow: hidden;
-    padding-top: 56px;
+    padding-top: 62px;
 }
 
 .nav-section {
