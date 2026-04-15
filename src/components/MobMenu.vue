@@ -12,6 +12,10 @@ const goToTimeline = () => {
 const goToSearch = () => {
     router.push('/search')
 }
+
+const goToProfile = () => {
+    router.push('/profile')
+}
 </script>
 
 <template>
@@ -44,7 +48,7 @@ const goToSearch = () => {
                                 <PhSparkle :size='24'></PhSparkle>
                             </button>
                         </div>
-                        <div class="icon-box profile">
+                        <div class="icon-box profile" @click='goToProfile'>
                             <button>
                                 <PhUser :size='24'></PhUser>
                             </button>

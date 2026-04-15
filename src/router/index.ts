@@ -8,6 +8,7 @@ import Timeline from "../views/Timeline.vue";
 import ReviewCreate from "../views/ReviewCreate.vue";
 import ReviewDetail from "../views/ReviewDetail.vue";
 import ReviewEdit from "../views/ReviewEdit.vue";
+import Profile from "../views/Profile.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -89,6 +90,17 @@ const router = createRouter({
             header: {
               titleType: "dynamic",
               showBack: true,
+            },
+          },
+        },
+        {
+          path: "profile",
+          name: "profile",
+          component: Profile,
+          meta: {
+            header: {
+              title: "Profile",
+              showBack: false,
             },
           },
         },
