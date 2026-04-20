@@ -1,6 +1,6 @@
-import { api } from './client'
+import { api } from "./client";
 
 export const getMe = async () => {
-    const res = await api.get('/api/users/me')
-    return res.data
-}
+  const res = await api.get("/api/users/me");
+  return res.data.data;
+};
