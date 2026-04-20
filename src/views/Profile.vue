@@ -18,8 +18,8 @@ interface HistoryItem {
 }
 
 const now = new Date()
-const year = ref(new Date().getFullYear())
-const month = ref(new Date().getMonth() + 1)
+const year = ref(now.getFullYear())
+const month = ref(now.getMonth() + 1)
 
 const historyList = ref<HistoryItem[]>([])
 
@@ -40,11 +40,8 @@ const getHistory = async () => {
     }
 }
 
-onMounted(() => {
-    getHistory()
-})
-
 onMounted(async () => {
+    getHistory();
     try {
         user.value = await getMe();
     } catch (err) {
@@ -75,10 +72,11 @@ onMounted(async () => {
                 <div class="calendar-body">
                     <div class="date-box" v-for='item in historyList' :key='item.reviewId'
                         @click='toGoReviewDetail(item.reviewId)'>
-                        <p class="star-date">{{ item.startDate }}</p>
+                        <p class="start-date">{{ item.startDate }}</p>
                         <p class="work-title">{{ item.workTitle }}</p>
                         <div class="img-box work-poster">
-                            <img :src="`https://image.tmdb.org/t/p/w200${item.workPosterPath}`" :alt='item.workTitle'>
+                            <img v-if="item.workPosterPath"
+                                :src="'https://image.tmdb.org/t/p/w200' + item.workPosterPath" :alt='item.workTitle'>
                         </div>
                     </div>
                 </div>
