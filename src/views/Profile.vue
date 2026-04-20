@@ -41,6 +41,7 @@ const getHistory = async () => {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 onMounted(async () => {
     getHistory();
 =======
@@ -50,6 +51,10 @@ onMounted(() => {
 
 onMounted(async () => {
 >>>>>>> c5f0c50 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
+=======
+onMounted(async () => {
+    getHistory();
+>>>>>>> b422ed5 (:bug: profile fix: 코드 리뷰 기반 수정)
     try {
         user.value = await getMe();
     } catch (err) {
@@ -81,10 +86,14 @@ onMounted(async () => {
                     <div class="date-box" v-for='item in historyList' :key='item.reviewId'
                         @click='toGoReviewDetail(item.reviewId)'>
 <<<<<<< HEAD
+<<<<<<< HEAD
                         <p class="start-date">{{ item.startDate }}</p>
 =======
                         <p class="star-date">{{ item.startDate }}</p>
 >>>>>>> c5f0c50 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
+=======
+                        <p class="start-date">{{ item.startDate }}</p>
+>>>>>>> b422ed5 (:bug: profile fix: 코드 리뷰 기반 수정)
                         <p class="work-title">{{ item.workTitle }}</p>
                         <div class="img-box work-poster">
                             <img v-if="item.workPosterPath"
