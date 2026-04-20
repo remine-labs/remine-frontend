@@ -3,14 +3,21 @@ import { PhHouseLine, PhBook, PhPenNib, PhSparkle, PhUser } from "@phosphor-icon
 import { useRouter } from "vue-router";
 
 const router = useRouter()
+
 const goToHome = () => {
     router.push('/home')
 }
+
 const goToTimeline = () => {
     router.push('/timeline')
 }
+
 const goToSearch = () => {
     router.push('/search')
+}
+
+const goToProfile = () => {
+    router.push('/profile')
 }
 </script>
 
@@ -44,7 +51,7 @@ const goToSearch = () => {
                                 <PhSparkle :size='24'></PhSparkle>
                             </button>
                         </div>
-                        <div class="icon-box profile">
+                        <div class="icon-box profile" @click='goToProfile'>
                             <button>
                                 <PhUser :size='24'></PhUser>
                             </button>
