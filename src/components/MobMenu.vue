@@ -59,12 +59,12 @@ const goToSearch = () => {
 <style>
 nav {
     position: fixed;
+    width: 100%;
+    max-width: 47.5rem;
     bottom: 0;
     left: 0;
     right: 0;
     margin: 0 auto;
-    width: 100%;
-    max-width: 47.5rem;
     z-index: 999;
     overflow: hidden;
     padding-top: 62px;
