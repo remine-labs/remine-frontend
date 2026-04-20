@@ -23,7 +23,7 @@ const searchWorks = async () => {
             },
         })
 
-        works.value = res.data.results
+        works.value = res.data.data.results
     } catch (err) {
         console.error('search failed:', err)
         error.value = '검색 실패'
