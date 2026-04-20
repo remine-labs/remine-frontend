@@ -10,7 +10,6 @@ export const patchReview = (payload: {
   rating: number;
   startDate: string;
   endDate: string | null;
-  updatedAt: string;
 }) => {
   return api.patch("/api/reviews", payload);
 };
