@@ -29,12 +29,17 @@ interface HistoryItem {
 
 const now = new Date()
 <<<<<<< HEAD
+<<<<<<< HEAD
 const year = ref(now.getFullYear())
 const month = ref(now.getMonth() + 1)
 =======
 const year = ref(new Date().getFullYear())
 const month = ref(new Date().getMonth() + 1)
 >>>>>>> 00e64a6 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+const year = ref(now.getFullYear())
+const month = ref(now.getMonth() + 1)
+>>>>>>> bdc6746 (:bug: profile fix: 코드 리뷰 기반 수정)
 
 const historyList = ref<HistoryItem[]>([])
 
@@ -66,6 +71,7 @@ const getHistory = async () => {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 onMounted(async () => {
     getHistory();
 =======
@@ -82,6 +88,10 @@ onMounted(async () => {
 >>>>>>> b422ed5 (:bug: profile fix: 코드 리뷰 기반 수정)
 =======
 >>>>>>> 786b1d2 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
+=======
+onMounted(async () => {
+    getHistory();
+>>>>>>> bdc6746 (:bug: profile fix: 코드 리뷰 기반 수정)
     try {
         user.value = await getMe();
     } catch (err) {
@@ -140,6 +150,7 @@ onMounted(() => {
                         @click='toGoReviewDetail(item.reviewId)'>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                         <p class="start-date">{{ item.startDate }}</p>
 =======
                         <p class="star-date">{{ item.startDate }}</p>
@@ -162,6 +173,13 @@ onMounted(() => {
                         <div class="img-box work-poster">
                             <img :src="`https://image.tmdb.org/t/p/w200${item.workPosterPath}`" :alt='item.workTitle'>
 >>>>>>> 00e64a6 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+                        <p class="start-date">{{ item.startDate }}</p>
+                        <p class="work-title">{{ item.workTitle }}</p>
+                        <div class="img-box work-poster">
+                            <img v-if="item.workPosterPath"
+                                :src="'https://image.tmdb.org/t/p/w200' + item.workPosterPath" :alt='item.workTitle'>
+>>>>>>> bdc6746 (:bug: profile fix: 코드 리뷰 기반 수정)
                         </div>
                     </div>
                 </div>
