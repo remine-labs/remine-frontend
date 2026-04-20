@@ -1,6 +1,9 @@
 <script setup lang='ts'>
 import { onMounted, ref } from 'vue'
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 786b1d2 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
 import { getMe, type MeResponse } from "../api/auth"
 import { api } from '../api/client'
 import router from '../router';
@@ -10,9 +13,12 @@ const user = ref<MeResponse | null>(null);
 const toGoReviewDetail = (reviewId: number) => {
     router.push(`/review/${reviewId}`)
 }
+<<<<<<< HEAD
 =======
 import { api } from '../api/client';
 >>>>>>> 00e64a6 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+>>>>>>> 786b1d2 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
 
 interface HistoryItem {
     reviewId: number,
@@ -41,10 +47,14 @@ const getHistory = async () => {
             }
         })
 <<<<<<< HEAD
+<<<<<<< HEAD
         historyList.value = res.data.data
 =======
         historyList.value = res.data
 >>>>>>> 00e64a6 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+        historyList.value = res.data.data
+>>>>>>> 786b1d2 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
         console.log(res.data)
         console.log(res.request?.responseURL)
         console.log(res.headers['content-type'])
@@ -64,41 +74,55 @@ onMounted(() => {
 })
 
 onMounted(async () => {
+<<<<<<< HEAD
 >>>>>>> c5f0c50 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
 =======
 onMounted(async () => {
     getHistory();
 >>>>>>> b422ed5 (:bug: profile fix: 코드 리뷰 기반 수정)
+=======
+>>>>>>> 786b1d2 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
     try {
         user.value = await getMe();
     } catch (err) {
         console.error(err);
     }
 });
+<<<<<<< HEAD
 =======
 onMounted(() => {
     getHistory()
 })
 >>>>>>> 00e64a6 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+>>>>>>> 786b1d2 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
 </script>
 
 <template>
     <section class="profile-section">
         <div class="wrap">
 <<<<<<< HEAD
+<<<<<<< HEAD
             <div class="user-container" v-if='user'>
 =======
             <div class="user-container">
 >>>>>>> 00e64a6 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+            <div class="user-container" v-if='user'>
+>>>>>>> 786b1d2 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
                 <div class="user-info-box">
                     <div class="img-box profile-img">
                         img
                     </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
                     <p class="username">{{ user.name }}</p>
 =======
                     <p class="username">username</p>
 >>>>>>> 00e64a6 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+                    <p class="username">{{ user.name }}</p>
+>>>>>>> 786b1d2 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
                     <button>edit</button>
                 </div>
                 <button>setting</button>
@@ -110,6 +134,7 @@ onMounted(() => {
                     <button class='active-btn' @click='getHistory'>조회</button>
                 </div>
                 <div class="calendar-body">
+<<<<<<< HEAD
 <<<<<<< HEAD
                     <div class="date-box" v-for='item in historyList' :key='item.reviewId'
                         @click='toGoReviewDetail(item.reviewId)'>
@@ -128,6 +153,10 @@ onMounted(() => {
                                 :src="'https://image.tmdb.org/t/p/w200' + item.workPosterPath" :alt='item.workTitle'>
 =======
                     <div class="date-box" v-for='item in historyList' :key='item.reviewId'>
+=======
+                    <div class="date-box" v-for='item in historyList' :key='item.reviewId'
+                        @click='toGoReviewDetail(item.reviewId)'>
+>>>>>>> 786b1d2 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
                         <p class="star-date">{{ item.startDate }}</p>
                         <p class="work-title">{{ item.workTitle }}</p>
                         <div class="img-box work-poster">
@@ -140,12 +169,16 @@ onMounted(() => {
         </div>
     </section>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 786b1d2 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
 </template>
 
 <style>
 .profile-section .date-box {
     cursor: pointer;
 }
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 </style>
@@ -158,3 +191,6 @@ onMounted(() => {
 =======
 </template>
 >>>>>>> 00e64a6 (:sparkles: profile feat: profile 페이지에 calendar api 연결 (캘린더 디자인X))
+=======
+</style>
+>>>>>>> 786b1d2 (:sparkles: profile feat: profile 화면에 username 노출 및 작품 포스터 클릭시 해당 작품 리뷰 상세 페이지로 연결)
