@@ -136,15 +136,9 @@ body {
     /* background */
     --bg-canvas: #272727;
     --bg-default: #1e1e20;
-<<<<<<< HEAD
     --bg-surface: #363642;
     --bg-overlay: #36364283;
     --bg-elevated: #313136;
-=======
-    --bg-surface: #4f5560;
-    --bg-overlay: #4f5560b3;
-    --bg-elevated: #3d3e41;
->>>>>>> 3ac076b (:bug: design-system fix: 중앙 정렬 관련 로컬 적용)
 
     /* text */
     --text-main: #f6f4f0;
