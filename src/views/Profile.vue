@@ -1,6 +1,14 @@
 <script setup lang='ts'>
 import { onMounted, ref } from 'vue'
-import { api } from '../api/client';
+import { getMe, type MeResponse } from "../api/auth"
+import { api } from '../api/client'
+import router from '../router';
+
+const user = ref<MeResponse | null>(null);
+
+const toGoReviewDetail = (reviewId: number) => {
+    router.push(`/review/${reviewId}`)
+}
 
 interface HistoryItem {
     reviewId: number,
@@ -23,7 +31,7 @@ const getHistory = async () => {
                 month: month.value,
             }
         })
-        historyList.value = res.data
+        historyList.value = res.data.data
         console.log(res.data)
         console.log(res.request?.responseURL)
         console.log(res.headers['content-type'])
@@ -35,17 +43,25 @@ const getHistory = async () => {
 onMounted(() => {
     getHistory()
 })
+
+onMounted(async () => {
+    try {
+        user.value = await getMe();
+    } catch (err) {
+        console.error(err);
+    }
+});
 </script>
 
 <template>
     <section class="profile-section">
         <div class="wrap">
-            <div class="user-container">
+            <div class="user-container" v-if='user'>
                 <div class="user-info-box">
                     <div class="img-box profile-img">
                         img
                     </div>
-                    <p class="username">username</p>
+                    <p class="username">{{ user.name }}</p>
                     <button>edit</button>
                 </div>
                 <button>setting</button>
@@ -57,7 +73,8 @@ onMounted(() => {
                     <button class='active-btn' @click='getHistory'>조회</button>
                 </div>
                 <div class="calendar-body">
-                    <div class="date-box" v-for='item in historyList' :key='item.reviewId'>
+                    <div class="date-box" v-for='item in historyList' :key='item.reviewId'
+                        @click='toGoReviewDetail(item.reviewId)'>
                         <p class="star-date">{{ item.startDate }}</p>
                         <p class="work-title">{{ item.workTitle }}</p>
                         <div class="img-box work-poster">
@@ -69,3 +86,9 @@ onMounted(() => {
         </div>
     </section>
 </template>
+
+<style>
+.profile-section .date-box {
+    cursor: pointer;
+}
+</style>
