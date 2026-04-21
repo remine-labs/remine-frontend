@@ -53,12 +53,13 @@ const selectWork = (work: any) => {
 <template>
     <section class="search-section">
         <div class="wrap">
-            <div class="search-container">
+            <div class="search-container relative">
                 <div class="input-box">
-                    <input v-model="query" type="text" @keyup.enter="searchWorks">
+                    <input class="work-search-input" v-model="query" type="search" @keyup.enter="searchWorks"
+                        placeholder='작품 제목을 입력해주세요.' autofocus>
                 </div>
                 <div class="icon-box">
-                    <button @click="searchWorks">
+                    <button class="icon-btn" @click="searchWorks">
                         <PhMagnifyingGlass :size="24" />
                     </button>
                 </div>
@@ -85,6 +86,22 @@ const selectWork = (work: any) => {
 </template>
 
 <style>
+.search-section .input-box .work-search-input {
+    width: 100%;
+    line-height: 4rem;
+    text-indent: var(--font-size-body);
+    padding-right: 40px;
+}
+
+.search-section .search-container .icon-box {
+    position: absolute;
+    right: 3px;
+    top: 3px;
+    width: 40px;
+    height: 40px;
+    z-index: 99;
+}
+
 .search-section .work-box {
     cursor: pointer;
 }
