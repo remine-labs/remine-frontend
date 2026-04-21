@@ -101,7 +101,10 @@ const selectWork = (work: any) => {
     line-height: 4rem;
     text-indent: var(--font-size-body);
     padding-right: 40px;
+<<<<<<< HEAD
     box-sizing: border-box;
+=======
+>>>>>>> 8d610c7 (:art: search-work style: search input 퍼블리싱)
 }
 
 .search-section .search-container .icon-box {
@@ -113,6 +116,7 @@ const selectWork = (work: any) => {
     z-index: 99;
 }
 
+<<<<<<< HEAD
 .search-section .works-list-container .work-box {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
@@ -120,6 +124,9 @@ const selectWork = (work: any) => {
     column-gap: 12px;
     margin-top: 3rem;
     padding: 12px;
+=======
+.search-section .work-box {
+>>>>>>> 8d610c7 (:art: search-work style: search input 퍼블리싱)
     cursor: pointer;
     z-index: 1;
 }
