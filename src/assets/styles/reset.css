@@ -149,22 +149,3 @@ pre {
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
-
-/* 유틸리티 클래스들 */
-.relative {
-  position: relative;
-}
-
-.clearfix::after {
-  content: "";
-  display: block;
-  clear: both;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.invisible {
-  visibility: hidden;
-}

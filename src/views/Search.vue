@@ -53,12 +53,13 @@ const selectWork = (work: any) => {
 <template>
     <section class="search-section">
         <div class="wrap">
-            <div class="search-container">
+            <div class="search-container relative">
                 <div class="input-box">
-                    <input v-model="query" type="text" @keyup.enter="searchWorks">
+                    <input class="work-search-input" v-model="query" type="search" @keyup.enter="searchWorks"
+                        placeholder='작품 제목을 입력해주세요.' autofocus>
                 </div>
                 <div class="icon-box">
-                    <button @click="searchWorks">
+                    <button class="icon-btn" @click="searchWorks">
                         <PhMagnifyingGlass :size="24" />
                     </button>
                 </div>
@@ -68,15 +69,25 @@ const selectWork = (work: any) => {
             <p v-if="error">{{ error }}</p>
 
             <div class="works-list-container">
-                <div class="work-box" v-for="work in works" :key="work.id" @click='selectWork(work)'>
-                    <div class="img-box poster"><img :src="`https://image.tmdb.org/t/p/w200${work.poster_path}`"
-                            alt="" /></div>
-                    <p class="work-name">{{ work.title }}</p>
-                    <p class="release-date">{{ work.release_date }}</p>
-                    <div class="story-box">
-                        <p class="story">
-                            {{ work.overview }}
-                        </p>
+                <div class="work-box relative" v-for="work in works" :key="work.id" @click="selectWork(work)">
+                    <div class="img-box poster">
+                        <img :src="`https://image.tmdb.org/t/p/w200${work.poster_path}`" :alt="work.title" />
+                    </div>
+
+                    <div class="work-info-box">
+                        <div class="work-title-box">
+                            <span class="media-type sub-text">영화</span>
+                            <div class="work-title">
+                                <span class="work-name title ellipsis-1">{{ work.title }}</span>
+                                <span class="release-year number">({{ work.release_date?.slice(0, 4) }})</span>
+                            </div>
+                        </div>
+
+                        <div class="story-box" :class="{ empty: !work.overview?.trim() }">
+                            <p class="story long-text ellipsis-4">
+                                {{ work.overview?.trim() ? work.overview : '제공된 정보가 없습니다.' }}
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -85,7 +96,110 @@ const selectWork = (work: any) => {
 </template>
 
 <style>
-.search-section .work-box {
+.search-section .input-box .work-search-input {
+    width: 100%;
+    line-height: 4rem;
+    text-indent: var(--font-size-body);
+    padding-right: 40px;
+    box-sizing: border-box;
+}
+
+.search-section .search-container .icon-box {
+    position: absolute;
+    right: 3px;
+    top: 3px;
+    width: 40px;
+    height: 40px;
+    z-index: 99;
+}
+
+.search-section .works-list-container .work-box {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: stretch;
+    column-gap: 12px;
+    margin-top: 3rem;
+    padding: 12px;
     cursor: pointer;
+    z-index: 1;
+}
+
+.search-section .work-box .img-box {
+    width: clamp(100px, 25vw, 140px);
+    aspect-ratio: 2 / 3;
+    grid-row: 1 / 3;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.search-section .work-box .img-box img {
+    object-fit: cover;
+    object-position: center;
+    width: 100%;
+    height: 100%;
+}
+
+.search-section .work-box .work-info-box {
+    grid-row: 1 / 3;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.search-section .work-box .work-title-box {
+    min-width: 0;
+    padding-bottom: 0;
+}
+
+.search-section .work-box .work-title-box .media-type {
+    display: inline-block;
+    padding: 4px 8px;
+    background-color: var(--chip-default-bg);
+    border-radius: 8px;
+    line-height: 1;
+}
+
+.search-section .work-box .work-title-box .work-title {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    min-width: 0;
+}
+
+.search-section .work-box .work-title-box .work-name {
+    min-width: 0;
+    flex: 1;
+}
+
+.search-section .work-box .work-title-box .release-year {
+    flex-shrink: 0;
+}
+
+.search-section .work-box .story-box {
+    min-width: 0;
+    margin-top: auto;
+}
+
+.search-section .work-box .story-box.empty {
+    margin-top: 1.2rem;
+}
+
+.search-section .work-box .story-box .story {
+    margin: 0;
+}
+
+
+.search-section .work-box .story-box:after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 7.2rem);
+    background-color: var(--bg-surface);
+    border-radius: 8px;
+    box-shadow: 0px 0px 8px #00000013;
+    z-index: -1;
 }
 </style>
