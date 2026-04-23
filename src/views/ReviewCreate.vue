@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import { api } from '../api/client'
 import { useRouter } from 'vue-router'
 import Datepicker from 'vue3-datepicker'
-import { PhStar, PhStarHalf } from '@phosphor-icons/vue'
+import { PhStar } from '@phosphor-icons/vue'
 
 
 const router = useRouter()
