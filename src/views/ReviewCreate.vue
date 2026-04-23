@@ -4,10 +4,14 @@ import { api } from '../api/client'
 import { useRouter } from 'vue-router'
 import Datepicker from 'vue3-datepicker'
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { PhStar } from '@phosphor-icons/vue'
 =======
 import { PhStar, PhStarHalf } from '@phosphor-icons/vue'
 >>>>>>> afddbf2 (:sparkles: review-create feat: 리뷰 작성 페이지 기본 기능 구현)
+=======
+import { PhStar } from '@phosphor-icons/vue'
+>>>>>>> 320a000 (:art: review-crud style: 사용하지 않는 아이콘 호출 제거)
 
 
 const router = useRouter()
