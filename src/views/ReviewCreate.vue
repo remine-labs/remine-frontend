@@ -3,7 +3,11 @@ import { ref, watch } from 'vue'
 import { api } from '../api/client'
 import { useRouter } from 'vue-router'
 import Datepicker from 'vue3-datepicker'
+<<<<<<< HEAD
 import { PhStar } from '@phosphor-icons/vue'
+=======
+import { PhStar, PhStarHalf } from '@phosphor-icons/vue'
+>>>>>>> afddbf2 (:sparkles: review-create feat: 리뷰 작성 페이지 기본 기능 구현)
 
 
 const router = useRouter()
