@@ -35,7 +35,7 @@ section {
 .long-text {
   font-size: var(--font-size-long);
   font-weight: 300;
-  line-height: 1.6;
+  line-height: 1.4;
   letter-spacing: -0.02em;
 }
 
@@ -43,6 +43,12 @@ section {
   font-size: var(--font-size-sub);
   font-weight: 300;
   line-height: 1.2;
+}
+
+.number {
+  font-size: 1.3rem;
+  font-weight: 300;
+  line-height: 1;
 }
 
 /* utility */
@@ -71,6 +77,13 @@ section {
 .ellipsis-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ellipsis-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
