@@ -125,7 +125,9 @@ const selectWork = (work: any) => {
 }
 
 .search-section .work-box .img-box {
-    width: clamp(100px, 25vw, 140px);
+    /* TODO: 반응형 고려 */
+    /* width: clamp(100px, 25vw, 140px); */
+    width: 100px;
     aspect-ratio: 2 / 3;
     grid-row: 1 / 3;
     flex-shrink: 0;
@@ -168,7 +170,7 @@ const selectWork = (work: any) => {
 
 .search-section .work-box .work-title-box .work-name {
     min-width: 0;
-    flex: 1;
+    max-width: calc(100% - 4rem);
 }
 
 .search-section .work-box .work-title-box .release-year {
