@@ -143,12 +143,18 @@ const selectWork = (work: any) => {
 
 .search-section .work-box .img-box {
 <<<<<<< HEAD
+<<<<<<< HEAD
     /* TODO: 반응형 고려 */
     /* width: clamp(100px, 25vw, 140px); */
     width: 100px;
 =======
     width: clamp(100px, 25vw, 140px);
 >>>>>>> e0044a2 (:art: search-work style: 검색 결과 카드 레이아웃 및 UI 퍼블리싱)
+=======
+    /* TODO: 반응형 고려 */
+    /* width: clamp(100px, 25vw, 140px); */
+    width: 100px;
+>>>>>>> 678a48e (:art: search-work style: 포스터 크기 고정)
     aspect-ratio: 2 / 3;
     grid-row: 1 / 3;
     flex-shrink: 0;
@@ -192,10 +198,14 @@ const selectWork = (work: any) => {
 .search-section .work-box .work-title-box .work-name {
     min-width: 0;
 <<<<<<< HEAD
+<<<<<<< HEAD
     max-width: calc(100% - 4rem);
 =======
     flex: 1;
 >>>>>>> e0044a2 (:art: search-work style: 검색 결과 카드 레이아웃 및 UI 퍼블리싱)
+=======
+    max-width: calc(100% - 4rem);
+>>>>>>> 678a48e (:art: search-work style: 포스터 크기 고정)
 }
 
 .search-section .work-box .work-title-box .release-year {
