@@ -102,9 +102,13 @@ const selectWork = (work: any) => {
     text-indent: var(--font-size-body);
     padding-right: 40px;
 <<<<<<< HEAD
+<<<<<<< HEAD
     box-sizing: border-box;
 =======
 >>>>>>> 8d610c7 (:art: search-work style: search input 퍼블리싱)
+=======
+    box-sizing: border-box;
+>>>>>>> e0044a2 (:art: search-work style: 검색 결과 카드 레이아웃 및 UI 퍼블리싱)
 }
 
 .search-section .search-container .icon-box {
@@ -117,6 +121,9 @@ const selectWork = (work: any) => {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> e0044a2 (:art: search-work style: 검색 결과 카드 레이아웃 및 UI 퍼블리싱)
 .search-section .works-list-container .work-box {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
@@ -124,17 +131,24 @@ const selectWork = (work: any) => {
     column-gap: 12px;
     margin-top: 3rem;
     padding: 12px;
+<<<<<<< HEAD
 =======
 .search-section .work-box {
 >>>>>>> 8d610c7 (:art: search-work style: search input 퍼블리싱)
+=======
+>>>>>>> e0044a2 (:art: search-work style: 검색 결과 카드 레이아웃 및 UI 퍼블리싱)
     cursor: pointer;
     z-index: 1;
 }
 
 .search-section .work-box .img-box {
+<<<<<<< HEAD
     /* TODO: 반응형 고려 */
     /* width: clamp(100px, 25vw, 140px); */
     width: 100px;
+=======
+    width: clamp(100px, 25vw, 140px);
+>>>>>>> e0044a2 (:art: search-work style: 검색 결과 카드 레이아웃 및 UI 퍼블리싱)
     aspect-ratio: 2 / 3;
     grid-row: 1 / 3;
     flex-shrink: 0;
@@ -177,7 +191,11 @@ const selectWork = (work: any) => {
 
 .search-section .work-box .work-title-box .work-name {
     min-width: 0;
+<<<<<<< HEAD
     max-width: calc(100% - 4rem);
+=======
+    flex: 1;
+>>>>>>> e0044a2 (:art: search-work style: 검색 결과 카드 레이아웃 및 UI 퍼블리싱)
 }
 
 .search-section .work-box .work-title-box .release-year {
