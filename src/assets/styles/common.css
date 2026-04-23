@@ -108,6 +108,10 @@ button {
   padding: 0.6rem 2rem;
 }
 
+button.text-btn {
+  min-width: 80px;
+}
+
 button.icon-btn {
   display: flex;
   align-items: center;
@@ -131,7 +135,8 @@ button.icon-btn {
 /* input */
 input[type="text"],
 input[type="search"],
-input[type="password"] {
+input[type="password"],
+textarea {
   color: var(--text-main);
   border-radius: 8px;
   background-color: var(--bg-surface);
@@ -140,13 +145,14 @@ input[type="password"] {
   outline: none;
 }
 
-input::placeholder {
+*::placeholder {
   color: var(--text-sub);
 }
 
 input[type="text"]:focus,
 input[type="search"]:focus,
-input[type="password"]:focus {
+input[type="password"]:focus,
+textarea:focus {
   background-color: var(--bg-elevated);
   border-color: var(--bg-surface);
   box-shadow: 0 0 4px var(--chip-important-bg);

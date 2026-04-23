@@ -1,19 +1,86 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { api } from '../api/client'
 import { useRouter } from 'vue-router'
+import Datepicker from 'vue3-datepicker'
+import { PhStar, PhStarHalf } from '@phosphor-icons/vue'
+
 
 const router = useRouter()
-
 const work = history.state.work
 
-console.log('work', work)
 
-const rating = ref<number>(0)
-const startDate = ref('')
-const endDate = ref('')
+// 감상일 관련
+const now = new Date()
+const startDate = ref<Date>(now)
+const endDate = ref<Date | undefined>(now)
+const formatDate = (date?: Date) => {
+    if (!date) return null
+    return date.toISOString().slice(0, 10)
+}
 const isWatching = ref(false)
-const isSameStartDate = ref(false)
+
+// 감상중 체크
+watch(isWatching, (val) => {
+    if (val) {
+        endDate.value = undefined
+    } else {
+        endDate.value = startDate.value
+    }
+})
+
+// 시작일 변경
+watch(startDate, (newStart) => {
+    if (isWatching.value) return
+
+    if (!endDate.value) {
+        endDate.value = newStart
+        return
+    }
+
+    const today = new Date()
+
+    if (endDate.value.toDateString() === today.toDateString()) {
+        endDate.value = newStart
+    }
+
+    if (endDate.value < newStart) {
+        endDate.value = newStart
+    }
+})
+
+// 종료일 변경 보정
+watch(endDate, (newEnd) => {
+    if (!newEnd || isWatching.value) return
+
+    if (newEnd < startDate.value) {
+        endDate.value = startDate.value
+    }
+})
+
+// 별점 입력
+const rating = ref(0)
+const ratingBoxRef = ref<HTMLElement | null>(null)
+
+const getStarFill = (i: number) => {
+    if (rating.value >= i) return '100%'
+    if (rating.value >= i - 0.5) return '50%'
+    return '0%'
+}
+
+const handleRatingClick = (e: MouseEvent) => {
+    if (!ratingBoxRef.value) return
+
+    const rect = ratingBoxRef.value.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const ratio = x / rect.width
+
+    const raw = ratio * 5
+    const value = Math.ceil(raw * 2) / 2
+
+    rating.value = Math.min(5, Math.max(0, value))
+}
+
 const comment = ref('')
 
 const submitReview = async () => {
@@ -30,8 +97,8 @@ const submitReview = async () => {
         releaseDate: work.release_date,
         comment: comment.value.trim(),
         rating: rating.value,
-        startDate: startDate.value,
-        endDate: isWatching.value ? null : (endDate.value || null),
+        startDate: formatDate(startDate.value),
+        endDate: isWatching.value ? null : formatDate(endDate.value),
     }
 
     console.log(body)
@@ -59,7 +126,6 @@ const submitReview = async () => {
     }
 }
 
-
 </script>
 
 <template>
@@ -70,49 +136,54 @@ const submitReview = async () => {
                     <img :src="`https://image.tmdb.org/t/p/w200${work.poster_path}`" :alt="work.title" />
                 </div>
                 <div class="info-text-box">
-                    <p class="work-title">{{ work.title }}</p>
-                    <p class="release-date">{{ work.release_date }}</p>
+                    <p class="work-title title">{{ work.title }}</p>
+                    <p class="release-date sub-text">{{ work.release_date }}</p>
                 </div>
             </div>
             <form @submit.prevent='submitReview'>
                 <div class="date-input-container">
                     <div class="title-box">
-                        <h2 class="description">watch date</h2>
+                        <h2 class="description">감상 기간</h2>
                         <div class="input-box">
                             <input type="checkbox" id="watching" v-model="isWatching">
                             <label for="watching">감상중</label>
                         </div>
                     </div>
-                    <div class="start-date-box">
-                        <p class="start-date-text">시작일</p>
-                        <div class='date-picker-box'><input type="date" v-model="startDate"></div>
-                    </div>
-                    <div class="end-date-box">
-                        <p class="end-date-text">종료일</p>
-                        <div class='date-picker-box'><input type="date" v-model="endDate"></div>
-                        <div class="input-box">
-                            <input type="checkbox" id="same-start-date" v-model="isSameStartDate">
-                            <label for="same-start-date">시작일과 동일</label>
+                    <div class="date-input-box">
+                        <div class="start-date-box">
+                            <p class="start-date-text">시작일</p>
+                            <div class='date-picker-box'>
+                                <Datepicker v-model="startDate" />
+                            </div>
+                        </div>
+                        <div class="end-date-box" v-if='!isWatching'>
+                            <p class="end-date-text">종료일</p>
+                            <div class='date-picker-box'>
+                                <Datepicker v-model="endDate" />
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="rating-container">
-                    <h2 class="description">rating</h2>
-                    <div class="rating-box">
-                        <div class="input-box">
-                            <input type="number" v-model="rating" min="0" max="5" step="0.5" />
+                    <h2 class="description">평점</h2>
+                    <div class="rating-box" ref="ratingBoxRef" @click="handleRatingClick">
+                        <div v-for="i in 5" :key="i" class="star-box relative">
+                            <PhStar class="star-stroke" :size="24" />
+                            <div class="star-fill" :style="{ width: getStarFill(i) }">
+                                <PhStar class="star-filled" weight="fill" :size="24" />
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="review-write-container">
-                    <h2 class="description">textarea review</h2>
+                    <h2 class="description">감상평</h2>
                     <div class="input-box">
                         <textarea v-model="comment" name="review-write" id="review-write"
                             placeholder="감상을 자유롭게 작성해주세요."></textarea>
                     </div>
                 </div>
                 <div class="btn-box">
-                    <button type="submit" id='post-review-btn' class='active-btn'>save</button>
+                    <button type="submit" id='post-review-btn' class='active-btn text-btn'>저장</button>
                 </div>
             </form>
         </div>
@@ -120,9 +191,132 @@ const submitReview = async () => {
 </template>
 
 <style>
+.review-create-section .work-info-container {
+    display: flex;
+    gap: 16px;
+    background-color: var(--bg-elevated);
+    border-radius: 8px;
+    box-shadow: 0px 0px 4px #00000013;
+}
+
+.review-create-section .work-info-container .img-box {
+    width: 80px;
+    aspect-ratio: 2/3;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.review-create-section .work-info-container .info-text-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.review-create-section .date-input-container {
+    margin-top: 4rem;
+}
+
+.review-create-section h2 {
+    font-size: var(--font-size-title);
+}
+
+.review-create-section .date-input-container .title-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.review-create-section .date-input-container .input-box {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.review-create-section .date-input-box {
+    display: flex;
+    justify-content: space-between;
+}
+
+.review-create-section .date-input-box .start-date-box,
+.review-create-section .date-input-box .end-date-box {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.review-create-section .date-input-box .end-date-box {
+    justify-content: end
+}
+
+.review-create-section .date-input-box .start-date-text,
+.review-create-section .date-input-box .end-date-text {
+    flex-shrink: 0;
+}
+
+.review-create-section .date-input-box .date-picker-box {
+    max-width: calc(100% - 6.3rem);
+}
+
+.review-create-section .date-input-box .date-picker-box input {
+    width: 100%;
+    text-align: center;
+}
+
+.review-create-section .rating-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4rem;
+}
+
+.review-create-section .rating-container .rating-box {
+    flex-shrink: 0;
+    display: flex;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.review-create-section .rating-container .rating-box .star-box {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.review-create-section .rating-box .star-stroke,
+.review-create-section .rating-box .star-fill>svg {
+    display: block;
+    width: 24px;
+    height: 24px;
+    color: var(--chip-important-bg);
+}
+
+.review-create-section .rating-box .star-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.review-create-section .review-write-container {
+    margin-top: 4rem;
+}
+
 .review-create-section .review-write-container textarea {
     width: 100%;
-    height: 150px;
+    min-height: 250px;
+    max-width: auto;
     resize: vertical;
+    margin-top: 1rem;
+    padding: 6px;
+    outline: none;
+    white-space: pre-wrap;
+}
+
+.review-create-section .btn-box {
+    margin-top: 5rem;
+    text-align: center;
 }
 </style>
