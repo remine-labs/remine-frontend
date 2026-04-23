@@ -72,9 +72,6 @@ const handleEditSubmit = async () => {
         alert(`수정 실패\n${errorMsg}`)
     }
 }
-
-
-
 </script>
 
 <template>

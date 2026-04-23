@@ -67,7 +67,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <section class="review-read-section">
+    <section class="review-detail-section">
         <div class="wrap">
             <div v-if="isLoading">로딩 중...</div>
             <div v-else-if="errorMessage">{{ errorMessage }}</div>
@@ -126,3 +126,9 @@ onMounted(() => {
         </div>
     </section>
 </template>
+
+<style>
+.review-detail-section .review-text-box {
+    white-space: pre-wrap;
+}
+</style>
