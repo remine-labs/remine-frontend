@@ -135,16 +135,22 @@ const selectWork = (work: any) => {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> e0044a2 (:art: search-work style: 검색 결과 카드 레이아웃 및 UI 퍼블리싱)
 =======
+=======
+>>>>>>> 38e9c96 (:sparkles: search-work feat: 검색 API 응답 구조 변경 및 UI 반영)
 .search-section .total-count {
     text-align: right;
     font-size: var(--font-size-sub);
     line-height: 4;
 }
 
+<<<<<<< HEAD
 >>>>>>> f7c46a3 (:sparkles: search-work feat: 검색 API 응답 구조 변경 및 UI 반영)
+=======
+>>>>>>> 38e9c96 (:sparkles: search-work feat: 검색 API 응답 구조 변경 및 UI 반영)
 .search-section .works-list-container .work-box {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
