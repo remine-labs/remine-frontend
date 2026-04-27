@@ -17,13 +17,14 @@ const searchWorks = async () => {
     loading.value = true
     error.value = ''
     try {
-        const res = await api.get('/api/tmdb/movies/search', {
+        const res = await api.get('/api/tmdb/contents/search', {
             params: {
                 query: query.value,
             },
         })
 
         works.value = res.data.data.results
+        totalCount.value = res.data.data.total_results ?? 0
     } catch (err) {
         console.error('search failed:', err)
         error.value = '검색 실패'
@@ -32,17 +33,20 @@ const searchWorks = async () => {
     }
 }
 
+const totalCount = ref(0)
+
+
 const selectWork = (work: any) => {
     router.push({
         path: '/review/create',
         state: {
             headerTitle: work.title,
             work: {
-                id: work.id,
-                title: work.title,
-                release_date: work.release_date,
-                overview: work.overview,
-                poster_path: work.poster_path,
+                id: work.workId,
+                title: work.workTitle,
+                release_date: work.workReleaseDate,
+                overview: work.workOverview,
+                poster_path: work.workPosterPath,
             },
         },
     })
@@ -67,25 +71,33 @@ const selectWork = (work: any) => {
 
             <p v-if="loading">loading...</p>
             <p v-if="error">{{ error }}</p>
-
+            <div class="total-count" :class="{ invisible: totalCount === 0 }">총 {{ totalCount }}건의 결과</div>
             <div class="works-list-container">
-                <div class="work-box relative" v-for="work in works" :key="work.id" @click="selectWork(work)">
+
+                <div class="work-box relative" v-for="work in works" :key="work.workId" @click="selectWork(work)">
                     <div class="img-box poster">
-                        <img :src="`https://image.tmdb.org/t/p/w200${work.poster_path}`" :alt="work.title" />
+                        <img :src="`https://image.tmdb.org/t/p/w200${work.workPosterPath}`" :alt="work.workTitle" />
                     </div>
 
                     <div class="work-info-box">
                         <div class="work-title-box">
-                            <span class="media-type sub-text">영화</span>
+                            <span class="media-type sub-text" :class="work.mediaType">{{ work.mediaType.toUpperCase()
+                            }}</span>
+
                             <div class="work-title">
-                                <span class="work-name title ellipsis-1">{{ work.title }}</span>
-                                <span class="release-year number">({{ work.release_date?.slice(0, 4) }})</span>
+                                <span class="work-name title ellipsis-1">
+                                    {{ work.workTitle }}
+                                </span>
+
+                                <span class="release-year number">
+                                    ({{ work.workReleaseDate?.slice(0, 4) }})
+                                </span>
                             </div>
                         </div>
 
-                        <div class="story-box" :class="{ empty: !work.overview?.trim() }">
+                        <div class="story-box" :class="{ empty: !work.workOverview?.trim() }">
                             <p class="story long-text ellipsis-4">
-                                {{ work.overview?.trim() ? work.overview : '제공된 정보가 없습니다.' }}
+                                {{ work.workOverview?.trim() ? work.workOverview : '제공된 정보가 없습니다.' }}
                             </p>
                         </div>
                     </div>
@@ -113,12 +125,18 @@ const selectWork = (work: any) => {
     z-index: 99;
 }
 
+.search-section .total-count {
+    text-align: right;
+    font-size: var(--font-size-sub);
+    line-height: 4;
+}
+
 .search-section .works-list-container .work-box {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     align-items: stretch;
     column-gap: 12px;
-    margin-top: 3rem;
+    margin-bottom: 3rem;
     padding: 12px;
     cursor: pointer;
     z-index: 1;
@@ -131,6 +149,7 @@ const selectWork = (work: any) => {
     aspect-ratio: 2 / 3;
     grid-row: 1 / 3;
     flex-shrink: 0;
+    border-radius: 8px;
     overflow: hidden;
 }
 
@@ -156,6 +175,7 @@ const selectWork = (work: any) => {
 .search-section .work-box .work-title-box .media-type {
     display: inline-block;
     padding: 4px 8px;
+    /* NOTICE:: tv, movie, person에 따라 칩 변경할 경우 변경 사항 */
     background-color: var(--chip-default-bg);
     border-radius: 8px;
     line-height: 1;
