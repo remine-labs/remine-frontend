@@ -1,10 +1,13 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "rewrites": [
+  "redirects": [
     {
       "source": "/oauth/callback",
-      "destination": "https://backend-1047813710575.asia-northeast3.run.app/login/oauth2/code/google"
-    },
+      "destination": "https://backend-1047813710575.asia-northeast3.run.app/login/oauth2/code/google",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
     {
       "source": "/oauth2/:path*",
       "destination": "https://backend-1047813710575.asia-northeast3.run.app/oauth2/:path*"
