@@ -2,6 +2,18 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     {
+      "source": "/oauth2/:path*",
+      "destination": "https://backend-1047813710575.asia-northeast3.run.app/oauth2/:path*"
+    },
+    {
+      "source": "/login/oauth2/code/:path*",
+      "destination": "https://backend-1047813710575.asia-northeast3.run.app/login/oauth2/code/:path*"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "https://backend-1047813710575.asia-northeast3.run.app/api/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
