@@ -208,7 +208,7 @@ nav .wrap .icon-container {
     padding: 10px 20px 20px;
 }
 
-nav .wrap .icon-container .icon-box {
+nav .wrap .icon-container .icon-box button {
     flex-direction: column;
 }
 

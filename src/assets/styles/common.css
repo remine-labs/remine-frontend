@@ -119,7 +119,6 @@ button.text-btn {
   width: 100%;
   height: 100%;
   padding: 0;
-  color: var(--btn-active-bg);
 }
 
 .active-btn {
@@ -163,23 +162,36 @@ textarea:focus {
 .chip-default {
   background-color: var(--chip-default-bg);
   color: #2d2f35;
+  padding: 2px 6px;
   border-radius: 8px;
+  line-height: 1;
 }
 
 .chip-important {
   background-color: var(--chip-important-bg);
   color: var(--text-inverse);
+  padding: 2px 6px;
   border-radius: 8px;
+  line-height: 1;
 }
 
 .chip-warning {
   background-color: var(--chip-warning-bg);
   color: #2d2f35;
+  padding: 2px 6px;
   border-radius: 8px;
+  line-height: 1;
 }
 
 .chip-rating {
   background-color: var(--btn-active-bg);
   color: var(--text-inverse);
+  padding: 2px 6px;
   border-radius: 8px;
+  line-height: 1;
+}
+
+/* design */
+.heart {
+  color: var(--heart);
 }

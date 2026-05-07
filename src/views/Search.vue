@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { PhMagnifyingGlass } from '@phosphor-icons/vue'
+import { PhHeart, PhMagnifyingGlass } from '@phosphor-icons/vue'
 import { api } from '../api/client'
 
 const router = useRouter()
@@ -75,30 +75,28 @@ const selectWork = (work: any) => {
             <div class="works-list-container">
 
                 <div class="work-box relative" v-for="work in works" :key="work.workId" @click="selectWork(work)">
+                    <div class="type-box">
+                        <span class="media-type sub-text chip-important" :class="work.mediaType">{{
+                            work.mediaType.toUpperCase()
+                            }}</span>
+                    </div>
                     <div class="img-box poster">
                         <img :src="`https://image.tmdb.org/t/p/w200${work.workPosterPath}`" :alt="work.workTitle" />
                     </div>
 
                     <div class="work-info-box">
                         <div class="work-title-box">
-                            <span class="media-type sub-text" :class="work.mediaType">{{ work.mediaType.toUpperCase()
-                            }}</span>
-
-                            <div class="work-title">
-                                <span class="work-name title ellipsis-1">
-                                    {{ work.workTitle }}
-                                </span>
-
-                                <span class="release-year number">
-                                    ({{ work.workReleaseDate?.slice(0, 4) }})
-                                </span>
-                            </div>
+                            <span class="work-name ellipsis-1">
+                                {{ work.workTitle }}
+                            </span>
+                            <span class="release-year number">
+                                ({{ work.workReleaseDate?.slice(0, 4) }})
+                            </span>
                         </div>
-
-                        <div class="story-box" :class="{ empty: !work.workOverview?.trim() }">
-                            <p class="story long-text ellipsis-4">
-                                {{ work.workOverview?.trim() ? work.workOverview : '제공된 정보가 없습니다.' }}
-                            </p>
+                        <div class="icon-box watchlist">
+                            <button class='heart'>
+                                <PhHeart :size='20'></PhHeart>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -148,6 +146,7 @@ const selectWork = (work: any) => {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> f7c46a3 (:sparkles: search-work feat: 검색 API 응답 구조 변경 및 UI 반영)
 =======
 >>>>>>> 38e9c96 (:sparkles: search-work feat: 검색 API 응답 구조 변경 및 UI 반영)
@@ -164,11 +163,31 @@ const selectWork = (work: any) => {
 >>>>>>> 8d610c7 (:art: search-work style: search input 퍼블리싱)
 =======
 >>>>>>> e0044a2 (:art: search-work style: 검색 결과 카드 레이아웃 및 UI 퍼블리싱)
+=======
+.search-section .works-list-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 8px;
+}
+
+.search-section .works-list-container .work-box {
+    width: calc(50% - 4px);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--bg-elevated);
+>>>>>>> 5ac929a (:art: design-system style: redesign search results)
     cursor: pointer;
-    z-index: 1;
+    box-shadow: 0px 0px 8px #00000014
+}
+
+.search-section .work-box .type-box {
+    position: absolute;
+    top: 3px;
+    left: 5px;
 }
 
 .search-section .work-box .img-box {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     /* TODO: 반응형 고려 */
@@ -187,44 +206,32 @@ const selectWork = (work: any) => {
     flex-shrink: 0;
     border-radius: 8px;
     overflow: hidden;
+=======
+    aspect-ratio: 2/3;
+>>>>>>> 5ac929a (:art: design-system style: redesign search results)
 }
 
 .search-section .work-box .img-box img {
-    object-fit: cover;
-    object-position: center;
-    width: 100%;
     height: 100%;
+    object-fit: cover;
 }
 
 .search-section .work-box .work-info-box {
-    grid-row: 1 / 3;
     display: flex;
-    flex-direction: column;
-    min-height: 100%;
+    gap: 3px;
+    align-items: center;
+    padding: 12px 6px;
 }
 
 .search-section .work-box .work-title-box {
-    min-width: 0;
-    padding-bottom: 0;
-}
-
-.search-section .work-box .work-title-box .media-type {
-    display: inline-block;
-    padding: 4px 8px;
-    /* NOTICE:: tv, movie, person에 따라 칩 변경할 경우 변경 사항 */
-    background-color: var(--chip-default-bg);
-    border-radius: 8px;
-    line-height: 1;
-}
-
-.search-section .work-box .work-title-box .work-title {
     display: flex;
-    align-items: baseline;
-    gap: 8px;
-    min-width: 0;
+    align-items: center;
+    width: calc(100% - 27px);
+    gap: 4px;
 }
 
 .search-section .work-box .work-title-box .work-name {
+<<<<<<< HEAD
     min-width: 0;
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -267,5 +274,8 @@ const selectWork = (work: any) => {
     border-radius: 8px;
     box-shadow: 0px 0px 8px #00000013;
     z-index: -1;
+=======
+    max-width: calc(100% - 43px);
+>>>>>>> 5ac929a (:art: design-system style: redesign search results)
 }
 </style>
