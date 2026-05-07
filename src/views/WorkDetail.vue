@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { api } from '../api/client'
 import { useRoute } from 'vue-router'
 import { PhHeart, PhPenNib } from '@phosphor-icons/vue'
