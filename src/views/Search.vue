@@ -36,20 +36,8 @@ const searchWorks = async () => {
 const totalCount = ref(0)
 
 
-const selectWork = (work: any) => {
-    router.push({
-        path: '/review/create',
-        state: {
-            headerTitle: work.title,
-            work: {
-                id: work.workId,
-                title: work.workTitle,
-                release_date: work.workReleaseDate,
-                overview: work.workOverview,
-                poster_path: work.workPosterPath,
-            },
-        },
-    })
+const goToWorkDetail = (work: any) => {
+    router.push(`/work/${work.mediaType}/${work.workId}`)
 }
 
 </script>
@@ -74,7 +62,7 @@ const selectWork = (work: any) => {
             <div class="total-count" :class="{ invisible: totalCount === 0 }">총 {{ totalCount }}건의 결과</div>
             <div class="works-list-container">
 
-                <div class="work-box relative" v-for="work in works" :key="work.workId" @click="selectWork(work)">
+                <div class="work-box relative" v-for="work in works" :key="work.workId" @click="goToWorkDetail(work)">
                     <div class="type-box">
                         <span class="media-type sub-text chip-important" :class="work.mediaType">{{
                             work.mediaType.toUpperCase()

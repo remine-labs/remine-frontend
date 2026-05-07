@@ -184,11 +184,11 @@ nav {
     margin: 0 auto;
     z-index: 999;
     overflow: hidden;
-    padding-top: 62px;
+    padding-top: 34px;
 }
 
 .nav-section {
-    height: 8.4rem;
+    height: 84px;
     color: var(--btn-active-bg)
 }
 
