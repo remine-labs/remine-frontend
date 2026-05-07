@@ -114,55 +114,56 @@ getWorkDetail()
                 </div>
                 <div class="work-info-box">
                     <div class="work-meta-box">
-                        <span class="age-rating" :class="`age-${work?.certification}`"">{{ work?.certification }}</span>
+                        <span class="age-rating" :class="`age-${work?.certification}`">{{ work?.certification }}</span>
 
                         <div class=" genre-box sub-text">
                             <span class="genre" v-for='genre in work?.genres' :key='genre'>{{ genre }}</span>
+                        </div>
+                    </div>
+                    <h2 class="work-title title ellipsis-2">{{ work?.workTitle }}</h2>
+                    <div class="work-detail-box sub-text">
+                        <span class="release-date">{{ work?.workReleaseDate?.replace(/-/g, '.') }}</span>
+                        <span class="duration">running time</span>
+                    </div>
+                    <div class="directors-box sub-text">
+                        감독:
+                        <span class="director" v-for='director in work?.directors' :key='director'>{{ director }}</span>
+                    </div>
+                    <div class="writers-box sub-text">
+                        각본:
+                        <span class="writer" v-for='writer in work?.writers' :key='writer'>{{ writer }}</span>
                     </div>
                 </div>
-                <h2 class="work-title title ellipsis-2">{{ work?.workTitle }}</h2>
-                <div class="work-detail-box sub-text">
-                    <span class="release-date">{{ work?.workReleaseDate.replace(/-/g, '.') }}</span>
-                    <span class="duration">running time</span>
-                </div>
-                <div class="directors-box sub-text">
-                    감독:
-                    <span class="director" v-for='director in work?.directors' :key='director'>{{ director }}</span>
-                </div>
-                <div class="writers-box sub-text">
-                    각본:
-                    <span class="writer" v-for='writer in work?.writers' :key='writer'>{{ writer }}</span>
-                </div>
             </div>
-        </div>
-        <div class="actor-container">
-            <h3>출연진</h3>
-            <div class="actor-list-box">
-                <div class="actor-box" v-for='actor in work?.actors' :key='actor'>
-                    <div class="img-box">
-                        img
+            <div class="actor-container">
+                <h3>출연진</h3>
+                <div class="actor-list-box">
+                    <div class="actor-box" v-for='actor in work?.actors' :key='actor'>
+                        <div class="img-box">
+                            img
+                        </div>
+                        <span class="actor-name ellipsis-2">{{ actor }}</span>
                     </div>
-                    <span class="actor-name ellipsis-2">{{ actor }}</span>
                 </div>
             </div>
-        </div>
-        <div class=" overview-box">
-            <h3>줄거리</h3>
-            <div class="overview">
-                {{ work?.workOverview }}
+            <div class=" overview-box">
+                <h3>줄거리</h3>
+                <div class="overview">
+                    {{ work?.workOverview }}
+                </div>
             </div>
-        </div>
-        <div class="provider-box">
-            <h3>시청 가능 OTT</h3>
-            <div class="ott-box">
-                <div class="ott" v-for='provider in work?.watchProviders' :key='provider'>{{ providerMap[provider] ||
-                    provider
-                }}</div>
+            <div class="provider-box">
+                <h3>시청 가능 OTT</h3>
+                <div class="ott-box">
+                    <div class="ott" v-for='provider in work?.watchProviders' :key='provider'>{{ providerMap[provider]
+                        ||
+                        provider
+                    }}</div>
+                </div>
             </div>
-        </div>
-        <div class="review-list-box">
-            <h3>내가 쓴 리뷰</h3>
-        </div>
+            <div class="review-list-box">
+                <h3>내가 쓴 리뷰</h3>
+            </div>
         </div>
     </section>
 </template>
