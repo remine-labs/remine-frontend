@@ -66,7 +66,7 @@ const goToWorkDetail = (work: any) => {
                     <div class="type-box">
                         <span class="media-type sub-text chip-important" :class="work.mediaType">{{
                             work.mediaType.toUpperCase()
-                            }}</span>
+                        }}</span>
                     </div>
                     <div class="img-box poster">
                         <img :src="`https://image.tmdb.org/t/p/w200${work.workPosterPath}`" :alt="work.workTitle" />
@@ -99,14 +99,7 @@ const goToWorkDetail = (work: any) => {
     line-height: 4rem;
     text-indent: var(--font-size-body);
     padding-right: 40px;
-<<<<<<< HEAD
-<<<<<<< HEAD
     box-sizing: border-box;
-=======
->>>>>>> 8d610c7 (:art: search-work style: search input 퍼블리싱)
-=======
-    box-sizing: border-box;
->>>>>>> e0044a2 (:art: search-work style: 검색 결과 카드 레이아웃 및 UI 퍼블리싱)
 }
 
 .search-section .search-container .icon-box {
@@ -118,40 +111,12 @@ const goToWorkDetail = (work: any) => {
     z-index: 99;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> e0044a2 (:art: search-work style: 검색 결과 카드 레이아웃 및 UI 퍼블리싱)
-=======
-=======
->>>>>>> 38e9c96 (:sparkles: search-work feat: 검색 API 응답 구조 변경 및 UI 반영)
 .search-section .total-count {
     text-align: right;
     font-size: var(--font-size-sub);
     line-height: 4;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> f7c46a3 (:sparkles: search-work feat: 검색 API 응답 구조 변경 및 UI 반영)
-=======
->>>>>>> 38e9c96 (:sparkles: search-work feat: 검색 API 응답 구조 변경 및 UI 반영)
-.search-section .works-list-container .work-box {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: stretch;
-    column-gap: 12px;
-    margin-bottom: 3rem;
-    padding: 12px;
-<<<<<<< HEAD
-=======
-.search-section .work-box {
->>>>>>> 8d610c7 (:art: search-work style: search input 퍼블리싱)
-=======
->>>>>>> e0044a2 (:art: search-work style: 검색 결과 카드 레이아웃 및 UI 퍼블리싱)
-=======
 .search-section .works-list-container {
     display: flex;
     flex-wrap: wrap;
@@ -163,7 +128,6 @@ const goToWorkDetail = (work: any) => {
     border-radius: 8px;
     overflow: hidden;
     background-color: var(--bg-elevated);
->>>>>>> 5ac929a (:art: design-system style: redesign search results)
     cursor: pointer;
     box-shadow: 0px 0px 8px #00000014
 }
@@ -175,28 +139,7 @@ const goToWorkDetail = (work: any) => {
 }
 
 .search-section .work-box .img-box {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-    /* TODO: 반응형 고려 */
-    /* width: clamp(100px, 25vw, 140px); */
-    width: 100px;
-=======
-    width: clamp(100px, 25vw, 140px);
->>>>>>> e0044a2 (:art: search-work style: 검색 결과 카드 레이아웃 및 UI 퍼블리싱)
-=======
-    /* TODO: 반응형 고려 */
-    /* width: clamp(100px, 25vw, 140px); */
-    width: 100px;
->>>>>>> 678a48e (:art: search-work style: 포스터 크기 고정)
-    aspect-ratio: 2 / 3;
-    grid-row: 1 / 3;
-    flex-shrink: 0;
-    border-radius: 8px;
-    overflow: hidden;
-=======
     aspect-ratio: 2/3;
->>>>>>> 5ac929a (:art: design-system style: redesign search results)
 }
 
 .search-section .work-box .img-box img {
@@ -219,51 +162,10 @@ const goToWorkDetail = (work: any) => {
 }
 
 .search-section .work-box .work-title-box .work-name {
-<<<<<<< HEAD
-    min-width: 0;
-<<<<<<< HEAD
-<<<<<<< HEAD
     max-width: calc(100% - 4rem);
-=======
-    flex: 1;
->>>>>>> e0044a2 (:art: search-work style: 검색 결과 카드 레이아웃 및 UI 퍼블리싱)
-=======
-    max-width: calc(100% - 4rem);
->>>>>>> 678a48e (:art: search-work style: 포스터 크기 고정)
 }
 
 .search-section .work-box .work-title-box .release-year {
     flex-shrink: 0;
-}
-
-.search-section .work-box .story-box {
-    min-width: 0;
-    margin-top: auto;
-}
-
-.search-section .work-box .story-box.empty {
-    margin-top: 1.2rem;
-}
-
-.search-section .work-box .story-box .story {
-    margin: 0;
-}
-
-
-.search-section .work-box .story-box:after {
-    content: '';
-    display: block;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: calc(100% - 7.2rem);
-    background-color: var(--bg-surface);
-    border-radius: 8px;
-    box-shadow: 0px 0px 8px #00000013;
-    z-index: -1;
-=======
-    max-width: calc(100% - 43px);
->>>>>>> 5ac929a (:art: design-system style: redesign search results)
 }
 </style>
