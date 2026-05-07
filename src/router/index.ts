@@ -9,6 +9,7 @@ import ReviewCreate from "../views/ReviewCreate.vue";
 import ReviewDetail from "../views/ReviewDetail.vue";
 import ReviewEdit from "../views/ReviewEdit.vue";
 import Profile from "../views/Profile.vue";
+import WorkDetail from "../views/WorkDetail.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -57,6 +58,17 @@ const router = createRouter({
             header: {
               title: "ReMine",
               showBack: false,
+            },
+          },
+        },
+        {
+          path: "/work/:mediaType/:workId",
+          name: "workDetail",
+          component: WorkDetail,
+          meta: {
+            header: {
+              titleType: "dynamic",
+              showBack: true,
             },
           },
         },

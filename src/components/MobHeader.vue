@@ -33,9 +33,11 @@ const showBack = computed(() => header.value?.showBack)
         <div class="header-section">
             <div class="wrap">
                 <div class="title-box">
-                    <button v-if="showBack" @click="router.back()">
-                        <PhCaretLeft :size='32'></PhCaretLeft>
-                    </button>
+                    <div class="icon-box">
+                        <button v-if="showBack" @click="router.back()">
+                            <PhCaretLeft :size='32'></PhCaretLeft>
+                        </button>
+                    </div>
                     <h1 class='logo'>{{ title }}</h1>
                 </div>
                 <div class="icon-box">
@@ -62,7 +64,7 @@ header {
 }
 
 .header-section {
-    height: 7rem;
+    height: 58px;
     box-shadow: 0px 2px 6px #0000001e;
     margin-bottom: 6px;
 }

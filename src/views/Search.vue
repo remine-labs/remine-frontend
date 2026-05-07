@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { PhMagnifyingGlass } from '@phosphor-icons/vue'
+import { PhHeart, PhMagnifyingGlass } from '@phosphor-icons/vue'
 import { api } from '../api/client'
 
 const router = useRouter()
@@ -36,20 +36,8 @@ const searchWorks = async () => {
 const totalCount = ref(0)
 
 
-const selectWork = (work: any) => {
-    router.push({
-        path: '/review/create',
-        state: {
-            headerTitle: work.title,
-            work: {
-                id: work.workId,
-                title: work.workTitle,
-                release_date: work.workReleaseDate,
-                overview: work.workOverview,
-                poster_path: work.workPosterPath,
-            },
-        },
-    })
+const goToWorkDetail = (work: any) => {
+    router.push(`/work/${work.mediaType}/${work.workId}`)
 }
 
 </script>
@@ -74,31 +62,29 @@ const selectWork = (work: any) => {
             <div class="total-count" :class="{ invisible: totalCount === 0 }">총 {{ totalCount }}건의 결과</div>
             <div class="works-list-container">
 
-                <div class="work-box relative" v-for="work in works" :key="work.workId" @click="selectWork(work)">
+                <div class="work-box relative" v-for="work in works" :key="work.workId" @click="goToWorkDetail(work)">
+                    <div class="type-box">
+                        <span class="media-type sub-text chip-important" :class="work.mediaType">{{
+                            work.mediaType.toUpperCase()
+                        }}</span>
+                    </div>
                     <div class="img-box poster">
                         <img :src="`https://image.tmdb.org/t/p/w200${work.workPosterPath}`" :alt="work.workTitle" />
                     </div>
 
                     <div class="work-info-box">
                         <div class="work-title-box">
-                            <span class="media-type sub-text" :class="work.mediaType">{{ work.mediaType.toUpperCase()
-                            }}</span>
-
-                            <div class="work-title">
-                                <span class="work-name title ellipsis-1">
-                                    {{ work.workTitle }}
-                                </span>
-
-                                <span class="release-year number">
-                                    ({{ work.workReleaseDate?.slice(0, 4) }})
-                                </span>
-                            </div>
+                            <span class="work-name ellipsis-1">
+                                {{ work.workTitle }}
+                            </span>
+                            <span class="release-year number">
+                                ({{ work.workReleaseDate?.slice(0, 4) }})
+                            </span>
                         </div>
-
-                        <div class="story-box" :class="{ empty: !work.workOverview?.trim() }">
-                            <p class="story long-text ellipsis-4">
-                                {{ work.workOverview?.trim() ? work.workOverview : '제공된 정보가 없습니다.' }}
-                            </p>
+                        <div class="icon-box watchlist">
+                            <button class='heart'>
+                                <PhHeart :size='20'></PhHeart>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -131,97 +117,55 @@ const selectWork = (work: any) => {
     line-height: 4;
 }
 
+.search-section .works-list-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 8px;
+}
+
 .search-section .works-list-container .work-box {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: stretch;
-    column-gap: 12px;
-    margin-bottom: 3rem;
-    padding: 12px;
+    width: calc(50% - 4px);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--bg-elevated);
     cursor: pointer;
-    z-index: 1;
+    box-shadow: 0px 0px 8px #00000014
+}
+
+.search-section .work-box .type-box {
+    position: absolute;
+    top: 3px;
+    left: 5px;
 }
 
 .search-section .work-box .img-box {
-    /* TODO: 반응형 고려 */
-    /* width: clamp(100px, 25vw, 140px); */
-    width: 100px;
-    aspect-ratio: 2 / 3;
-    grid-row: 1 / 3;
-    flex-shrink: 0;
-    border-radius: 8px;
-    overflow: hidden;
+    aspect-ratio: 2/3;
 }
 
 .search-section .work-box .img-box img {
-    object-fit: cover;
-    object-position: center;
-    width: 100%;
     height: 100%;
+    object-fit: cover;
 }
 
 .search-section .work-box .work-info-box {
-    grid-row: 1 / 3;
     display: flex;
-    flex-direction: column;
-    min-height: 100%;
+    gap: 3px;
+    align-items: center;
+    padding: 12px 6px;
 }
 
 .search-section .work-box .work-title-box {
-    min-width: 0;
-    padding-bottom: 0;
-}
-
-.search-section .work-box .work-title-box .media-type {
-    display: inline-block;
-    padding: 4px 8px;
-    /* NOTICE:: tv, movie, person에 따라 칩 변경할 경우 변경 사항 */
-    background-color: var(--chip-default-bg);
-    border-radius: 8px;
-    line-height: 1;
-}
-
-.search-section .work-box .work-title-box .work-title {
     display: flex;
-    align-items: baseline;
-    gap: 8px;
-    min-width: 0;
+    align-items: center;
+    width: calc(100% - 27px);
+    gap: 4px;
 }
 
 .search-section .work-box .work-title-box .work-name {
-    min-width: 0;
     max-width: calc(100% - 4rem);
 }
 
 .search-section .work-box .work-title-box .release-year {
     flex-shrink: 0;
-}
-
-.search-section .work-box .story-box {
-    min-width: 0;
-    margin-top: auto;
-}
-
-.search-section .work-box .story-box.empty {
-    margin-top: 1.2rem;
-}
-
-.search-section .work-box .story-box .story {
-    margin: 0;
-}
-
-
-.search-section .work-box .story-box:after {
-    content: '';
-    display: block;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: calc(100% - 7.2rem);
-    background-color: var(--bg-surface);
-    border-radius: 8px;
-    box-shadow: 0px 0px 8px #00000013;
-    z-index: -1;
 }
 </style>

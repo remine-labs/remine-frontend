@@ -1,6 +1,4 @@
-/* =================================
-   RESET CSS - ReMine Project
-   ================================= */
+/* RESET CSS - ReMine Project  */
 
 /* Reset */
 *,
@@ -25,6 +23,7 @@ picture,
 video,
 canvas {
   display: block;
+  width: 100%;
   max-width: 100%;
 }
 

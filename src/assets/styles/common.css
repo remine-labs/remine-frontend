@@ -112,14 +112,13 @@ button.text-btn {
   min-width: 80px;
 }
 
-button.icon-btn {
+.icon-box button {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
   padding: 0;
-  color: var(--btn-active-bg);
 }
 
 .active-btn {
@@ -156,4 +155,43 @@ textarea:focus {
   background-color: var(--bg-elevated);
   border-color: var(--bg-surface);
   box-shadow: 0 0 4px var(--chip-important-bg);
+}
+
+/* chip */
+
+.chip-default {
+  background-color: var(--chip-default-bg);
+  color: #2d2f35;
+  padding: 2px 6px;
+  border-radius: 8px;
+  line-height: 1;
+}
+
+.chip-important {
+  background-color: var(--chip-important-bg);
+  color: var(--text-inverse);
+  padding: 2px 6px;
+  border-radius: 8px;
+  line-height: 1;
+}
+
+.chip-warning {
+  background-color: var(--chip-warning-bg);
+  color: #2d2f35;
+  padding: 2px 6px;
+  border-radius: 8px;
+  line-height: 1;
+}
+
+.chip-rating {
+  background-color: var(--btn-active-bg);
+  color: var(--text-inverse);
+  padding: 2px 6px;
+  border-radius: 8px;
+  line-height: 1;
+}
+
+/* design */
+.heart {
+  color: var(--heart);
 }

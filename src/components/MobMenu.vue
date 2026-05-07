@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { PhHouseLine, PhBook, PhPenNib, PhSparkle, PhUser } from "@phosphor-icons/vue";
+import { PhHouseLine, PhBook, PhSparkle, PhUser, PhMagnifyingGlass } from "@phosphor-icons/vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter()
@@ -26,36 +26,36 @@ const goToProfile = () => {
         <div class="nav-section">
             <div class="wrap">
                 <div class="icon-container">
-                    <div class="left-box">
-                        <div class="icon-box home">
-                            <button @click='goToHome'>
-                                <PhHouseLine :size='24'></PhHouseLine>
-                            </button>
-                        </div>
-                        <div class="icon-box timeline">
-                            <button @click='goToTimeline'>
-                                <PhBook :size='24'></PhBook>
-                            </button>
-                        </div>
+                    <div class="icon-box home" @click='goToHome'>
+                        <button>
+                            <PhHouseLine :size='24'></PhHouseLine>
+                            <span>HOME</span>
+                        </button>
                     </div>
-                    <div class="fab-box" @click='goToSearch'>
-                        <div class="icon-box create">
-                            <button>
-                                <PhPenNib :size='24'></PhPenNib>
-                            </button>
-                        </div>
+                    <div class="icon-box search" @click='goToSearch'>
+                        <button>
+                            <PhMagnifyingGlass :size='24'></PhMagnifyingGlass>
+                            <span>SEARCH</span>
+                        </button>
                     </div>
-                    <div class="right-box">
-                        <div class="icon-box recommend">
+                    <div class="fab-box relative">
+                        <div class="icon-box discover">
                             <button>
                                 <PhSparkle :size='24'></PhSparkle>
                             </button>
                         </div>
-                        <div class="icon-box profile" @click='goToProfile'>
-                            <button>
-                                <PhUser :size='24'></PhUser>
-                            </button>
-                        </div>
+                    </div>
+                    <div class="icon-box timeline" @click='goToTimeline'>
+                        <button>
+                            <PhBook :size='24'></PhBook>
+                            <span>REVIEWS</span>
+                        </button>
+                    </div>
+                    <div class="icon-box profile" @click='goToProfile'>
+                        <button>
+                            <PhUser :size='24'></PhUser>
+                            <span>PROFILE</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -74,11 +74,11 @@ nav {
     margin: 0 auto;
     z-index: 999;
     overflow: hidden;
-    padding-top: 62px;
+    padding-top: 34px;
 }
 
 .nav-section {
-    height: 7.2rem;
+    height: 84px;
     color: var(--btn-active-bg)
 }
 
@@ -93,43 +93,44 @@ nav .wrap .icon-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 30px;
     height: inherit;
-    padding-bottom: 10px;
+    padding: 10px 20px 20px;
 }
 
-nav .wrap .fab-box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: 64px;
-    height: 64px;
+nav .wrap .icon-container .icon-box button {
+    flex-direction: column;
+}
+
+nav .wrap .icon-container>.icon-box button svg {
+    color: var(--text-icon)
+}
+
+nav .wrap .icon-container span {
+    font-size: 12px;
+    line-height: 2;
+    color: var(--text-menu);
+}
+
+nav .wrap .icon-container>div {
+    flex: 1;
+}
+
+nav .wrap .icon-container .fab-box .icon-box {
+    position: absolute;
+    top: -70px;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 66px;
+    aspect-ratio: 1/1;
+    overflow: hidden;
     background-color: var(--btn-active-bg);
+    border-radius: 50%;
+    box-shadow: 0px 0px 4px #1f305928;
+    z-index: 99;
+}
+
+nav .wrap .fab-box .icon-box button {
     color: var(--text-inverse);
-    border-radius: 64px;
-    margin-top: -56px;
-    box-shadow: 0px 0px 6px #00000073;
-}
-
-nav .wrap .fab-box button {
-    transform: rotate(90deg);
-}
-
-nav .wrap .icon-container .left-box,
-nav .wrap .icon-container .right-box {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: calc(100% - 64px - 32px);
-    height: 100%;
-}
-
-nav .wrap .icon-container .left-box .icon-box,
-nav .wrap .icon-container .right-box .icon-box {
-    width: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 </style>

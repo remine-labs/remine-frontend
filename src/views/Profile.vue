@@ -18,6 +18,7 @@ interface HistoryItem {
 }
 
 const now = new Date()
+
 const year = ref(now.getFullYear())
 const month = ref(now.getMonth() + 1)
 
@@ -32,9 +33,6 @@ const getHistory = async () => {
             }
         })
         historyList.value = res.data.data
-        console.log(res.data)
-        console.log(res.request?.responseURL)
-        console.log(res.headers['content-type'])
     } catch (error) {
         console.error('history 조회 실패', error)
     }
