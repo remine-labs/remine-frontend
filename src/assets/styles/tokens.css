@@ -82,15 +82,17 @@ html {
 
   /* background */
   --bg-canvas: #fbfbfb;
-  --bg-default: #f6f4f0;
-  --bg-surface: #faeddb;
-  --bg-overlay: #faeddb81;
+  --bg-default: #faf7f0;
+  --bg-surface: #faebd7;
+  --bg-overlay: #faebd781;
   --bg-elevated: #fafafa;
 
   /* text */
   --text-main: #2d2f35;
   --text-sub: #474a53;
   --text-inverse: #f6f4f0;
+  --text-menu: #666b77;
+  --text-icon: #a0a6b2;
 
   /* button */
   --btn-active-bg: #1f3059;
@@ -104,6 +106,8 @@ html {
   /* system */
   --error: #d64545;
   --success: #35974f;
+  --heart: #f64750;
+  --star: #edbd64;
 }
 
 body {
@@ -128,11 +132,6 @@ body {
     /* color */
     --color-brand: #bd2c2c;
 
-    /* system */
-    --error: #d64545;
-    --success: #35974f;
-
-    /* color */
     /* background */
     --bg-canvas: #272727;
     --bg-default: #1e1e20;
@@ -142,14 +141,20 @@ body {
 
     /* text */
     --text-main: #f6f4f0;
-    --text-sub: #faeddb;
+    --text-sub: #ede8e1;
     --text-inverse: #2d2f35;
+    --text-menu: #a0a6b2;
+    --text-icon: #666b77;
 
     /* button */
     --btn-active-bg: #faa160;
-    --btn-neutral-bg: #eee8df;
+    --btn-neutral-bg: #696865;
 
     /* chip */
     --chip-important-bg: #a87ac2;
+
+    /* system */
+    --error: #d64545;
+    --success: #35974f;
   }
 }

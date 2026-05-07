@@ -112,7 +112,7 @@ button.text-btn {
   min-width: 80px;
 }
 
-button.icon-btn {
+.icon-box button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -156,4 +156,30 @@ textarea:focus {
   background-color: var(--bg-elevated);
   border-color: var(--bg-surface);
   box-shadow: 0 0 4px var(--chip-important-bg);
+}
+
+/* chip */
+
+.chip-default {
+  background-color: var(--chip-default-bg);
+  color: #2d2f35;
+  border-radius: 8px;
+}
+
+.chip-important {
+  background-color: var(--chip-important-bg);
+  color: var(--text-inverse);
+  border-radius: 8px;
+}
+
+.chip-warning {
+  background-color: var(--chip-warning-bg);
+  color: #2d2f35;
+  border-radius: 8px;
+}
+
+.chip-rating {
+  background-color: var(--btn-active-bg);
+  color: var(--text-inverse);
+  border-radius: 8px;
 }

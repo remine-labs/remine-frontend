@@ -71,7 +71,7 @@ header {
 }
 
 .header-section {
-    height: 7rem;
+    height: 5.8rem;
     box-shadow: 0px 2px 6px #0000001e;
     margin-bottom: 6px;
 }
