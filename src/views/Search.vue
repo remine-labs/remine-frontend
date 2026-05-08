@@ -63,7 +63,7 @@ const goToWorkDetail = (work: any) => {
             <div class="search-container relative">
                 <div class="input-box">
                     <input class="work-search-input" v-model="query" type="search" @keyup.enter="handleSearch"
-                        @click='handleSearch' placeholder='작품 제목 또는 유튜브 링크를 입력해주세요.' autofocus>
+                        placeholder='작품 제목 또는 유튜브 링크를 입력해주세요.' autofocus>
                 </div>
                 <div class="icon-box">
                     <button class="icon-btn" @click="handleSearch">
@@ -85,7 +85,7 @@ const goToWorkDetail = (work: any) => {
                     <div class="type-box">
                         <span class="media-type sub-text chip-important" :class="work.mediaType">{{
                             work.mediaType.toUpperCase()
-                            }}</span>
+                        }}</span>
                     </div>
                     <div class="img-box poster">
                         <img :src="`https://image.tmdb.org/t/p/w200${work.workPosterPath}`" :alt="work.workTitle" />
