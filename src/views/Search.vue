@@ -11,23 +11,38 @@ const works = ref<any[]>([])
 const loading = ref(false)
 const error = ref('')
 
-const searchWorks = async () => {
+const isYoutubeLink = (value: string) => {
+    return value.includes('youtube.com') || value.includes('youtu.be')
+}
+
+const handleSearch = async () => {
     if (!query.value.trim()) return
 
     loading.value = true
     error.value = ''
-    try {
-        const res = await api.get('/api/tmdb/contents/search', {
-            params: {
-                query: query.value,
-            },
-        })
 
-        works.value = res.data.data.results
-        totalCount.value = res.data.data.total_results ?? 0
+    try {
+        let res
+
+        if (isYoutubeLink(query.value)) {
+            res = await api.get('/api/youtube', {
+                params: {
+                    url: query.value,
+                },
+            })
+        } else {
+            res = await api.get('/api/search', {
+                params: {
+                    query: query.value,
+                },
+            })
+        }
+
+        works.value = res.data.data
+        totalCount.value = res.data.total_results
     } catch (err) {
-        console.error('search failed:', err)
-        error.value = '검색 실패'
+        error.value = '검색 중 오류가 발생했습니다.'
+        console.error(err)
     } finally {
         loading.value = false
     }
@@ -47,13 +62,17 @@ const goToWorkDetail = (work: any) => {
         <div class="wrap">
             <div class="search-container relative">
                 <div class="input-box">
-                    <input class="work-search-input" v-model="query" type="search" @keyup.enter="searchWorks"
-                        placeholder='작품 제목을 입력해주세요.' autofocus>
+                    <input class="work-search-input" v-model="query" type="search" @keyup.enter="handleSearch"
+                        @click='handleSearch' placeholder='작품 제목 또는 유튜브 링크를 입력해주세요.' autofocus>
                 </div>
                 <div class="icon-box">
-                    <button class="icon-btn" @click="searchWorks">
+                    <button class="icon-btn" @click="handleSearch">
                         <PhMagnifyingGlass :size="24" />
                     </button>
+                </div>
+                <div class="banner-box sub-text">
+                    <p>플레이리스트에 저장하셨다면,</p>
+                    <p>한 번 연동으로 검색부터 관심작품까지 한 번에!</p>
                 </div>
             </div>
 
@@ -66,7 +85,7 @@ const goToWorkDetail = (work: any) => {
                     <div class="type-box">
                         <span class="media-type sub-text chip-important" :class="work.mediaType">{{
                             work.mediaType.toUpperCase()
-                        }}</span>
+                            }}</span>
                     </div>
                     <div class="img-box poster">
                         <img :src="`https://image.tmdb.org/t/p/w200${work.workPosterPath}`" :alt="work.workTitle" />
@@ -109,6 +128,15 @@ const goToWorkDetail = (work: any) => {
     width: 40px;
     height: 40px;
     z-index: 99;
+}
+
+.search-section .search-container .banner-box {
+    text-align: center;
+    margin-top: 16px;
+    background-color: var(--chip-default-bg);
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
 .search-section .total-count {
