@@ -31,15 +31,15 @@ const handleSearch = async () => {
                 },
             })
         } else {
-            res = await api.get('/api/search', {
+            res = await api.get('/api/tmdb/contents/search', {
                 params: {
-                    query: query.value,
+                    query: query.value.trim(),
                 },
             })
         }
 
-        works.value = res.data.data
-        totalCount.value = res.data.total_results
+        works.value = res.data.data.results
+        totalCount.value = res.data.data.total_results
     } catch (err) {
         error.value = '검색 중 오류가 발생했습니다.'
         console.error(err)
@@ -85,7 +85,7 @@ const goToWorkDetail = (work: any) => {
                     <div class="type-box">
                         <span class="media-type sub-text chip-important" :class="work.mediaType">{{
                             work.mediaType.toUpperCase()
-                        }}</span>
+                            }}</span>
                     </div>
                     <div class="img-box poster">
                         <img :src="`https://image.tmdb.org/t/p/w200${work.workPosterPath}`" :alt="work.workTitle" />
