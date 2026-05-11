@@ -192,7 +192,7 @@ onMounted(() => {
                             {{ tag }}
                         </span>
                     </div>
-                    <span v-else='review?.tags?.length'>생성된 태그가 없어요.</span>
+                    <span v-else>생성된 태그가 없어요.</span>
                 </div>
             </div>
         </template>

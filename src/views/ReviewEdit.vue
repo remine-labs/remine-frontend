@@ -166,7 +166,7 @@ const handleEditSubmit = async () => {
                             <span> - </span>
                             <div class='date-picker-box'>
                                 <span v-if='isWatching'>ING</span>
-                                <Datepicker v-else='isWatching' v-model="review.endDate" inputFormat='yy-MM-dd' />
+                                <Datepicker v-else v-model="review.endDate" inputFormat='yy-MM-dd' />
                             </div>
                         </div>
                     </div>

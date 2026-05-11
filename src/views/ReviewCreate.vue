@@ -154,7 +154,7 @@ const submitReview = async () => {
                             <span> - </span>
                             <div class='date-picker-box'>
                                 <span v-if='isWatching'>ING</span>
-                                <Datepicker v-if='!isWatching' v-model="endDate" inputFormat='yy-MM-dd' />
+                                <Datepicker v-else v-model="endDate" inputFormat='yy-MM-dd' />
                             </div>
                         </div>
                     </div>
