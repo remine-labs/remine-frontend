@@ -210,7 +210,7 @@ const submitReview = async () => {
     padding: 8px;
     border-radius: 8px;
     background-color: var(--bg-elevated);
-    box-shadow: 0 0 8px #0000000d;
+    box-shadow: var(--box-default);
     text-align: center;
     ;
 }

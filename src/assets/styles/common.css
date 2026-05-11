@@ -154,11 +154,19 @@ textarea:focus {
 }
 
 /* chip */
+.chips span {
+  margin-right: 6px;
+  font-size: var(--font-size-sub);
+}
+
+.chips span:last-child {
+  margin-right: 0;
+}
 
 .chip-default {
   background-color: var(--chip-default-bg);
   color: #2d2f35;
-  padding: 2px 6px;
+  padding: 2px 8px;
   border-radius: 8px;
   line-height: 1;
 }

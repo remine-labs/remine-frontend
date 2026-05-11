@@ -108,6 +108,9 @@ html {
   --success: #35974f;
   --heart: #f64750;
   --star: #edbd64;
+
+  /* box shadow */
+  --box-default: 0 0 8px #0000001a;
 }
 
 body {

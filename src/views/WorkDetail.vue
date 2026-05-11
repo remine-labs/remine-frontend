@@ -213,7 +213,7 @@ getWorkDetail()
     border-radius: 50%;
     cursor: pointer;
     pointer-events: auto;
-    box-shadow: 0 0 8px #0000000d
+    box-shadow: var(--box-default)
 }
 
 .work-detail-section .floating-box .icon-box.watchlist {
@@ -390,7 +390,7 @@ getWorkDetail()
     color: var(--text-sub);
     background-color: var(--bg-elevated);
     padding: 16px;
-    box-shadow: 0 0 8px #0000000d;
+    box-shadow: var(--box-default);
 }
 
 .work-detail-section .provider-box {

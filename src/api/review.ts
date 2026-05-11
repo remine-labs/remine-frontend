@@ -13,3 +13,7 @@ export const patchReview = (payload: {
 }) => {
   return api.patch("/api/reviews", payload);
 };
+
+export const deleteReview = (reviewId: number) => {
+  return api.delete(`/api/reviews/${reviewId}`);
+};
