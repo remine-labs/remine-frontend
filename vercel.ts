@@ -1,9 +1,6 @@
 import { type VercelConfig } from "@vercel/config/v1";
 
-const BACKEND_URL =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost"
-    : "https://backend-1047813710575.asia-northeast3.run.app";
+const BACKEND_URL = "https://backend-1047813710575.asia-northeast3.run.app";
 
 export const config: VercelConfig = {
   rewrites: [
