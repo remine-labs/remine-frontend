@@ -103,13 +103,10 @@ section {
 }
 
 /* btn */
-button {
+.btn-box button {
   border-radius: 8px;
-  padding: 0.6rem 2rem;
-}
-
-button.text-btn {
   min-width: 80px;
+  padding: 10px 20px;
 }
 
 .icon-box button {
@@ -118,7 +115,6 @@ button.text-btn {
   justify-content: center;
   width: 100%;
   height: 100%;
-  padding: 0;
 }
 
 .active-btn {
@@ -194,4 +190,10 @@ textarea:focus {
 /* design */
 .heart {
   color: var(--heart);
+}
+
+.overlay-box {
+  position: absolute;
+  inset: 0;
+  background-color: #53535380;
 }

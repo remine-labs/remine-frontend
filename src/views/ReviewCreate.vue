@@ -7,7 +7,7 @@ import { PhStar } from '@phosphor-icons/vue'
 
 
 const router = useRouter()
-const work = history.state.work
+const work = history.state
 
 
 // 감상일 관련
@@ -130,60 +130,54 @@ const submitReview = async () => {
 
 <template>
     <section class="review-create-section">
-        <div class="wrap">
-            <div class="work-info-container" v-if="work">
-                <div class="img-box">
-                    <img :src="`https://image.tmdb.org/t/p/w200${work.poster_path}`" :alt="work.title" />
-                </div>
-                <div class="info-text-box">
-                    <p class="work-title title">{{ work.title }}</p>
-                    <p class="release-date sub-text">{{ work.release_date }}</p>
-                </div>
+        <div class="work-info-container relative" v-if="work">
+            <div class="img-box">
+                <img :src="`https://image.tmdb.org/t/p/original${work.poster}`" :alt="work.title" />
             </div>
+            <div class="overlay-box"></div>
+        </div>
+        <div class="wrap">
             <form @submit.prevent='submitReview'>
-                <div class="date-input-container">
-                    <div class="title-box">
-                        <h2 class="description">감상 기간</h2>
-                        <div class="input-box">
-                            <input type="checkbox" id="watching" v-model="isWatching">
-                            <label for="watching">감상중</label>
-                        </div>
-                    </div>
+                <div class="input-container relative">
                     <div class="date-input-box">
-                        <div class="start-date-box">
-                            <p class="start-date-text">시작일</p>
-                            <div class='date-picker-box'>
-                                <Datepicker v-model="startDate" />
+                        <div class="head-box relative">
+                            <p>감상일</p>
+                            <div class="input-box">
+                                <input type="checkbox" id="watching" v-model="isWatching">
+                                <label for="watching">감상중</label>
                             </div>
                         </div>
-                        <div class="end-date-box" v-if='!isWatching'>
-                            <p class="end-date-text">종료일</p>
+                        <div class="body-box">
                             <div class='date-picker-box'>
-                                <Datepicker v-model="endDate" />
+                                <Datepicker v-model="startDate" inputFormat='yy-MM-dd' />
+                            </div>
+                            <span> - </span>
+                            <div class='date-picker-box'>
+                                <span v-if='isWatching'>ING</span>
+                                <Datepicker v-if='!isWatching' v-model="endDate" inputFormat='yy-MM-dd' />
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="rating-container">
-                    <h2 class="description">평점</h2>
-                    <div class="rating-box" ref="ratingBoxRef" @click="handleRatingClick">
-                        <div v-for="i in 5" :key="i" class="star-box relative">
-                            <PhStar class="star-stroke" :size="24" />
-                            <div class="star-fill" :style="{ width: getStarFill(i) }">
-                                <PhStar class="star-filled" weight="fill" :size="24" />
+                    <div class="rating-container">
+                        <p>평점</p>
+                        <div class="rating-box" ref="ratingBoxRef" @click="handleRatingClick">
+                            <div v-for="i in 5" :key="i" class="star-box relative">
+                                <PhStar class="star-stroke" :size="24" />
+                                <div class="star-fill" :style="{ width: getStarFill(i) }">
+                                    <PhStar class="star-filled" weight="fill" :size="24" />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="review-write-container">
-                    <h2 class="description">감상평</h2>
                     <div class="input-box">
                         <textarea v-model="comment" name="review-write" id="review-write"
-                            placeholder="감상을 자유롭게 작성해주세요."></textarea>
+                            placeholder="자유롭게 감상을 남겨주세요."></textarea>
                     </div>
                 </div>
                 <div class="btn-box">
-                    <button type="submit" id='post-review-btn' class='active-btn text-btn'>저장</button>
+                    <button type="submit" id='post-review-btn' class='active-btn text-btn'>등록하기</button>
                 </div>
             </form>
         </div>
@@ -191,92 +185,80 @@ const submitReview = async () => {
 </template>
 
 <style>
-.review-create-section .work-info-container {
-    display: flex;
-    gap: 16px;
-    background-color: var(--bg-elevated);
-    border-radius: 8px;
-    box-shadow: 0px 0px 4px #00000013;
+.review-create-section {
+    padding-top: 58px;
 }
 
-.review-create-section .work-info-container .img-box {
-    width: 80px;
-    aspect-ratio: 2/3;
-    border-radius: 8px;
+.review-create-section .work-info-container {
+    width: 100%;
+    aspect-ratio: 3/2;
     overflow: hidden;
 }
 
-.review-create-section .work-info-container .info-text-box {
+.review-create-section .work-info-container .img-box {
+    margin-top: -15%;
+}
+
+.review-create-section .input-container {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    margin-top: -10%;
+    gap: 8px;
 }
 
-.review-create-section .date-input-container {
-    margin-top: 4rem;
+.review-create-section .input-container>div {
+    width: calc(50% - 4px);
+    padding: 8px;
+    border-radius: 8px;
+    background-color: var(--bg-elevated);
+    box-shadow: 0 0 8px #0000000d;
+    text-align: center;
+    ;
 }
 
-.review-create-section h2 {
-    font-size: var(--font-size-title);
+.review-create-section .input-container p {
+    font-weight: 500;
 }
 
-.review-create-section .date-input-container .title-box {
+.review-create-section .date-input-box .head-box .input-box {
+    position: absolute;
+    top: 0;
+    right: 0;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    color: var(--text-sub);
 }
 
-.review-create-section .date-input-container .input-box {
+.review-create-section .date-input-box .body-box {
+    margin-top: 6px;
     display: flex;
-    align-items: center;
     gap: 4px;
-}
-
-.review-create-section .date-input-box {
-    display: flex;
-    justify-content: space-between;
-}
-
-.review-create-section .date-input-box .start-date-box,
-.review-create-section .date-input-box .end-date-box {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-}
-
-.review-create-section .date-input-box .end-date-box {
-    justify-content: end
-}
-
-.review-create-section .date-input-box .start-date-text,
-.review-create-section .date-input-box .end-date-text {
-    flex-shrink: 0;
 }
 
 .review-create-section .date-input-box .date-picker-box {
-    max-width: calc(100% - 6.3rem);
+    width: calc(50% - 5.5px);
+    font-size: var(--font-size-sub);
 }
 
-.review-create-section .date-input-box .date-picker-box input {
+.review-create-section .date-picker-box span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.review-create-section .date-picker-box input {
     width: 100%;
     text-align: center;
 }
 
-.review-create-section .rating-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 4rem;
-}
 
 .review-create-section .rating-container .rating-box {
-    flex-shrink: 0;
-    display: flex;
-    gap: 6px;
-    cursor: pointer;
+    margin-top: 6px;
+    display: inline-block;
 }
 
-.review-create-section .rating-container .rating-box .star-box {
+.review-create-section .rating-box .star-box {
+    display: inline-block;
+    margin: 0 2px;
     width: 24px;
     height: 24px;
     flex-shrink: 0;
@@ -301,7 +283,7 @@ const submitReview = async () => {
 }
 
 .review-create-section .review-write-container {
-    margin-top: 4rem;
+    margin-top: 2rem;
 }
 
 .review-create-section .review-write-container textarea {
@@ -316,7 +298,7 @@ const submitReview = async () => {
 }
 
 .review-create-section .btn-box {
-    margin-top: 5rem;
-    text-align: center;
+    margin-top: 3rem;
+    text-align: right;
 }
 </style>

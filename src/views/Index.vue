@@ -10,7 +10,8 @@
             </div>
 
             <div class="login-container">
-                <div v-for="provider in loginProviders" :key="provider.id" class="login-box" :class="provider.id">
+                <div class='btn-box login-box' v-for="provider in loginProviders" :key="provider.id"
+                    :class="provider.id">
                     <button class='google-oauth' @click="login(provider.url)">
                         {{ provider.label }}로 로그인
                     </button>
