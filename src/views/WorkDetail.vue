@@ -1,10 +1,13 @@
 <script setup lang='ts'>
 import { ref } from 'vue'
 import { api } from '../api/client'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { PhHeart, PhPenNib } from '@phosphor-icons/vue'
 
 const route = useRoute()
+const router = useRouter()
+
+
 
 const mediaType = route.params.mediaType as string
 const workId = route.params.workId as string
@@ -26,6 +29,7 @@ interface WorkDetail {
     certification: string
 }
 
+
 const work = ref<WorkDetail | null>(null)
 const loading = ref(false)
 const error = ref('')
@@ -44,6 +48,19 @@ const getWorkDetail = async () => {
     } finally {
         loading.value = false;
     }
+}
+
+
+const goToCreate = () => {
+    router.push({
+        path: '/review/create',
+        state: {
+            id: work.value?.workId,
+            title: work.value?.workTitle,
+            poster: work.value?.workPosterPath,
+            releaseDate: work.value?.workReleaseDate
+        },
+    })
 }
 
 const providerMap: Record<string, string> = {
@@ -91,9 +108,9 @@ getWorkDetail()
                     <PhHeart :size='24'></PhHeart>
                 </button>
             </div>
-            <div class="icon-box review-create">
+            <div class="icon-box review-create" @click="goToCreate">
                 <button>
-                    <PhPenNib :size='24'></PhPenNib>
+                    <PhPenNib :size="24" />
                 </button>
             </div>
         </div>
@@ -101,6 +118,7 @@ getWorkDetail()
             <div class="img-box">
                 <img :src="`https://image.tmdb.org/t/p/original${work?.workPosterPath}`" :alt="work?.workTitle" />
             </div>
+            <div class="overlay-box"></div>
             <div class="icon-box watchlist">
                 <button>
                     <PhHeart :size='30'></PhHeart>
@@ -195,7 +213,7 @@ getWorkDetail()
     border-radius: 50%;
     cursor: pointer;
     pointer-events: auto;
-    box-shadow: 0 0 8px #0000000d
+    box-shadow: var(--box-default)
 }
 
 .work-detail-section .floating-box .icon-box.watchlist {
@@ -372,7 +390,7 @@ getWorkDetail()
     color: var(--text-sub);
     background-color: var(--bg-elevated);
     padding: 16px;
-    box-shadow: 0 0 8px #0000000d;
+    box-shadow: var(--box-default);
 }
 
 .work-detail-section .provider-box {
