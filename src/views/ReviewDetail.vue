@@ -188,7 +188,7 @@ onMounted(() => {
                         <p>생성된 태그가 만족스러웠나요? <button>평가하기</button></p>
                     </div>
                     <div class="tags-box chips" v-if='review?.tags?.length'>
-                        <span v-for="tag in review.tags" :key="tag" class="tag-item chip-default">
+                        <span v-for="tag in review.tags" :key="tag" class="tag-item chip default">
                             {{ tag }}
                         </span>
                     </div>
