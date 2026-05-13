@@ -162,7 +162,7 @@ const goToWorkDetail = (work: any) => {
 
 .search-section .work-box .type-box {
     position: absolute;
-    top: 3px;
+    top: 5px;
     left: 5px;
 }
 
