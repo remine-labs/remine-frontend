@@ -98,6 +98,10 @@ nav .wrap .icon-container {
     padding: 10px 20px 20px;
 }
 
+nav .wrap .icon-container .icon-box {
+    min-width: calc((100% - 120px)/5);
+}
+
 nav .wrap .icon-container .icon-box button {
     flex-direction: column;
 }
