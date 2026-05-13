@@ -228,6 +228,10 @@ const submitReview = async () => {
     color: var(--text-sub);
 }
 
+.review-create-section .date-input-box .head-box p {
+    margin: 0 51px;
+}
+
 .review-create-section .date-input-box .body-box {
     margin-top: 6px;
     display: flex;

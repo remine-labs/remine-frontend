@@ -107,7 +107,7 @@ nav .wrap .icon-container>.icon-box button svg {
 }
 
 nav .wrap .icon-container span {
-    font-size: 12px;
+    font-size: var(--font-size-sub);
     line-height: 2;
     color: var(--text-menu);
 }

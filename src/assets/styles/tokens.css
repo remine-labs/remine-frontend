@@ -72,10 +72,11 @@ html {
   --font-family-body: "IbmPlexSans", system-ui, sans-serif;
 
   /* size */
-  --font-size-title: 2rem;
-  --font-size-body: 1.6rem;
-  --font-size-long: 1.5rem;
-  --font-size-sub: 1.4rem;
+  --font-size-page-title: 2.4rem;
+  --font-size-title: 1.8rem;
+  --font-size-body: 1.4rem;
+  --font-size-long: 1.3rem;
+  --font-size-sub: 1.2rem;
 
   /* color */
   --color-brand: #a90101;
@@ -93,6 +94,7 @@ html {
   --text-inverse: #f6f4f0;
   --text-menu: #666b77;
   --text-icon: #a0a6b2;
+  --text-static: #2d2f35;
 
   /* button */
   --btn-active-bg: #1f3059;

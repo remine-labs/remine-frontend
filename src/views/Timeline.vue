@@ -100,12 +100,14 @@ interface Review {
                     <div class="review-text-box ellipsis-2">
                         {{ item.comment }}
                     </div>
-                    <div class="footer-box chips" v-if='item?.tags?.length'>
-                        <span class="media-type chip-important">media type</span>
-                        <span v-for="tag in item.tags" :key="tag" class="tag-item chip-default">
-                            {{ tag }}
-                        </span>
-                        <span class="rating-chip">
+                    <div class="footer-box chips">
+                        <span class="media-type chip important">media type</span>
+                        <template v-if='item?.tags?.length'>
+                            <span v-for="tag in item.tags" :key="tag" class="tag-item chip default">
+                                {{ tag }}
+                            </span>
+                        </template>
+                        <span class="rating chip">
                             {{ item.rating }} /5
                         </span>
                     </div>
@@ -173,15 +175,8 @@ interface Review {
 }
 
 .timeline-section .timeline-box .review-text-box {
-    margin: 16px 0;
+    margin: 16px 0 12px;
     font-size: var(--font-size-long);
     color: var(--text-sub);
-}
-
-.timeline-section .timeline-box .footer-box .rating-chip {
-    color: var(--text-inverse);
-    background-color: var(--btn-active-bg);
-    padding: 2px 8px;
-    border-radius: 8px;
 }
 </style>

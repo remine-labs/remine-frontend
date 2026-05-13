@@ -12,7 +12,7 @@ section {
 /* font setting */
 .logo {
   font-family: var(--font-family-logo);
-  font-size: 3.4rem;
+  font-size: 3rem;
   font-weight: 700;
   letter-spacing: -0.03em;
   color: var(--color-brand);
@@ -20,7 +20,7 @@ section {
 
 .page-title {
   font-family: var(--font-family-logo);
-  font-size: 3rem;
+  font-size: var(--font-size-page-title);
   font-weight: 400;
   letter-spacing: -0.04em;
 }
@@ -46,7 +46,7 @@ section {
 }
 
 .number {
-  font-size: 1.3rem;
+  font-size: var(--font-size-sub);
   font-weight: 300;
   line-height: 1;
 }
@@ -154,45 +154,39 @@ textarea:focus {
 }
 
 /* chip */
-.chips span {
-  margin-right: 6px;
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.chips .chip {
   font-size: var(--font-size-sub);
+  white-space: nowrap;
+  padding: 4px 8px;
+  border-radius: 8px;
+  line-height: 1;
 }
 
-.chips span:last-child {
-  margin-right: 0;
-}
-
-.chip-default {
+.chip.default {
   background-color: var(--chip-default-bg);
   color: #2d2f35;
-  padding: 2px 8px;
-  border-radius: 8px;
-  line-height: 1;
 }
 
-.chip-important {
+.chip.important {
   background-color: var(--chip-important-bg);
   color: var(--text-inverse);
-  padding: 2px 6px;
-  border-radius: 8px;
-  line-height: 1;
 }
 
-.chip-warning {
+.chip.warning {
   background-color: var(--chip-warning-bg);
   color: #2d2f35;
-  padding: 2px 6px;
-  border-radius: 8px;
-  line-height: 1;
 }
 
-.chip-rating {
+.chip.rating {
   background-color: var(--btn-active-bg);
   color: var(--text-inverse);
-  padding: 2px 6px;
-  border-radius: 8px;
-  line-height: 1;
 }
 
 /* design */
@@ -204,4 +198,24 @@ textarea:focus {
   position: absolute;
   inset: 0;
   background-color: #53535380;
+}
+
+/* datepicker */
+section div .v3dp__popout[data-v-65eb861b] {
+  background-color: var(--bg-elevated);
+  color: var(--text-main);
+}
+
+section div button.v3dp__heading__center[data-v-65eb861b]:hover,
+section div .v3dp__heading__button[data-v-65eb861b]:not(:disabled):hover {
+  background-color: var(--bg-surface);
+}
+
+section div .v3dp__elements[data-v-65eb861b] button:disabled {
+  color: var(--text-menu);
+}
+
+section div .v3dp__elements[data-v-65eb861b] button.selected span {
+  background-color: var(--btn-active-bg);
+  color: var(--text-inverse);
 }
