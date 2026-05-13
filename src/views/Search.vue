@@ -83,7 +83,7 @@ const goToWorkDetail = (work: any) => {
 
                 <div class="work-box relative" v-for="work in works" :key="work.workId" @click="goToWorkDetail(work)">
                     <div class="type-box">
-                        <span class="media-type sub-text chip-important" :class="work.mediaType">{{
+                        <span class="media-type sub-text chip important" :class="work.mediaType">{{
                             work.mediaType.toUpperCase()
                             }}</span>
                     </div>
