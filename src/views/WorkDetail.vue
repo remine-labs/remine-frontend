@@ -160,7 +160,7 @@ getWorkDetail()
                         <div class="img-box">
                             img
                         </div>
-                        <span class="actor-name ellipsis-2">{{ actor }}</span>
+                        <span class="actor-name sub-text ellipsis-2">{{ actor }}</span>
                     </div>
                 </div>
             </div>
@@ -211,9 +211,11 @@ getWorkDetail()
     width: 60px;
     aspect-ratio: 1/1;
     border-radius: 50%;
+    box-shadow: var(--box-default);
+    margin-right: 10px;
+
     cursor: pointer;
     pointer-events: auto;
-    box-shadow: var(--box-default)
 }
 
 .work-detail-section .floating-box .icon-box.watchlist {
@@ -297,6 +299,7 @@ getWorkDetail()
 .work-detail-section .work-meta-box .age-rating.age-15 {
     background-color: #fced1f;
     font-weight: 600;
+    color: var(--text-static);
 }
 
 .work-detail-section .work-info-box .work-meta-box .genre {
@@ -314,8 +317,9 @@ getWorkDetail()
 }
 
 .work-detail-section .work-info-box .work-title {
-    font-size: 2.2rem;
-    margin: 6px 0;
+    font-size: var(--font-size-title);
+    line-height: 1.2;
+    margin: 10px 0;
 }
 
 .work-detail-section .work-info-box .work-detail-box {
@@ -350,7 +354,8 @@ getWorkDetail()
 }
 
 .work-detail-section h3 {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
+    font-weight: 500;
 }
 
 .work-detail-section .actor-list-box {
@@ -367,7 +372,8 @@ getWorkDetail()
     align-items: center;
     width: calc((100% - 42px)/7);
     flex-shrink: 0;
-    word-break: break-word;
+    word-break: keep-all;
+    text-align: center;
 }
 
 .work-detail-section .actor-list-box .img-box {

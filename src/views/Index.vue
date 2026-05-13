@@ -46,7 +46,7 @@ const loginProviders = [
 }
 
 .title-container .slogun-text {
-    font-size: 2rem;
+    font-size: var(--font-size-title);
     font-weight: 500;
 }
 

@@ -231,6 +231,10 @@ const handleEditSubmit = async () => {
     font-weight: 500;
 }
 
+.review-edit-section .date-input-box .head-box p {
+    margin: 0 51px;
+}
+
 .review-edit-section .date-input-box .head-box .input-box {
     position: absolute;
     top: 0;
