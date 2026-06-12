@@ -93,8 +93,9 @@ const submitReview = async () => {
     const body = {
         workId: work.id,
         workTitle: work.title,
-        workPosterPath: work.poster_path,
-        releaseDate: work.release_date,
+        workPosterPath: work.poster,
+        releaseDate: work.releaseDate,
+        mediaType: work.mediaType,
         comment: comment.value.trim(),
         rating: rating.value,
         startDate: formatDate(startDate.value),
