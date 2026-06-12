@@ -69,7 +69,7 @@ const goToCreate = () => {
             id: work.value?.workId,
             title: work.value?.workTitle,
             poster: work.value?.workPosterPath,
-            releaseDate: work.value?.workReleaseDate,
+            workReleaseDate: work.value?.workReleaseDate,
             mediaType: work.value?.mediaType
         },
     })
