@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { api } from '../api/client'
+import { createReview } from '../api/review'
+import type { ReviewPayload } from '../api/review'
 import { useRouter } from 'vue-router'
 import Datepicker from 'vue3-datepicker'
 import { PhStar } from '@phosphor-icons/vue'
+
+
 
 
 const router = useRouter()
@@ -90,22 +94,22 @@ const submitReview = async () => {
         return
     }
 
-    const body = {
+    const body: ReviewPayload = {
         workId: work.id,
         workTitle: work.title,
         workPosterPath: work.poster,
-        releaseDate: work.releaseDate,
+        workReleaseDate: work.workReleaseDate,
         mediaType: work.mediaType,
         comment: comment.value.trim(),
         rating: rating.value,
-        startDate: formatDate(startDate.value),
+        startDate: formatDate(startDate.value)!,
         endDate: isWatching.value ? null : formatDate(endDate.value),
     }
 
     console.log(body)
 
     try {
-        const res = await api.post('/api/reviews', body)
+        const res = await createReview(body)
         const reviewId = res.data.data.reviewId
         alert('저장되었습니다. 리뷰 페이지로 이동합니다.')
         router.push({

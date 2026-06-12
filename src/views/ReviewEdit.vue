@@ -16,6 +16,14 @@ type ReviewForm = {
     endDate: Date | undefined
 }
 
+type WorkInfo = {
+    id: number
+    title: string
+    posterPath: string
+    workReleaseDate: string
+    mediaType: string
+}
+
 const review = ref<ReviewForm>({
     rating: 0,
     comment: '',
@@ -23,14 +31,14 @@ const review = ref<ReviewForm>({
     endDate: undefined,
 })
 
-const work = ref({
+
+const work = ref<WorkInfo>({
     id: 0,
     title: '',
     posterPath: '',
-    releaseDate: ''
+    workReleaseDate: '',
+    mediaType: '',
 })
-
-
 
 // 별점 입력
 const ratingBoxRef = ref<HTMLElement | null>(null)
@@ -96,7 +104,8 @@ onMounted(async () => {
         id: detail.workId,
         title: detail.workTitle,
         posterPath: detail.workPosterPath,
-        releaseDate: detail.releaseDate
+        workReleaseDate: detail.workReleaseDate,
+        mediaType: detail.mediaType,
     }
 
     console.log(detail)
@@ -111,10 +120,19 @@ const handleEditSubmit = async () => {
     try {
         await patchReview({
             reviewId,
+
+            workId: work.value.id,
+            workTitle: work.value.title,
+            workPosterPath: work.value.posterPath,
+            workReleaseDate: work.value.workReleaseDate,
+            mediaType: work.value.mediaType,
+
             comment: review.value.comment,
             rating: review.value.rating,
             startDate: formatDate(review.value.startDate),
-            endDate: review.value.endDate ? formatDate(review.value.endDate) : null,
+            endDate: review.value.endDate
+                ? formatDate(review.value.endDate)
+                : null,
         })
 
         alert('수정되었습니다. 리뷰 페이지로 이동합니다.')
