@@ -7,28 +7,40 @@ import { PhHeart, PhPenNib } from '@phosphor-icons/vue'
 const route = useRoute()
 const router = useRouter()
 
-
-
 const mediaType = route.params.mediaType as string
 const workId = route.params.workId as string
 
-interface WorkDetail {
+export interface Actor {
+    name: string
+    profilePath: string
+}
+
+export interface WorkDetail {
     workId: number
     workTitle: string
     originalTitle: string
+
     genres: string[]
     workReleaseDate: string
     workOverview: string
+
     workPosterPath: string
-    workVoteAverage: number
     mediaType: string
+
+    runtime: number
+
     watchProviders: string[]
+
     directors: string[]
     writers: string[]
-    actors: string[]
-    certification: string
-}
 
+    actors: Actor[]
+
+    certification: string
+
+    numberOfSeasons: number | null
+    numberOfEpisodes: number | null
+}
 
 const work = ref<WorkDetail | null>(null)
 const loading = ref(false)
@@ -50,7 +62,6 @@ const getWorkDetail = async () => {
     }
 }
 
-
 const goToCreate = () => {
     router.push({
         path: '/review/create',
@@ -58,7 +69,8 @@ const goToCreate = () => {
             id: work.value?.workId,
             title: work.value?.workTitle,
             poster: work.value?.workPosterPath,
-            releaseDate: work.value?.workReleaseDate
+            releaseDate: work.value?.workReleaseDate,
+            mediaType: work.value?.mediaType
         },
     })
 }
@@ -95,7 +107,6 @@ const providerMap: Record<string, string> = {
     'YouTube Premium': 'YouTube',
     'YouTube': 'YouTube',
 }
-
 
 getWorkDetail()
 </script>
@@ -140,8 +151,12 @@ getWorkDetail()
                     </div>
                     <h2 class="work-title title ellipsis-2">{{ work?.workTitle }}</h2>
                     <div class="work-detail-box sub-text">
-                        <span class="release-date">{{ work?.workReleaseDate?.replace(/-/g, '.') }}</span>
-                        <span class="duration">running time</span>
+                        <p class="release-date">개봉일: {{ work?.workReleaseDate?.replace(/-/g, '.') }}</p>
+                        <p class="runtime" v-if="work?.mediaType === 'movie'">상영 시간: {{ work?.runtime }}</p>
+                        <p class="season-info" v-if="work?.numberOfSeasons && work?.numberOfSeasons > 1">시즌: {{
+                            work?.numberOfSeasons }}</p>
+                        <p class="episode-info" v-if="work?.numberOfEpisodes">총 {{
+                            work?.numberOfEpisodes }}부작</p>
                     </div>
                     <div class="directors-box sub-text">
                         감독:
@@ -156,11 +171,14 @@ getWorkDetail()
             <div class="actor-container">
                 <h3>출연진</h3>
                 <div class="actor-list-box">
-                    <div class="actor-box" v-for='actor in work?.actors' :key='actor'>
+                    <div class="actor-box" v-for="actor in work?.actors" :key="actor.name">
                         <div class="img-box">
-                            img
+                            <img v-if="actor.profilePath" :src="`https://image.tmdb.org/t/p/w200${actor.profilePath}`"
+                                :alt="actor.name" />
                         </div>
-                        <span class="actor-name sub-text ellipsis-2">{{ actor }}</span>
+                        <span class="actor-name sub-text ellipsis-2">
+                            {{ actor.name }}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -324,16 +342,15 @@ getWorkDetail()
 
 .work-detail-section .work-info-box .work-detail-box {
     color: var(--text-sub);
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 }
 
-.work-detail-section .work-info-box .work-detail-box .release-date:after {
-    content: '·';
-    margin: 0 6px;
+.work-detail-section .work-info-box .work-detail-box p {
+    margin-bottom: 6px;
 }
 
 .work-detail-section .work-info-box .directors-box {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .work-detail-section .work-info-box .directors-box,
