@@ -17,6 +17,10 @@ const goToEdit = () => {
     router.push(`/review/${route.params.reviewId}/edit`)
 }
 
+const goToWorkDetail = () => {
+    router.push(`/work/${review.value?.mediaType}/${review.value?.workId}`)
+}
+
 const isMenuOpen = ref(false)
 
 const toggleMenu = () => {
@@ -28,7 +32,8 @@ export interface ReviewDetail {
     workId: number
     workTitle: string
     workPosterPath: string
-    releaseDate: string
+    workReleaseDate: string
+    mediaType: string
     comment: string
     rating: number
     startDate: string
@@ -138,7 +143,7 @@ onMounted(() => {
                     <PhDotsThreeVertical :size='30'></PhDotsThreeVertical>
                 </div>
                 <div class="modal-menu-box" :class='{ active: isMenuOpen }'>
-                    <p>작품 상세보기</p>
+                    <p @click='goToWorkDetail'>작품 상세보기</p>
                     <p @click='goToEdit'>수정</p>
                     <p @click='handleDeleteReview'>삭제</p>
                 </div>
@@ -149,7 +154,7 @@ onMounted(() => {
                         <span class="icon">
                             <PhInfo :size='24'></PhInfo>
                         </span>
-                        <p class="release-date sub-text">{{ formatDisplayDate(review.releaseDate) }}</p>
+                        <p class="release-date sub-text">{{ formatDisplayDate(review.workReleaseDate) }}</p>
                     </div>
                     <div class="watch-period-box">
                         <span class="icon">

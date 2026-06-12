@@ -50,7 +50,8 @@ interface Review {
     workId: number
     workTitle: string
     workPosterPath: string
-    releaseDate: string
+    workReleaseDate: string
+    mediaType: string
     comment: string
     rating: number
     startDate: string
@@ -90,7 +91,7 @@ interface Review {
                         <div class="work-info-box">
                             <h3 class='work-title'>{{ item.workTitle }}</h3>
                             <span class="release-year number">
-                                ({{ item.releaseDate?.slice(0, 4) }})
+                                ({{ item.workReleaseDate?.slice(0, 4) }})
                             </span>
                         </div>
                         <div class="created-date number">
