@@ -1,27 +1,24 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { api } from '../api/client'
-import { createReview } from '../api/review'
+import { createReview, createTags } from '../api/review'
 import type { ReviewPayload } from '../api/review'
 import { useRouter } from 'vue-router'
 import Datepicker from 'vue3-datepicker'
 import { PhStar } from '@phosphor-icons/vue'
 
-
-
-
 const router = useRouter()
 const work = history.state
-
 
 // 감상일 관련
 const now = new Date()
 const startDate = ref<Date>(now)
 const endDate = ref<Date | undefined>(now)
+
 const formatDate = (date?: Date) => {
     if (!date) return null
     return date.toISOString().slice(0, 10)
 }
+
 const isWatching = ref(false)
 
 // 감상중 체크
@@ -88,7 +85,6 @@ const handleRatingClick = (e: MouseEvent) => {
 const comment = ref('')
 
 const submitReview = async () => {
-    // TODO: 작품 정보 직접 등록시 수정해야 할 부분
     if (!work?.id) {
         console.error('작품 정보가 없습니다.')
         return
@@ -106,15 +102,27 @@ const submitReview = async () => {
         endDate: isWatching.value ? null : formatDate(endDate.value),
     }
 
-    console.log(body)
-
     try {
         const res = await createReview(body)
         const reviewId = res.data.data.reviewId
+
+        const count = body.comment.replace(/\s/g, '').length
+
+        if (count >= 20) {
+            await createTags(reviewId, {
+                tags: [],
+            })
+        } else {
+            await createTags(reviewId, {
+                tags: ["수동태그 예정"],
+            })
+        }
+
         alert('저장되었습니다. 리뷰 페이지로 이동합니다.')
+
         router.push({
             name: 'reviewDetail',
-            params: { reviewId: reviewId },
+            params: { reviewId },
         })
     } catch (err: any) {
         let errorMsg = '알 수 없는 오류'
@@ -130,7 +138,6 @@ const submitReview = async () => {
         alert(`저장 실패\n${errorMsg}`)
     }
 }
-
 </script>
 
 <template>

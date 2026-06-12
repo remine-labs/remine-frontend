@@ -1,7 +1,8 @@
 <script setup lang='ts'>
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getReviewDetail, patchReview } from '../api/review'
+import { getReviewDetail, patchReview, createTags } from '../api/review'
+import type { PatchReviewPayload } from '../api/review'
 import Datepicker from 'vue3-datepicker'
 import { PhStar } from '@phosphor-icons/vue'
 
@@ -39,6 +40,7 @@ const work = ref<WorkInfo>({
     workReleaseDate: '',
     mediaType: '',
 })
+
 
 // 별점 입력
 const ratingBoxRef = ref<HTMLElement | null>(null)
@@ -117,23 +119,37 @@ const handleEditSubmit = async () => {
         return
     }
 
+    const body: PatchReviewPayload = {
+        reviewId,
+
+        workId: work.value.id,
+        workTitle: work.value.title,
+        workPosterPath: work.value.posterPath,
+        workReleaseDate: work.value.workReleaseDate,
+        mediaType: work.value.mediaType,
+
+        comment: review.value.comment.trim(),
+        rating: review.value.rating,
+        startDate: formatDate(review.value.startDate),
+        endDate: review.value.endDate
+            ? formatDate(review.value.endDate)
+            : null,
+    }
+
     try {
-        await patchReview({
-            reviewId,
+        await patchReview(body)
 
-            workId: work.value.id,
-            workTitle: work.value.title,
-            workPosterPath: work.value.posterPath,
-            workReleaseDate: work.value.workReleaseDate,
-            mediaType: work.value.mediaType,
+        const count = body.comment.replace(/\s/g, '').length
 
-            comment: review.value.comment,
-            rating: review.value.rating,
-            startDate: formatDate(review.value.startDate),
-            endDate: review.value.endDate
-                ? formatDate(review.value.endDate)
-                : null,
-        })
+        if (count >= 20) {
+            await createTags(reviewId, {
+                tags: [],
+            })
+        } else {
+            await createTags(reviewId, {
+                tags: ["수동태그 예정"],
+            })
+        }
 
         alert('수정되었습니다. 리뷰 페이지로 이동합니다.')
 

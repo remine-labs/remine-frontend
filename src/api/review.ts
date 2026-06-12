@@ -32,3 +32,11 @@ export const patchReview = (payload: PatchReviewPayload) => {
 export const deleteReview = (reviewId: number) => {
   return api.delete(`/api/reviews/${reviewId}`);
 };
+
+export type CreateTagsPayload = {
+  tags: string[];
+};
+
+export const createTags = (reviewId: number, payload: CreateTagsPayload) => {
+  return api.post(`/api/reviews/${reviewId}/tags`, payload);
+};

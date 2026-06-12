@@ -102,7 +102,7 @@ interface Review {
                         {{ item.comment }}
                     </div>
                     <div class="footer-box chips">
-                        <span class="media-type chip important">media type</span>
+                        <span class="media-type chip important">{{ item.mediaType.toUpperCase() }}</span>
                         <template v-if='item?.tags?.length'>
                             <span v-for="tag in item.tags" :key="tag" class="tag-item chip default">
                                 {{ tag }}
