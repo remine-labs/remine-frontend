@@ -152,7 +152,7 @@ getWorkDetail()
                     <h2 class="work-title title ellipsis-2">{{ work?.workTitle }}</h2>
                     <div class="work-detail-box sub-text">
                         <p class="release-date">개봉일: {{ work?.workReleaseDate?.replace(/-/g, '.') }}</p>
-                        <p class="runtime" v-if="work?.mediaType === 'movie'">상영 시간: {{ work?.runtime }}</p>
+                        <p class="runtime" v-if="work?.mediaType === 'movie'">상영 시간: {{ work?.runtime }}분</p>
                         <p class="season-info" v-if="work?.numberOfSeasons && work?.numberOfSeasons > 1">시즌: {{
                             work?.numberOfSeasons }}</p>
                         <p class="episode-info" v-if="work?.numberOfEpisodes">총 {{
