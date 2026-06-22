@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 
 const router = useRouter()
 
+
 const user = ref<MeResponse | null>(null);
 
 const goToWatchlist = () => {
