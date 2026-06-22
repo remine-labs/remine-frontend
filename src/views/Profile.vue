@@ -1,8 +1,9 @@
 <script setup lang='ts'>
 import { onMounted, ref } from 'vue'
-import { getMe, type MeResponse } from "../api/auth"
+import { getMe, type MeResponse, logout } from "../api/auth"
 import { api } from '../api/client'
 import router from '../router';
+
 
 const user = ref<MeResponse | null>(null);
 
@@ -38,6 +39,14 @@ const getHistory = async () => {
     }
 }
 
+const handleLogout = async () => {
+    try {
+        await logout();
+    } finally {
+        router.replace("/");
+    }
+};
+
 onMounted(async () => {
     getHistory();
     try {
@@ -59,7 +68,12 @@ onMounted(async () => {
                     <p class="username">{{ user.name }}</p>
                     <button>edit</button>
                 </div>
-                <button>setting</button>
+                <div class="btn-box">
+                    <button>setting</button>
+                </div>
+                <div class="btn-box">
+                    <button id='logout-btn' @click='handleLogout'>logout</button>
+                </div>
             </div>
             <div class="calendar-container">
                 <div class="calendar-header">

@@ -10,9 +10,8 @@
             </div>
 
             <div class="login-container">
-                <div class='btn-box login-box' v-for="provider in loginProviders" :key="provider.id"
-                    :class="provider.id">
-                    <button class='google-oauth' @click="login(provider.url)">
+                <div class="btn-box" :class="provider.id" v-for="provider in loginProviders" :key="provider.id">
+                    <button class="oauth-btn" @click="login(provider.url)">
                         {{ provider.label }}로 로그인
                     </button>
                 </div>
@@ -32,6 +31,11 @@ const loginProviders = [
         id: 'google',
         label: 'Google',
         url: `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`
+    },
+    {
+        id: 'kakao',
+        label: 'Kakao',
+        url: `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/kakao`
     }
 ]
 
@@ -41,35 +45,49 @@ const loginProviders = [
 /* google design guide */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,500;1,500&display=swap');
 
-.title-container {
+.index-section .title-container {
     text-align: center;
 }
 
-.title-container .slogun-text {
+.index-section .title-container .slogun-text {
     font-size: var(--font-size-title);
     font-weight: 500;
 }
 
-.title-container .logo {
+.index-section .title-container .logo {
     margin: 2rem 0;
 }
 
-.login-container {
+.index-section .login-container {
     width: 300px;
     margin: 5rem auto 0;
 }
 
-.login-container button {
+.index-section .login-container .btn-box {
+    width: 100%;
+    margin-bottom: 1rem;
+    text-align: center;
+    border: #747775 solid 1px;
+    border-radius: 8px;
+}
+
+
+.index-section .login-container .btn-box button {
     width: 100%;
 }
 
-.login-container .google-oauth {
+.index-section .btn-box.google {
     background-color: #ffff;
-    border: #747775 solid 1px;
+    color: rbga(0, 0, 0, .54)
+}
+
+.index-section .btn-box.kakao {
+    background-color: #fee500;
+    color: rbga(0, 0, 0, .85)
 }
 
 @media (prefers-color-scheme: dark) {
-    .login-container .google-oauth {
+    .index-section .login-container .btn-box.google {
         background-color: #222;
         border: #747775 solid 1px;
     }
