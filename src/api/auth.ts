@@ -11,3 +11,7 @@ export const getMe = async (): Promise<MeResponse> => {
   const res = await api.get("/api/users/me");
   return res.data.data;
 };
+
+export const logout = async (): Promise<void> => {
+  await api.post("/api/logout");
+};
