@@ -14,7 +14,8 @@ api.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      originalRequest.url !== "/api/refresh"
+      originalRequest.url !== "/api/refresh" &&
+      originalRequest.url !== "/api/logout"
     ) {
       originalRequest._retry = true;
 
