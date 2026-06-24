@@ -2,12 +2,18 @@
 import { onMounted, ref } from 'vue'
 import { getMe, type MeResponse, logout } from "../api/auth"
 import { api } from '../api/client'
-import router from '../router';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 
 const user = ref<MeResponse | null>(null);
 
-const toGoReviewDetail = (reviewId: number) => {
+const goToWatchlist = () => {
+    router.push('/watchlist')
+}
+
+const goToReviewDetail = (reviewId: number) => {
     router.push(`/review/${reviewId}`)
 }
 
@@ -75,6 +81,14 @@ onMounted(async () => {
                     <button id='logout-btn' @click='handleLogout'>logout</button>
                 </div>
             </div>
+            <div class="collection-container">
+                <div class="created-review-box">
+                    작성한 리뷰 NNN개
+                </div>
+                <div class="watchlist-box" @click='goToWatchlist'>
+                    관심 작품 NNN개
+                </div>
+            </div>
             <div class="calendar-container">
                 <div class="calendar-header">
                     <input type="number" v-model="year" />
@@ -83,7 +97,7 @@ onMounted(async () => {
                 </div>
                 <div class="calendar-body">
                     <div class="date-box" v-for='item in historyList' :key='item.reviewId'
-                        @click='toGoReviewDetail(item.reviewId)'>
+                        @click='goToReviewDetail(item.reviewId)'>
                         <p class="start-date">{{ item.startDate }}</p>
                         <p class="work-title">{{ item.workTitle }}</p>
                         <div class="img-box work-poster">
