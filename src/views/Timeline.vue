@@ -29,7 +29,7 @@ onMounted(() => {
     fetchTimeline(0)
 })
 
-const toGoReviewDetail = (reviewId: number) => {
+const goToReviewDetail = (reviewId: number) => {
     router.push(`/review/${reviewId}`)
 }
 
@@ -82,7 +82,7 @@ interface Review {
             </div>
             <div class="timeline-container">
                 <div class="timeline-box" v-for="item in timeline" :key="item.reviewId"
-                    @click='toGoReviewDetail(item.reviewId)'>
+                    @click='goToReviewDetail(item.reviewId)'>
                     <div class="head-box">
                         <div class="img-box">
                             <img :src="`https://image.tmdb.org/t/p/w200${item.workPosterPath}`" :alt="item.workTitle" />

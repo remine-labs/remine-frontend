@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { PhHeart, PhMagnifyingGlass } from '@phosphor-icons/vue'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { PhMagnifyingGlass } from '@phosphor-icons/vue'
+import WorkCard from '../components/WorkCard.vue'
 import { api } from '../api/client'
 
+const route = useRoute();
 const router = useRouter()
 
 const query = ref('')
@@ -13,6 +15,10 @@ const error = ref('')
 
 const isYoutubeLink = (value: string) => {
     return value.includes('youtube.com') || value.includes('youtu.be')
+}
+
+const goToPlaylist = () => {
+    router.push('/playlists')
 }
 
 const handleSearch = async () => {
@@ -50,11 +56,14 @@ const handleSearch = async () => {
 
 const totalCount = ref(0)
 
+onMounted(() => {
+    const url = route.query.url as string;
 
-const goToWorkDetail = (work: any) => {
-    router.push(`/work/${work.mediaType}/${work.workId}`)
-}
-
+    if (url) {
+        query.value = url;
+        handleSearch();
+    }
+})
 </script>
 
 <template>
@@ -70,7 +79,7 @@ const goToWorkDetail = (work: any) => {
                         <PhMagnifyingGlass :size="24" />
                     </button>
                 </div>
-                <div class="banner-box sub-text">
+                <div class="banner-box sub-text" @click='goToPlaylist'>
                     <p>플레이리스트에 저장하셨다면,</p>
                     <p>한 번 연동으로 검색부터 관심작품까지 한 번에!</p>
                 </div>
@@ -80,33 +89,9 @@ const goToWorkDetail = (work: any) => {
             <p v-if="error">{{ error }}</p>
             <div class="total-count" :class="{ invisible: totalCount === 0 }">총 {{ totalCount }}건의 결과</div>
             <div class="works-list-container">
-
-                <div class="work-box relative" v-for="work in works" :key="work.workId" @click="goToWorkDetail(work)">
-                    <div class="type-box">
-                        <span class="media-type sub-text chip important" :class="work.mediaType">{{
-                            work.mediaType.toUpperCase()
-                            }}</span>
-                    </div>
-                    <div class="img-box poster">
-                        <img :src="`https://image.tmdb.org/t/p/w200${work.workPosterPath}`" :alt="work.workTitle" />
-                    </div>
-
-                    <div class="work-info-box">
-                        <div class="work-title-box">
-                            <span class="work-name ellipsis-1">
-                                {{ work.workTitle }}
-                            </span>
-                            <span class="release-year number">
-                                ({{ work.workReleaseDate?.slice(0, 4) }})
-                            </span>
-                        </div>
-                        <div class="icon-box watchlist">
-                            <button class='heart'>
-                                <PhHeart :size='20'></PhHeart>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <WorkCard v-for="work in works" :key="work.workId" :work-id="work.workId" :work-title="work.workTitle"
+                    :work-poster-path="work.workPosterPath" :work-release-date="work.workReleaseDate"
+                    :media-type="work.mediaType" />
             </div>
         </div>
     </section>

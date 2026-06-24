@@ -1,3 +1,24 @@
+<script setup lang="ts">
+
+const login = (url: string) => {
+    window.location.href = url
+}
+
+const loginProviders = [
+    {
+        id: 'google',
+        label: 'Google',
+        url: `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`
+    },
+    {
+        id: 'kakao',
+        label: 'Kakao',
+        url: `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/kakao`
+    }
+]
+
+</script>
+
 <template>
     <section class="index-section">
         <div class="wrap">
@@ -20,26 +41,6 @@
     </section>
 </template>
 
-<script setup lang="ts">
-
-const login = (url: string) => {
-    window.location.href = url
-}
-
-const loginProviders = [
-    {
-        id: 'google',
-        label: 'Google',
-        url: `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`
-    },
-    {
-        id: 'kakao',
-        label: 'Kakao',
-        url: `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/kakao`
-    }
-]
-
-</script>
 
 <style>
 /* google design guide */
@@ -78,12 +79,12 @@ const loginProviders = [
 
 .index-section .btn-box.google {
     background-color: #ffff;
-    color: rbga(0, 0, 0, .54)
+    color: rgba(0, 0, 0, .54);
 }
 
 .index-section .btn-box.kakao {
     background-color: #fee500;
-    color: rbga(0, 0, 0, .85)
+    color: rgba(0, 0, 0, .85);
 }
 
 @media (prefers-color-scheme: dark) {
