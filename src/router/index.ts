@@ -10,6 +10,9 @@ import ReviewDetail from "../views/ReviewDetail.vue";
 import ReviewEdit from "../views/ReviewEdit.vue";
 import Profile from "../views/Profile.vue";
 import WorkDetail from "../views/WorkDetail.vue";
+import Watchlist from "../views/Watchlist.vue";
+import Playlists from "../views/Playlists.vue";
+import Playlist from "../views/Playlist.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -113,6 +116,39 @@ const router = createRouter({
             header: {
               title: "Profile",
               showBack: false,
+            },
+          },
+        },
+        {
+          path: "watchlist",
+          name: "watchlist",
+          component: Watchlist,
+          meta: {
+            header: {
+              title: "Watchlist",
+              showBack: false,
+            },
+          },
+        },
+        {
+          path: "playlists",
+          name: "playlists",
+          component: Playlists,
+          meta: {
+            header: {
+              title: "Playlists",
+              showBack: false,
+            },
+          },
+        },
+        {
+          path: "playlist/detail",
+          name: "playlistDetail",
+          component: Playlist,
+          meta: {
+            header: {
+              title: "Playlist",
+              showBack: true,
             },
           },
         },
