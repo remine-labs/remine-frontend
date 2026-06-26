@@ -1,13 +1,36 @@
 <script setup lang='ts'>
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-// TODO: watchlist 관련 api 생성 이후
-// import WorkCard from '../components/WorkCard.vue';
+import WorkCard from '../components/WorkCard.vue';
+import { getWatchlist, deleteWatchlist } from '../api/watchlist.ts';
+import type { Watchlist } from '../api/watchlist.ts';
 
-const router = useRouter()
+const router = useRouter();
+const watchlist = ref<Watchlist[]>([]);
 
 const goToPlaylists = () => {
     router.push("/playlists")
 }
+
+const deleteWatchlistHandler = async (work: Watchlist) => {
+    try {
+        await deleteWatchlist(work.mediaType, work.workId);
+
+        const res = await getWatchlist();
+        watchlist.value = res.data.data.content;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+onMounted(async () => {
+    try {
+        const res = await getWatchlist();
+        watchlist.value = res.data.data.content;
+    } catch (error) {
+        console.error(error)
+    }
+})
 
 </script>
 
@@ -28,11 +51,12 @@ const goToPlaylists = () => {
                     <label for="checkbox-tv">TV</label>
                 </div>
             </div>
-            <!-- <div class="works-list-container">
-            <WorkCard v-for='work in works' :key='work.workId' :work-id='work.workId' :work-title='work.workTitle'
-                :work-poster-path='work.workPosterPath' :work-release-date='work.workReleaseDate'
-                :media-type='work.mediaType' />
-            </div> -->
+            <div class="works-list-container">
+                <WorkCard v-for="work in watchlist" :key="work.workId" :work-id="work.workId"
+                    :work-title="work.workTitle" :work-poster-path="work.workPosterPath" :media-type="work.mediaType"
+                    @toggle-watchlist="deleteWatchlistHandler(work)" />
+                <!-- TODO: :work-release-date는 추후 api 수정 후에 기입 -->
+            </div>
         </div>
     </section>
 </template>

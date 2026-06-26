@@ -10,11 +10,13 @@ interface WorkCardProps {
     workTitle: string;
     workReleaseDate?: string;
     mediaType?: string;
-    // TODO: 백엔드에게 Liked 값 받으면 추후 작업
-    // liked?: boolean;
 }
 
 const props = defineProps<WorkCardProps>();
+
+const emit = defineEmits<{
+    (e: "toggle-watchlist"): void;
+}>();
 
 const goToWorkDetail = () => {
     router.push(`/work/${props.mediaType}/${props.workId}`)
@@ -22,19 +24,19 @@ const goToWorkDetail = () => {
 </script>
 
 <template>
-    <div class="work-box relative" @click='goToWorkDetail'>
+    <div class="work-box relative">
         <div class="type-box">
             <span class="media-type sub-text chip" :class="mediaType">
                 {{ mediaType?.toUpperCase() }}
             </span>
         </div>
 
-        <div class="img-box poster">
+        <div class="img-box poster" @click='goToWorkDetail'>
             <img :src="`https://image.tmdb.org/t/p/w200${workPosterPath}`" :alt="workTitle" />
         </div>
 
         <div class="work-info-box">
-            <div class="work-title-box">
+            <div class="work-title-box" @click='goToWorkDetail'>
                 <span class="work-name ellipsis-1">
                     {{ workTitle }}
                 </span>
@@ -44,7 +46,7 @@ const goToWorkDetail = () => {
             </div>
 
             <div class="icon-box watchlist">
-                <button class="heart">
+                <button class="heart" @click="emit('toggle-watchlist')">
                     <PhHeart :size="20" />
                 </button>
             </div>
