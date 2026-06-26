@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { PhMagnifyingGlass } from '@phosphor-icons/vue'
 import WorkCard from '../components/WorkCard.vue'
 import { api } from '../api/client'
+import { addWatchlist } from '../api/watchlist.ts'
 
 const route = useRoute();
 const router = useRouter()
@@ -56,6 +57,21 @@ const handleSearch = async () => {
 
 const totalCount = ref(0)
 
+const addWatchlistHandler = async (work: any) => {
+    try {
+        await addWatchlist({
+            workId: work.workId,
+            mediaType: work.mediaType,
+            workTitle: work.workTitle,
+            workPosterPath: work.workPosterPath,
+        });
+
+        console.log("관심 작품 추가 완료");
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 onMounted(() => {
     const url = route.query.url as string;
 
@@ -91,7 +107,7 @@ onMounted(() => {
             <div class="works-list-container">
                 <WorkCard v-for="work in works" :key="work.workId" :work-id="work.workId" :work-title="work.workTitle"
                     :work-poster-path="work.workPosterPath" :work-release-date="work.workReleaseDate"
-                    :media-type="work.mediaType" />
+                    :media-type="work.mediaType" @toggle-watchlist="addWatchlistHandler(work)" />
             </div>
         </div>
     </section>
