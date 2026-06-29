@@ -11,6 +11,7 @@ export type Watchlist = {
   mediaType: string;
   workTitle: string;
   workPosterPath: string;
+  workReleaseDate?: string;
 };
 
 export const addWatchlist = (body: Watchlist) => {

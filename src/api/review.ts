@@ -8,7 +8,7 @@ export type ReviewPayload = {
   workId: number;
   workTitle: string;
   workPosterPath: string;
-  workReleaseDate: string;
+  workReleaseDate?: string;
   mediaType: string;
 
   comment: string;
