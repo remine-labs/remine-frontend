@@ -64,6 +64,7 @@ const addWatchlistHandler = async (work: any) => {
             mediaType: work.mediaType,
             workTitle: work.workTitle,
             workPosterPath: work.workPosterPath,
+            workReleaseDate: work.workReleaseDate
         });
 
         console.log("관심 작품 추가 완료");

@@ -54,7 +54,7 @@ onMounted(async () => {
             <div class="works-list-container">
                 <WorkCard v-for="work in watchlist" :key="work.workId" :work-id="work.workId"
                     :work-title="work.workTitle" :work-poster-path="work.workPosterPath" :media-type="work.mediaType"
-                    @toggle-watchlist="deleteWatchlistHandler(work)" />
+                    :work-release-date='work.workReleaseDate' @toggle-watchlist="deleteWatchlistHandler(work)" />
                 <!-- TODO: :work-release-date는 추후 api 수정 후에 기입 -->
             </div>
         </div>
