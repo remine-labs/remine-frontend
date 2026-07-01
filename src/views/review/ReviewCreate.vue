@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { createReview, createTags } from '../api/review'
-import type { ReviewPayload } from '../api/review'
+import { createReview, createTags } from '../../api/review'
+import type { ReviewPayload } from '../../api/review'
 import { useRouter } from 'vue-router'
 import Datepicker from 'vue3-datepicker'
 import { PhStar } from '@phosphor-icons/vue'
