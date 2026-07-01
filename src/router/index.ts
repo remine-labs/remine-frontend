@@ -4,15 +4,17 @@ import OAuthCallback from "../views/OAuthCallback.vue";
 import Home from "../views/Home.vue";
 import Search from "../views/Search.vue";
 import DefaultLayout from "../components/DefaultLayout.vue";
-import Timeline from "../views/Timeline.vue";
-import ReviewCreate from "../views/ReviewCreate.vue";
-import ReviewDetail from "../views/ReviewDetail.vue";
-import ReviewEdit from "../views/ReviewEdit.vue";
+import Timeline from "../views/review/Timeline.vue";
+import ReviewCreate from "../views/review/ReviewCreate.vue";
+import ReviewDetail from "../views/review/ReviewDetail.vue";
+import ReviewEdit from "../views/review/ReviewEdit.vue";
 import Profile from "../views/Profile.vue";
 import WorkDetail from "../views/WorkDetail.vue";
 import Watchlist from "../views/Watchlist.vue";
 import Playlists from "../views/Playlists.vue";
 import Playlist from "../views/Playlist.vue";
+import PrivacyPolicyView from "../views/policy/PrivacyPolicyView.vue";
+import ServiceTermsView from "../views/policy/ServiceTermsView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -148,6 +150,28 @@ const router = createRouter({
           meta: {
             header: {
               title: "Playlist",
+              showBack: true,
+            },
+          },
+        },
+        {
+          path: "terms/service",
+          name: "serviceTerms",
+          component: ServiceTermsView,
+          meta: {
+            header: {
+              title: "서비스 이용약관",
+              showBack: true,
+            },
+          },
+        },
+        {
+          path: "terms/privacy",
+          name: "privbacyPolicy",
+          component: PrivacyPolicyView,
+          meta: {
+            header: {
+              title: "개인정보처리방침",
               showBack: true,
             },
           },
