@@ -13,6 +13,7 @@ const terms = termsOfService;
                 <div class="date-box">
                     <p class="updated-at">개정일: {{ terms.metadata.updatedAt }}</p>
                     <p class="effective-date">시행일: {{ terms.metadata.effectiveDate }}</p>
+                    t
                 </div>
                 <div class="content-box" v-for="(sentence, index) in terms.content" :key='index'>
                     <p>{{ sentence }}</p>
