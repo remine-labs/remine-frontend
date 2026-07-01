@@ -1,8 +1,8 @@
 <script setup lang='ts'>
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getReviewDetail, patchReview, createTags } from '../api/review'
-import type { PatchReviewPayload } from '../api/review'
+import { getReviewDetail, patchReview, createTags } from '../../api/review'
+import type { PatchReviewPayload } from '../../api/review'
 import Datepicker from 'vue3-datepicker'
 import { PhStar } from '@phosphor-icons/vue'
 

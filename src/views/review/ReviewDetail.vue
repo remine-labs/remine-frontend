@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { api } from '../api/client'
-import { deleteReview } from '../api/review'
+import { api } from '../../api/client'
+import { deleteReview } from '../../api/review'
 import { PhCalendar, PhDotsThreeVertical, PhInfo, PhStar } from '@phosphor-icons/vue'
 
 const route = useRoute()
