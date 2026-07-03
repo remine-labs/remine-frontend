@@ -1,5 +1,3 @@
-import { isCaseOrDefaultClause } from "typescript";
-
 export const privacyPolicy = {
   title: "개인정보 처리방침",
   metadata: {
