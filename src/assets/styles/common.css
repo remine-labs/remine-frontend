@@ -223,3 +223,31 @@ section div .v3dp__elements[data-v-65eb861b] button.selected span {
   background-color: var(--btn-active-bg);
   color: var(--text-inverse);
 }
+
+/* terms */
+.terms-section .wrap {
+  padding: 0 30px;
+}
+
+.terms-section .terms-basic-container h2 {
+  text-align: center;
+}
+
+.terms-section .terms-basic-container .date-box {
+  text-align: right;
+  color: var(--text-sub);
+}
+
+.terms-section .terms-basic-container .content-box {
+  margin-top: 20px;
+}
+
+.terms-section .articles-container article h3 {
+  font-size: var(--font-size-title);
+  font-weight: 500;
+  margin: 20px 0 8px;
+}
+
+.terms-section .articles-container .content-box {
+  margin-bottom: 8px;
+}
