@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { privacyPolicy } from "../../data/policies/privcayPolicy";
+import { privacyPolicy } from "../../data/policies/privacyPolicy.ts";
 import PolicyBlock from "../../components/PolicyBlock.vue";
 
 const terms = privacyPolicy;
