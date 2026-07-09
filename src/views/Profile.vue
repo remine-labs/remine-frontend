@@ -1,11 +1,11 @@
 <script setup lang='ts'>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { getMe, type MeResponse, logout } from "../api/auth"
 import { api } from '../api/client'
 import { useRouter } from 'vue-router';
+import dayjs from 'dayjs';
 
 const router = useRouter()
-
 
 const user = ref<MeResponse | null>(null);
 
@@ -13,9 +13,9 @@ const goToWatchlist = () => {
     router.push('/watchlist')
 }
 
-const goToReviewDetail = (reviewId: number) => {
-    router.push(`/review/${reviewId}`)
-}
+// const goToReviewDetail = (reviewId: number) => {
+//     router.push(`/review/${reviewId}`)
+// }
 
 interface HistoryItem {
     reviewId: number,
@@ -24,14 +24,27 @@ interface HistoryItem {
     startDate: string
 }
 
-const now = new Date()
+const currentMonth = ref(dayjs())
 
-const year = ref(now.getFullYear())
-const month = ref(now.getMonth() + 1)
+const year = ref(currentMonth.value.year())
+const month = ref(currentMonth.value.month() + 1)
+
+const daysInMonth = computed(() => currentMonth.value.daysInMonth())
+
+const firstDay = computed(() =>
+    currentMonth.value.startOf('month').day()
+)
+
+console.log(daysInMonth.value, firstDay.value)
 
 const historyList = ref<HistoryItem[]>([])
 
+const historyMap = ref<Record<number, HistoryItem[]>>({})
+const calendarMap = computed(() => historyMap.value)
+
 const getHistory = async () => {
+    currentMonth.value = dayjs(`${year.value}-${month.value}-01`)
+
     try {
         const res = await api.get('/api/users/history', {
             params: {
@@ -40,6 +53,19 @@ const getHistory = async () => {
             }
         })
         historyList.value = res.data.data
+
+        historyMap.value = {}
+
+        for (const item of historyList.value) {
+            const day = Number(item.startDate.slice(-2))
+
+            if (!historyMap.value[day]) {
+                historyMap.value[day] = []
+            }
+
+            historyMap.value[day].push(item)
+        }
+        console.log(historyMap.value)
     } catch (error) {
         console.error('history 조회 실패', error)
     }
@@ -83,10 +109,12 @@ onMounted(async () => {
             </div>
             <div class="collection-container">
                 <div class="created-review-box">
-                    작성한 리뷰 NNN개
+                    작성한 리뷰
+                    <p class="count-num">NNN개</p>
                 </div>
                 <div class="watchlist-box" @click='goToWatchlist'>
-                    관심 작품 NNN개
+                    관심 작품
+                    <p class="count-num">NNN개</p>
                 </div>
             </div>
             <div class="calendar-container">
@@ -95,14 +123,23 @@ onMounted(async () => {
                     <input type="number" v-model="month" />
                     <button class='active-btn' @click='getHistory'>조회</button>
                 </div>
+                <div class="weekday">
+                    <p>SUN</p>
+                    <p>MON</p>
+                    <p>TUE</p>
+                    <p>WED</p>
+                    <p>THU</p>
+                    <p>FRI</p>
+                    <p>SAT</p>
+                </div>
                 <div class="calendar-body">
-                    <div class="date-box" v-for='item in historyList' :key='item.reviewId'
-                        @click='goToReviewDetail(item.reviewId)'>
-                        <p class="start-date">{{ item.startDate }}</p>
-                        <p class="work-title">{{ item.workTitle }}</p>
-                        <div class="img-box work-poster">
-                            <img v-if="item.workPosterPath"
-                                :src="'https://image.tmdb.org/t/p/w200' + item.workPosterPath" :alt='item.workTitle'>
+                    <div class="empty-box" v-for="n in firstDay" :key="'empty-' + n" />
+                    <div class="date-box" v-for="n in daysInMonth" :key="n">
+                        <span class='date'>{{ n }}</span>
+                        <div class="poster-box img-box">
+                            <img v-if="calendarMap[n]"
+                                :src="'https://image.tmdb.org/t/p/w200' + calendarMap[n]?.[0]?.workPosterPath"
+                                :alt="calendarMap[n]?.[0]?.workTitle">
                         </div>
                     </div>
                 </div>
@@ -112,7 +149,89 @@ onMounted(async () => {
 </template>
 
 <style>
-.profile-section .date-box {
-    cursor: pointer;
+.profile-section .user-container {
+    display: flex;
+}
+
+.profile-section .collection-container {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.profile-section .collection-container>div {
+    width: calc(50% - 4px);
+    border-radius: 8px;
+    padding: 4px 0;
+}
+
+.profile-section .collection-container .count-num {
+    font-family: var(--font-family-logo);
+    font-size: var(--font-size-title);
+}
+
+.profile-section .collection-container .created-review-box {
+    background-color: var(--bg-surface);
+}
+
+.profile-section .collection-container .watchlist-box {
+    background-color: var(--btn-neutral-bg)
+}
+
+.profile-section .calendar-container {
+    margin-top: 30px;
+}
+
+.profile-section .calendar-container .weekday {
+    display: flex;
+    gap: 4px;
+    /* 변경 시 calendar-body의 gap 같이 조정 필요 -> 추후 변수화 예정*/
+    font-size: var(--font-size-title);
+    font-weight: 400;
+    color: var(--text-sub);
+    margin: 10px 0;
+}
+
+.profile-section .calendar-container .weekday p {
+    flex: 1;
+    text-align: center;
+}
+
+.profile-section .calendar-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.profile-section .calendar-body .empth-box {
+    aspect-ratio: 1 / 1;
+}
+
+.profile-section .calendar-body .date-box {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background-color: var(--text-icon);
+}
+
+.profile-section .calendar-body .date {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    z-index: 1;
+    font-size: var(--font-size-sub);
+    color: var(--text-inverse);
+}
+
+.profile-section .calendar-body .poster-box {
+    width: 100%;
+    height: 100%;
+}
+
+.profile-section .calendar-body .poster-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 </style>
