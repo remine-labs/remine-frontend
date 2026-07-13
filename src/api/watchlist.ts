@@ -12,9 +12,18 @@ export type Watchlist = {
   workTitle: string;
   workPosterPath: string;
   workReleaseDate?: string;
+  isWatchlisted: boolean;
 };
 
-export const addWatchlist = (body: Watchlist) => {
+export type AddWatchlistRequest = {
+  workId: number;
+  mediaType: string;
+  workTitle: string;
+  workPosterPath: string;
+  workReleaseDate?: string;
+};
+
+export const addWatchlist = (body: AddWatchlistRequest) => {
   return api.post("/api/watchlist", body);
 };
 

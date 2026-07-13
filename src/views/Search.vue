@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { PhMagnifyingGlass } from '@phosphor-icons/vue'
 import WorkCard from '../components/WorkCard.vue'
 import { api } from '../api/client'
-import { addWatchlist } from '../api/watchlist.ts'
+import { addWatchlist, deleteWatchlist, getWatchlist } from '../api/watchlist.ts'
 
 const route = useRoute();
 const router = useRouter()
@@ -44,8 +44,17 @@ const handleSearch = async () => {
                 },
             })
         }
+        const watchlistRes = await getWatchlist();
+        const watchlist = watchlistRes.data.data.content;
 
-        works.value = res.data.data.results
+        const watchlistSet = new Set(
+            watchlist.map((item: any) => item.workId)
+        );
+
+        works.value = res.data.data.results.map((work: any) => ({
+            ...work,
+            isWatchlisted: watchlistSet.has(work.workId)
+        }));
         totalCount.value = res.data.data.total_results
     } catch (err) {
         error.value = '검색 중 오류가 발생했습니다.'
@@ -57,17 +66,21 @@ const handleSearch = async () => {
 
 const totalCount = ref(0)
 
-const addWatchlistHandler = async (work: any) => {
+const toggleWatchlistHandler = async (work: any) => {
     try {
-        await addWatchlist({
-            workId: work.workId,
-            mediaType: work.mediaType,
-            workTitle: work.workTitle,
-            workPosterPath: work.workPosterPath,
-            workReleaseDate: work.workReleaseDate
-        });
+        if (work.isWatchlisted) {
+            await deleteWatchlist(work.mediaType, work.workId);
+        } else {
+            await addWatchlist({
+                workId: work.workId,
+                mediaType: work.mediaType,
+                workTitle: work.workTitle,
+                workPosterPath: work.workPosterPath,
+                workReleaseDate: work.workReleaseDate,
+            });
+        }
 
-        console.log("관심 작품 추가 완료");
+        work.isWatchlisted = !work.isWatchlisted;
     } catch (error) {
         console.error(error);
     }
@@ -108,7 +121,8 @@ onMounted(() => {
             <div class="works-list-container">
                 <WorkCard v-for="work in works" :key="work.workId" :work-id="work.workId" :work-title="work.workTitle"
                     :work-poster-path="work.workPosterPath" :work-release-date="work.workReleaseDate"
-                    :media-type="work.mediaType" @toggle-watchlist="addWatchlistHandler(work)" />
+                    :media-type="work.mediaType" :is-watchlisted="work.isWatchlisted"
+                    @toggle-watchlist="toggleWatchlistHandler(work)" />
             </div>
         </div>
     </section>
@@ -145,57 +159,5 @@ onMounted(() => {
     text-align: right;
     font-size: var(--font-size-sub);
     line-height: 4;
-}
-
-.search-section .works-list-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px 8px;
-}
-
-.search-section .works-list-container .work-box {
-    width: calc(50% - 4px);
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: var(--bg-elevated);
-    cursor: pointer;
-    box-shadow: 0px 0px 8px #00000014
-}
-
-.search-section .work-box .type-box {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-}
-
-.search-section .work-box .img-box {
-    aspect-ratio: 2/3;
-}
-
-.search-section .work-box .img-box img {
-    height: 100%;
-    object-fit: cover;
-}
-
-.search-section .work-box .work-info-box {
-    display: flex;
-    gap: 3px;
-    align-items: center;
-    padding: 12px 6px;
-}
-
-.search-section .work-box .work-title-box {
-    display: flex;
-    align-items: center;
-    width: calc(100% - 27px);
-    gap: 4px;
-}
-
-.search-section .work-box .work-title-box .work-name {
-    max-width: calc(100% - 4rem);
-}
-
-.search-section .work-box .work-title-box .release-year {
-    flex-shrink: 0;
 }
 </style>
