@@ -3,9 +3,11 @@ import { ref } from 'vue'
 import { api } from '../api/client'
 import { useRoute, useRouter } from 'vue-router'
 import { PhHeart, PhPenNib } from '@phosphor-icons/vue'
+import { addWatchlist, deleteWatchlist, getWatchlist, type Watchlist } from '../api/watchlist'
 
 const route = useRoute()
 const router = useRouter()
+const isWatchlisted = ref(false);
 
 const mediaType = route.params.mediaType as string
 const workId = route.params.workId as string
@@ -46,6 +48,28 @@ const work = ref<WorkDetail | null>(null)
 const loading = ref(false)
 const error = ref('')
 
+const toggleWatchlistHandler = async () => {
+    if (!work.value) return;
+
+    try {
+        if (isWatchlisted.value) {
+            await deleteWatchlist(work.value.mediaType, work.value.workId);
+        } else {
+            await addWatchlist({
+                workId: work.value.workId,
+                mediaType: work.value.mediaType,
+                workTitle: work.value.workTitle,
+                workPosterPath: work.value.workPosterPath,
+                workReleaseDate: work.value.workReleaseDate,
+            });
+        }
+
+        isWatchlisted.value = !isWatchlisted.value;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 const getWorkDetail = async () => {
     try {
         loading.value = true
@@ -54,6 +78,11 @@ const getWorkDetail = async () => {
         )
 
         work.value = res.data.data
+        const watchlistRes = await getWatchlist();
+
+        isWatchlisted.value = watchlistRes.data.data.content.some(
+            (item: Watchlist) => item.workId === work.value?.workId
+        );
     } catch (err) {
         console.error(err)
         error.value = '작품 정보를 불러오지 못했습니다.'
@@ -115,8 +144,8 @@ getWorkDetail()
     <section class="work-detail-section">
         <div class="floating-box">
             <div class="icon-box watchlist">
-                <button>
-                    <PhHeart :size='24'></PhHeart>
+                <button @click="toggleWatchlistHandler">
+                    <PhHeart :weight="isWatchlisted ? 'fill' : 'regular'" :size="24" />
                 </button>
             </div>
             <div class="icon-box review-create" @click="goToCreate">
@@ -130,11 +159,6 @@ getWorkDetail()
                 <img :src="`https://image.tmdb.org/t/p/original${work?.workPosterPath}`" :alt="work?.workTitle" />
             </div>
             <div class="overlay-box"></div>
-            <div class="icon-box watchlist">
-                <button>
-                    <PhHeart :size='30'></PhHeart>
-                </button>
-            </div>
         </div>
         <div class="wrap">
             <div class="work-info-container">
@@ -267,14 +291,6 @@ getWorkDetail()
     margin-top: -15%;
     filter: blur(3px);
     transform: scale(1.1);
-}
-
-.work-detail-section .work-bg-box .icon-box {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 6px;
-    color: var(--heart);
 }
 
 .work-detail-section .wrap .work-info-container {
