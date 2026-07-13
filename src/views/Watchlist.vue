@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import WorkCard from '../components/WorkCard.vue';
-import { getWatchlist, deleteWatchlist } from '../api/watchlist.ts';
+import { getWatchlist, deleteWatchlist, addWatchlist } from '../api/watchlist.ts';
 import type { Watchlist } from '../api/watchlist.ts';
 
 const router = useRouter();
@@ -12,21 +12,33 @@ const goToPlaylists = () => {
     router.push("/playlists")
 }
 
-const deleteWatchlistHandler = async (work: Watchlist) => {
+const toggleWatchlistHandler = async (work: any) => {
     try {
-        await deleteWatchlist(work.mediaType, work.workId);
+        if (work.isWatchlisted) {
+            await deleteWatchlist(work.mediaType, work.workId);
+        } else {
+            await addWatchlist({
+                workId: work.workId,
+                mediaType: work.mediaType,
+                workTitle: work.workTitle,
+                workPosterPath: work.workPosterPath,
+                workReleaseDate: work.workReleaseDate,
+            });
+        }
 
-        const res = await getWatchlist();
-        watchlist.value = res.data.data.content;
+        work.isWatchlisted = !work.isWatchlisted;
     } catch (error) {
         console.error(error);
     }
-}
+};
 
 onMounted(async () => {
     try {
         const res = await getWatchlist();
-        watchlist.value = res.data.data.content;
+        watchlist.value = res.data.data.content.map((work: Watchlist) => ({
+            ...work,
+            isWatchlisted: true
+        }));
     } catch (error) {
         console.error(error)
     }
@@ -54,7 +66,8 @@ onMounted(async () => {
             <div class="works-list-container">
                 <WorkCard v-for="work in watchlist" :key="work.workId" :work-id="work.workId"
                     :work-title="work.workTitle" :work-poster-path="work.workPosterPath" :media-type="work.mediaType"
-                    :work-release-date='work.workReleaseDate' @toggle-watchlist="deleteWatchlistHandler(work)" />
+                    :work-release-date='work.workReleaseDate' :is-watchlisted="work.isWatchlisted"
+                    @toggle-watchlist="toggleWatchlistHandler(work)" />
                 <!-- TODO: :work-release-date는 추후 api 수정 후에 기입 -->
             </div>
         </div>
