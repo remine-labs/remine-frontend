@@ -10,6 +10,7 @@ interface WorkCardProps {
     workTitle: string;
     workReleaseDate?: string;
     mediaType?: string;
+    isWatchlisted?: boolean;
 }
 
 const props = defineProps<WorkCardProps>();
@@ -35,7 +36,7 @@ const goToWorkDetail = () => {
             <img :src="`https://image.tmdb.org/t/p/w200${workPosterPath}`" :alt="workTitle" />
         </div>
 
-        <div class="work-info-box">
+        <div class="work-info-box relative">
             <div class="work-title-box" @click='goToWorkDetail'>
                 <span class="work-name ellipsis-1">
                     {{ workTitle }}
@@ -47,7 +48,7 @@ const goToWorkDetail = () => {
 
             <div class="icon-box watchlist">
                 <button class="heart" @click="emit('toggle-watchlist')">
-                    <PhHeart :size="20" />
+                    <PhHeart :weight="props.isWatchlisted ? 'fill' : 'regular'" :size="24" />
                 </button>
             </div>
         </div>
@@ -55,6 +56,12 @@ const goToWorkDetail = () => {
 </template>
 
 <style>
+.works-list-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 8px;
+}
+
 .work-box {
     width: calc(50% - 4px);
     border-radius: 8px;
@@ -99,7 +106,7 @@ const goToWorkDetail = () => {
 .work-box .work-title-box {
     display: flex;
     align-items: center;
-    width: calc(100% - 27px);
+    margin-right: 34px;
     gap: 4px;
 }
 
@@ -109,5 +116,12 @@ const goToWorkDetail = () => {
 
 .work-box .work-title-box .release-year {
     flex-shrink: 0;
+}
+
+.work-box .work-info-box .watchlist {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 10px;
 }
 </style>
