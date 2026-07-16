@@ -142,18 +142,6 @@ getWorkDetail()
 
 <template>
     <section class="work-detail-section">
-        <div class="floating-box">
-            <div class="icon-box watchlist">
-                <button @click="toggleWatchlistHandler">
-                    <PhHeart :weight="isWatchlisted ? 'fill' : 'regular'" :size="24" />
-                </button>
-            </div>
-            <div class="icon-box review-create" @click="goToCreate">
-                <button>
-                    <PhPenNib :size="24" />
-                </button>
-            </div>
-        </div>
         <div class="work-bg-box relative">
             <div class="img-box">
                 <img :src="`https://image.tmdb.org/t/p/original${work?.workPosterPath}`" :alt="work?.workTitle" />
@@ -169,12 +157,12 @@ getWorkDetail()
                     <div class="work-meta-box">
                         <span class="age-rating" :class="`age-${work?.certification}`">{{ work?.certification }}</span>
 
-                        <div class="genre-box sub-text">
+                        <div class="genre-box description">
                             <span class="genre" v-for='genre in work?.genres' :key='genre'>{{ genre }}</span>
                         </div>
                     </div>
                     <h2 class="work-title title ellipsis-2">{{ work?.workTitle }}</h2>
-                    <div class="work-detail-box sub-text">
+                    <div class="work-detail-box description">
                         <p class="release-date">개봉일: {{ work?.workReleaseDate?.replace(/-/g, '.') }}</p>
                         <p class="runtime" v-if="work?.mediaType === 'movie'">상영 시간: {{ work?.runtime }}분</p>
                         <p class="season-info" v-if="work?.numberOfSeasons && work?.numberOfSeasons > 1">시즌: {{
@@ -182,11 +170,11 @@ getWorkDetail()
                         <p class="episode-info" v-if="work?.numberOfEpisodes">총 {{
                             work?.numberOfEpisodes }}부작</p>
                     </div>
-                    <div class="directors-box sub-text">
+                    <div class="directors-box description">
                         감독:
                         <span class="director" v-for='director in work?.directors' :key='director'>{{ director }}</span>
                     </div>
-                    <div class="writers-box sub-text">
+                    <div class="writers-box description">
                         각본:
                         <span class="writer" v-for='writer in work?.writers' :key='writer'>{{ writer }}</span>
                     </div>
@@ -200,7 +188,7 @@ getWorkDetail()
                             <img v-if="actor.profilePath" :src="`https://image.tmdb.org/t/p/w200${actor.profilePath}`"
                                 :alt="actor.name" />
                         </div>
-                        <span class="actor-name sub-text ellipsis-2">
+                        <span class="actor-name description ellipsis-2">
                             {{ actor.name }}
                         </span>
                     </div>
@@ -223,6 +211,18 @@ getWorkDetail()
             </div>
             <div class="review-list-box">
                 <h3>내가 쓴 리뷰</h3>
+            </div>
+        </div>
+        <div class="floating-box">
+            <div class="icon-box watchlist">
+                <button @click="toggleWatchlistHandler">
+                    <PhHeart :weight="isWatchlisted ? 'fill' : 'regular'" :size="24" />
+                </button>
+            </div>
+            <div class="icon-box review-create" @click="goToCreate">
+                <button>
+                    <PhPenNib :size="24" />
+                </button>
             </div>
         </div>
     </section>

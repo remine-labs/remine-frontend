@@ -27,7 +27,7 @@ const goToWorkDetail = () => {
 <template>
     <div class="work-box relative">
         <div class="type-box">
-            <span class="media-type sub-text chip" :class="mediaType">
+            <span class="media-type description chip" :class="mediaType">
                 {{ mediaType?.toUpperCase() }}
             </span>
         </div>

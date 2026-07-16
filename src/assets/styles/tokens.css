@@ -87,6 +87,7 @@ html {
   --bg-surface: #faebd7;
   --bg-overlay: #faebd781;
   --bg-elevated: #fafafa;
+  --bg-gray: #ececec;
 
   /* text */
   --text-main: #2d2f35;
@@ -143,6 +144,7 @@ body {
     --bg-surface: #363642;
     --bg-overlay: #36364283;
     --bg-elevated: #313136;
+    --bg-gray: #272727;
 
     /* text */
     --text-main: #f6f4f0;
