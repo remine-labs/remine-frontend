@@ -169,7 +169,7 @@ getWorkDetail()
                     <div class="work-meta-box">
                         <span class="age-rating" :class="`age-${work?.certification}`">{{ work?.certification }}</span>
 
-                        <div class=" genre-box sub-text">
+                        <div class="genre-box sub-text">
                             <span class="genre" v-for='genre in work?.genres' :key='genre'>{{ genre }}</span>
                         </div>
                     </div>
