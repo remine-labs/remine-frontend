@@ -1,6 +1,6 @@
 /* layout */
 section {
-  padding-top: 9.4rem;
+  padding-top: 60px;
   padding-bottom: 10rem;
   min-height: 100dvh;
 }
@@ -136,14 +136,14 @@ section {
   max-width: 47.5rem;
   left: 0;
   right: 0;
-  bottom: 124px;
+  bottom: 12%;
   margin: 0 auto;
   z-index: 999;
   pointer-events: none;
 }
 
 .floating-box .icon-box {
-  width: 60px;
+  width: 56px;
   aspect-ratio: 1/1;
   border-radius: 50%;
   box-shadow: var(--box-default);

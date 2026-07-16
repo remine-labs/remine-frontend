@@ -78,7 +78,7 @@ nav {
 }
 
 .nav-section {
-    height: 84px;
+    height: 60px;
     color: var(--btn-active-bg)
 }
 
@@ -95,7 +95,7 @@ nav .wrap .icon-container {
     justify-content: space-between;
     gap: 30px;
     height: inherit;
-    padding: 10px 20px 20px;
+    padding: 10px 20px;
 }
 
 nav .wrap .icon-container .icon-box {
@@ -112,7 +112,7 @@ nav .wrap .icon-container>.icon-box button svg {
 
 nav .wrap .icon-container span {
     font-size: var(--font-size-sub);
-    line-height: 2;
+    line-height: 1.6;
     color: var(--text-menu);
 }
 
@@ -122,10 +122,10 @@ nav .wrap .icon-container>div {
 
 nav .wrap .icon-container .fab-box .icon-box {
     position: absolute;
-    top: -70px;
+    top: -60px;
     left: 50%;
     transform: translateX(-50%);
-    min-width: 66px;
+    min-width: 60px;
     aspect-ratio: 1/1;
     overflow: hidden;
     background-color: var(--btn-active-bg);

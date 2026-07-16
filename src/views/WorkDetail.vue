@@ -230,15 +230,14 @@ getWorkDetail()
 
 <style>
 .work-detail-section {
-    padding-top: 5.8rem;
+    padding-top: 50px;
 }
-
 
 
 .work-detail-section .floating-box .icon-box.watchlist {
     background-color: var(--bg-surface);
     color: var(--heart);
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .work-detail-section .floating-box .icon-box.review-create {
