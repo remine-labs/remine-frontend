@@ -45,6 +45,12 @@ const formatDisplayDate = (date: string | Date | null) => {
     return `${yy}.${mm}.${dd}`
 }
 
+interface Tag {
+    label: string
+    category: string | null
+    sentiment: string | null
+}
+
 interface Review {
     reviewId: number
     workId: number
@@ -58,8 +64,10 @@ interface Review {
     endDate: string | null
     createdAt: string
     updatedAt: string
-    tags: string[]
+    tags: Tag[]
 }
+
+
 
 </script>
 
@@ -104,8 +112,8 @@ interface Review {
                     <div class="footer-box chips">
                         <span class="media-type chip important">{{ item.mediaType.toUpperCase() }}</span>
                         <template v-if='item?.tags?.length'>
-                            <span v-for="tag in item.tags" :key="tag" class="tag-item chip default">
-                                {{ tag }}
+                            <span v-for="tag in item.tags" :key="tag.label" class="tag-item chip default">
+                                {{ tag.label }}
                             </span>
                         </template>
                         <span class="rating chip">
