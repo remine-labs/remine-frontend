@@ -177,7 +177,7 @@ getReviewsByWorkId()
 
 <template>
     <section class="work-detail-section">
-        <<<<<<< HEAD=======<div class="floating-box">
+        <div class="floating-box">
             <div class="icon-box watchlist">
                 <button @click="toggleWatchlistHandler">
                     <PhHeart :weight="isWatchlisted ? 'fill' : 'regular'" :size="24" />
@@ -188,112 +188,108 @@ getReviewsByWorkId()
                     <PhPenNib :size="24" />
                 </button>
             </div>
+        </div>
+        <div class="work-bg-box relative">
+            <div class="img-box add-overlay">
+                <img :src="`https://image.tmdb.org/t/p/original${work?.workPosterPath}`" :alt="work?.workTitle" />
             </div>
-            >>>>>>> ccdbe2e (:sparkles: profile feat: workDetail 페이지의 FAB 버튼과 watchlist 연동, watchlist 추가 삭제 가능)
-            <div class="work-bg-box relative">
-                <div class="img-box add-overlay">
-                    <img :src="`https://image.tmdb.org/t/p/original${work?.workPosterPath}`" :alt="work?.workTitle" />
+        </div>
+        <div class="wrap">
+            <div class="work-info-container relative">
+                <div class="img-box poster">
+                    <img :src="`https://image.tmdb.org/t/p/w200${work?.workPosterPath}`" :alt="work?.workTitle" />
                 </div>
-                <<<<<<< HEAD=======<div class="overlay-box">
-            </div>
-            >>>>>>> ccdbe2e (:sparkles: profile feat: workDetail 페이지의 FAB 버튼과 watchlist 연동, watchlist 추가 삭제 가능)
-            </div>
-            <div class="wrap">
-                <div class="work-info-container relative">
-                    <div class="img-box poster">
-                        <img :src="`https://image.tmdb.org/t/p/w200${work?.workPosterPath}`" :alt="work?.workTitle" />
-                    </div>
-                    <div class="work-info-box">
-                        <div class="work-meta-box">
-                            <span class="age-rating" :class="`age-${work?.certification}`">{{ work?.certification
-                                }}</span>
+                <div class="work-info-box">
+                    <div class="work-meta-box">
+                        <span class="age-rating" :class="`age-${work?.certification}`">{{ work?.certification
+                            }}</span>
 
-                            <div class="genre-box description">
-                                <span class="genre" v-for='genre in work?.genres' :key='genre'>{{ genre }}</span>
-                            </div>
-                        </div>
-                        <h2 class="work-title ellipsis-2">{{ work?.workTitle }}</h2>
-                        <div class="work-detail-box">
-                            <p class="release-date">개봉일: {{ work?.workReleaseDate?.replace(/-/g, '.') }}</p>
-                            <p class="runtime" v-if="work?.mediaType === 'movie'">상영 시간: {{ work?.runtime }}분</p>
-                            <p class="tv-info">
-                                <span v-if="showSeason">
-                                    전체 {{ work?.numberOfSeasons }} 시즌
-                                </span>
-                                <span v-if="showSeason && work?.numberOfEpisodes">
-                                    ·
-                                </span>
-                                <span class="episode-info" v-if="work?.numberOfEpisodes">총 {{
-                                    work?.numberOfEpisodes }}부작</span>
-                            </p>
-                        </div>
-                        <!-- TODO: 감독과 각본은 1명 노출 후 그 외 n명 처리 + 말줄임표 처리 -->
-                        <div class="directors-box" v-if='work?.directors?.length'>
-                            감독:
-                            <span class="director" v-for='director in work?.directors' :key='director'>{{ director
-                                }}</span>
-                        </div>
-                        <div class="writers-box" v-if="work?.writers?.length">
-                            각본:
-                            <span class="writer" v-for='writer in work?.writers' :key='writer'>{{ writer }}</span>
+                        <div class="genre-box description">
+                            <span class="genre" v-for='genre in work?.genres' :key='genre'>{{ genre }}</span>
                         </div>
                     </div>
-                </div>
-                <div class="actor-container">
-                    <h3>출연진</h3>
-                    <div class="actor-list-box">
-                        <div class="actor-box" v-for="actor in work?.actors" :key="actor.name">
-                            <div class="img-box">
-                                <img v-if="actor.profilePath"
-                                    :src="`https://image.tmdb.org/t/p/w200${actor.profilePath}`" :alt="actor.name" />
-                            </div>
-                            <span class="actor-name ellipsis-2">
-                                {{ actor.name }}
+                    <h2 class="work-title ellipsis-2">{{ work?.workTitle }}</h2>
+                    <div class="work-detail-box">
+                        <p class="release-date">개봉일: {{ work?.workReleaseDate?.replace(/-/g, '.') }}</p>
+                        <p class="runtime" v-if="work?.mediaType === 'movie'">상영 시간: {{ work?.runtime }}분</p>
+                        <p class="tv-info">
+                            <span v-if="showSeason">
+                                전체 {{ work?.numberOfSeasons }} 시즌
                             </span>
+                            <span v-if="showSeason && work?.numberOfEpisodes">
+                                ·
+                            </span>
+                            <span class="episode-info" v-if="work?.numberOfEpisodes">총 {{
+                                work?.numberOfEpisodes }}부작</span>
+                        </p>
+                    </div>
+                    <!-- TODO: 감독과 각본은 1명 노출 후 그 외 n명 처리 + 말줄임표 처리 -->
+                    <div class="directors-box" v-if='work?.directors?.length'>
+                        감독:
+                        <span class="director" v-for='director in work?.directors' :key='director'>{{ director
+                            }}</span>
+                    </div>
+                    <div class="writers-box" v-if="work?.writers?.length">
+                        각본:
+                        <span class="writer" v-for='writer in work?.writers' :key='writer'>{{ writer }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="actor-container">
+                <h3>출연진</h3>
+                <div class="actor-list-box">
+                    <div class="actor-box" v-for="actor in work?.actors" :key="actor.name">
+                        <div class="img-box">
+                            <img v-if="actor.profilePath" :src="`https://image.tmdb.org/t/p/w200${actor.profilePath}`"
+                                :alt="actor.name" />
                         </div>
+                        <span class="actor-name ellipsis-2">
+                            {{ actor.name }}
+                        </span>
                     </div>
                 </div>
-                <div class=" overview-box">
-                    <h3>줄거리</h3>
-                    <div class="overview">
-                        {{ work?.workOverview }}
-                    </div>
+            </div>
+            <div class=" overview-box">
+                <h3>줄거리</h3>
+                <div class="overview">
+                    {{ work?.workOverview }}
                 </div>
-                <div class="provider-box">
-                    <h3>시청 가능 OTT</h3>
-                    <!-- TODO: OTT 정보 연결
+            </div>
+            <div class="provider-box">
+                <h3>시청 가능 OTT</h3>
+                <!-- TODO: OTT 정보 연결
                  요금제 따라 차등이 존재하는 경우 어떻게 할지 고민
                  각 OTT 사이트의 검색 페이지까지 연결은 가능하겠지만, 실제 작품까지는 연결 어려움
                  cf) 파라마운트에서만 제공하는 작품 체크 필요 나는 학교에서 죽었다 -->
-                    <!-- TODO: JustWatch에서 제공한다는 내용 기재 필수, 법적 문제임 -->
-                    <!-- TODO: 유저가 사용하는 OTT 정보 받을 경우 구분해서 노출 -->
-                    <div class="ott-box">
-                        <div class="ott" v-for='provider in work?.watchProviders' :key='provider'>{{
-                            providerMap[provider]
-                            ||
-                            provider
-                            }}</div>
-                    </div>
+                <!-- TODO: JustWatch에서 제공한다는 내용 기재 필수, 법적 문제임 -->
+                <!-- TODO: 유저가 사용하는 OTT 정보 받을 경우 구분해서 노출 -->
+                <div class="ott-box">
+                    <div class="ott" v-for='provider in work?.watchProviders' :key='provider'>{{
+                        providerMap[provider]
+                        ||
+                        provider
+                    }}</div>
                 </div>
-                <div class="review-list-box">
-                    <h3>내가 쓴 리뷰</h3>
-                    <!-- TODO: 작품 ID를 가지고 작성한 리뷰 조회 api
+            </div>
+            <div class="review-list-box">
+                <h3>내가 쓴 리뷰</h3>
+                <!-- TODO: 작품 ID를 가지고 작성한 리뷰 조회 api
                  작성한 리뷰가 있다면 감상일과 평점 간단하게 노출
                  없다면, "아직 리뷰가 없어요. 리뷰를 쓰고 내 취향의 작품을 추천받아 보세요" 식의 문구 -->
-                </div>
             </div>
-            <div class="floating-box">
-                <div class="icon-box watchlist">
-                    <button @click="toggleWatchlistHandler">
-                        <PhHeart :weight="isWatchlisted ? 'fill' : 'regular'" :size="24" />
-                    </button>
-                </div>
-                <div class="icon-box review-create">
-                    <button @click="goToCreate">
-                        <PhPenNib :size="24" />
-                    </button>
-                </div>
+        </div>
+        <div class="floating-box">
+            <div class="icon-box watchlist">
+                <button @click="toggleWatchlistHandler">
+                    <PhHeart :weight="isWatchlisted ? 'fill' : 'regular'" :size="24" />
+                </button>
             </div>
+            <div class="icon-box review-create">
+                <button @click="goToCreate">
+                    <PhPenNib :size="24" />
+                </button>
+            </div>
+        </div>
     </section>
 </template>
 
