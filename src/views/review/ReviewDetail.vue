@@ -27,6 +27,12 @@ const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value
 }
 
+interface Tag {
+    label: string
+    category: string | null
+    sentiment: string | null
+}
+
 export interface ReviewDetail {
     reviewId: number
     workId: number
@@ -40,7 +46,7 @@ export interface ReviewDetail {
     endDate: string | null
     createdAt: string
     updatedAt: string
-    tags: string[]
+    tags: Tag[]
 }
 
 const formatDisplayDate = (date: string | Date | null) => {
@@ -189,12 +195,12 @@ onMounted(() => {
 
                 <div class="tags-container">
                     <div class="head-box">
-                        <h3 class="description">Tags Type</h3>
+                        <h3>Tags Type</h3>
                         <p>생성된 태그가 만족스러웠나요? <button>평가하기</button></p>
                     </div>
                     <div class="tags-box chips" v-if='review?.tags?.length'>
-                        <span v-for="tag in review.tags" :key="tag" class="tag-item chip default">
-                            {{ tag }}
+                        <span v-for="tag in review.tags" :key="tag.label" class="tag-item chip default">
+                            {{ tag.label }}
                         </span>
                     </div>
                     <span v-else>생성된 태그가 없어요.</span>

@@ -28,7 +28,7 @@ const goToPlaylistDetail = (playlist: Playlist) => {
 
 const playlists = ref<Playlist[]>([]);
 
-const hanndleAddPlaylist = async () => {
+const handleAddPlaylist = async () => {
     try {
         await addPlaylist(playlistUrl.value);
 
@@ -92,7 +92,7 @@ onMounted(async () => {
                 <div class="footer">
                     <div class="btn-box">
                         <button class='close neutral-btn' @click="isAddPlaylistModalOpen = false">취소</button>
-                        <button class='add-playlist-btn active-btn' @click='hanndleAddPlaylist'>추가</button>
+                        <button class='add-playlist-btn active-btn' @click='handleAddPlaylist'>추가</button>
                     </div>
                 </div>
             </div>
