@@ -284,8 +284,8 @@ getReviewsByWorkId()
                     <PhHeart :weight="isWatchlisted ? 'fill' : 'regular'" :size="24" />
                 </button>
             </div>
-            <div class="icon-box review-create" @click="goToCreate">
-                <button>
+            <div class="icon-box review-create">
+                <button @click="goToCreate">
                     <PhPenNib :size="24" />
                 </button>
             </div>
