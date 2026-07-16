@@ -147,7 +147,8 @@ onMounted(() => {
 .search-section .search-container .banner-box {
     text-align: center;
     margin-top: 16px;
-    background-color: var(--chip-default-bg);
+    background-color: var(--bg-gray);
+    color: var(--text-main);
     padding: 10px;
     border-radius: 8px;
     cursor: pointer;
