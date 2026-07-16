@@ -64,7 +64,7 @@ onMounted(async () => {
                         <img :src="item.thumbnailUrl" :alt="item.playlistName">
                     </div>
                     <div class="info-box">
-                        <p class="playlist-name title">
+                        <p class="playlist-name title" @click='goToPlaylistDetail(item)'>
                             {{ item.playlistName }}
                         </p>
                         <p class="video-count">{{ item.videoCount }}개</p>
@@ -108,12 +108,23 @@ onMounted(async () => {
 .playlists-section .playlist-box {
     display: flex;
     gap: 8px;
+    margin-bottom: 8px;
 }
 
 .playlists-section .playlist-box .img-box {
     width: calc(50% - 4px);
     border-radius: 8px;
     overflow: hidden;
+    aspect-ratio: 16 / 9;
+    cursor: pointer;
+}
+
+.playlists-section .playlist-box .info-box {
+    padding: 6px 0;
+}
+
+.playlists-section .playlist-box .title {
+    cursor: pointer;
 }
 
 .playlists-section .move-to-total-video-list {
