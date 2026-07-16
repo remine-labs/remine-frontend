@@ -253,6 +253,10 @@ section div .v3dp__elements[data-v-65eb861b] button.selected span {
   color: var(--text-inverse);
 }
 
+.date-picker-box input {
+  padding: 0;
+}
+
 /* terms */
 .terms-section .wrap {
   padding: 0 30px;
