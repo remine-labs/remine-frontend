@@ -212,16 +212,21 @@ onMounted(async () => {
     position: relative;
     aspect-ratio: 1;
     overflow: hidden;
-    background-color: var(--text-icon);
+    background-color: var(--text-inverse);
 }
 
 .profile-section .calendar-body .date {
     position: absolute;
-    top: 6px;
-    left: 6px;
-    z-index: 1;
+    width: 20px;
+    aspect-ratio: 1 / 1;
+    top: 3px;
+    left: 3px;
+    text-align: center;
     font-size: var(--font-size-sub);
     color: var(--text-inverse);
+    background-color: var(--text-sub);
+    border-radius: 50%;
+    z-index: 1;
 }
 
 .profile-section .calendar-body .poster-box {
@@ -233,5 +238,6 @@ onMounted(async () => {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
 }
 </style>

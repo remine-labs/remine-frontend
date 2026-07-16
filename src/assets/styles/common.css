@@ -39,7 +39,7 @@ section {
   letter-spacing: -0.02em;
 }
 
-.sub-text {
+.description {
   font-size: var(--font-size-sub);
   font-weight: 300;
   line-height: 1.2;
@@ -106,7 +106,7 @@ section {
 .btn-box button {
   border-radius: 8px;
   min-width: 80px;
-  padding: 10px 20px;
+  padding: 8px 16px;
 }
 
 .icon-box button {
@@ -127,6 +127,32 @@ section {
   color: var(--text-main);
 }
 
+.floating-box {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  position: fixed;
+  width: 100%;
+  max-width: 47.5rem;
+  left: 0;
+  right: 0;
+  bottom: 124px;
+  margin: 0 auto;
+  z-index: 999;
+  pointer-events: none;
+}
+
+.floating-box .icon-box {
+  width: 60px;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  box-shadow: var(--box-default);
+  margin-right: 10px;
+
+  cursor: pointer;
+  pointer-events: auto;
+}
+
 /* input */
 input[type="text"],
 input[type="search"],
@@ -138,6 +164,8 @@ textarea {
   border: solid 3px transparent;
   transition: 0.3s ease-in-out;
   outline: none;
+  padding: 4px;
+  line-height: 2.4rem;
 }
 
 *::placeholder {
@@ -224,6 +252,10 @@ section div .v3dp__elements[data-v-65eb861b] button.selected span {
   color: var(--text-inverse);
 }
 
+.date-picker-box input {
+  padding: 0;
+}
+
 /* terms */
 .terms-section .wrap {
   padding: 0 30px;
@@ -250,4 +282,52 @@ section div .v3dp__elements[data-v-65eb861b] button.selected span {
 
 .terms-section .articles-container .content-box {
   margin-bottom: 8px;
+}
+
+/* modal */
+
+.modal-bg {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: #0000008e;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+}
+
+.modal-bg .modal-container {
+  min-width: 300px;
+  width: 90%;
+  max-width: 650px;
+  background-color: var(--bg-canvas);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.modal-bg .modal-container .header,
+.modal-bg .modal-container .body,
+.modal-bg .modal-container .footer {
+  padding: 10px 14px;
+}
+
+.modal-bg .header {
+  background-color: var(--bg-surface);
+}
+
+.modal-bg .body input {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.modal-bg .footer .btn-box {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 12px;
 }
