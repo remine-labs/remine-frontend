@@ -109,7 +109,7 @@ onMounted(() => {
                         <PhMagnifyingGlass :size="24" />
                     </button>
                 </div>
-                <div class="banner-box sub-text" @click='goToPlaylist'>
+                <div class="banner-box description" @click='goToPlaylist'>
                     <p>플레이리스트에 저장하셨다면,</p>
                     <p>한 번 연동으로 검색부터 관심작품까지 한 번에!</p>
                 </div>
@@ -131,9 +131,6 @@ onMounted(() => {
 <style>
 .search-section .input-box .work-search-input {
     width: 100%;
-    line-height: 4rem;
-    text-indent: var(--font-size-body);
-    padding-right: 40px;
     box-sizing: border-box;
 }
 
@@ -141,9 +138,10 @@ onMounted(() => {
     position: absolute;
     right: 3px;
     top: 3px;
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    aspect-ratio: 1 / 1;
     z-index: 99;
+    color: var(--text-sub);
 }
 
 .search-section .search-container .banner-box {

@@ -2,15 +2,15 @@
 import { useRouter } from 'vue-router';
 import { deletePlaylist, getPlaylistDetail } from '../api/youtube';
 import type { PlaylistDetail } from '../api/youtube';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
+const isDeletePlaylistModalOpen = ref(false);
 
 const playlistUrl = route.query.url as string;
 const playlistName = history.state.playlistName;
-const videoCount = history.state.videoCount;
 
 const goToWatchlist = () => {
     router.push('/watchlist')
@@ -30,6 +30,12 @@ const goToSearch = (videoUrl: string) => {
 }
 
 const playlistDetail = ref<PlaylistDetail[]>([]);
+const visiblePlaylistDetail = computed(() =>
+    playlistDetail.value.filter(
+        (item) => item.videoName !== 'Deleted video' && item.videoName !== 'Private video'
+    )
+);
+const videoCount = computed(() => visiblePlaylistDetail.value.length);
 
 const handleDeletePlaylist = async () => {
     try {
@@ -63,10 +69,10 @@ onMounted(async () => {
                 <div class="youtube-playlist-box active" @click='goToPlaylists'>재생 목록</div>
             </div>
             <p class='playlist-info'>{{ playlistName }} · {{ videoCount }} 개</p>
-            <button class="open-delete-modal-btn">삭제하기</button>
+            <button class="open-delete-modal-btn" @click='isDeletePlaylistModalOpen = true'>삭제하기</button>
             <p class="desciption">영상을 선택하면, 작품 정보를 알려드립니다.</p>
             <div class="playlist-item-container">
-                <div class="item-box" v-for='item in playlistDetail' :key='item.videoName'
+                <div class="item-box" v-for='item in visiblePlaylistDetail' :key='item.videoName'
                     @click='goToSearch(item.videoUrl)'>
                     <div class="img-box">
                         <img :src="item.thumbnailUrl" :alt="item.videoName">
@@ -77,17 +83,20 @@ onMounted(async () => {
                 </div>
             </div>
         </div>
-        <div class="modal-bg">
-            <div class="modal-body">
+        <div class="modal-bg delete-playlist-modal" :class="{ hidden: !isDeletePlaylistModalOpen }">
+            <div class="modal-container">
                 <div class="header">
-                    <p>해당 플레이리스트 연동을 해제하시겠습니까?</p>
+                    <p class="title">플레이리스트 연동 해제하기</p>
                 </div>
-                <div class="body btn-box">
-                    <button class="neutral-btn">취소</button>
-                    <button class="active-btn" @click='handleDeletePlaylist'>확인</button>
+                <div class="body">
+                    <p>해당 플레이리스트 연동을 해제하시겠습니까?</p>
+                    <p class='description'>플레이리스트 재연동을 원할 경우, 재생 목록 화면에서 추가해주세요.</p>
                 </div>
                 <div class="footer">
-                    <p>플레이리스트 재연동을 원할 경우, 재생 목록 화면에서 추가해주세요.</p>
+                    <div class="btn-box">
+                        <button class="neutral-btn" @click='isDeletePlaylistModalOpen = false'>취소</button>
+                        <button class="active-btn" @click='handleDeletePlaylist'>확인</button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -154,13 +154,13 @@ onMounted(() => {
                         <span class="icon">
                             <PhInfo :size='24'></PhInfo>
                         </span>
-                        <p class="release-date sub-text">{{ formatDisplayDate(review.workReleaseDate) }}</p>
+                        <p class="release-date description">{{ formatDisplayDate(review.workReleaseDate) }}</p>
                     </div>
                     <div class="watch-period-box">
                         <span class="icon">
                             <PhCalendar :size='24'></PhCalendar>
                         </span>
-                        <div class="date-box sub-text">
+                        <div class="date-box description">
                             <div class="start-date-box">
                                 {{ formatDisplayDate(review.startDate) }}
                             </div>
@@ -174,7 +174,7 @@ onMounted(() => {
                         <span class="icon">
                             <PhStar :size='24'></PhStar>
                         </span>
-                        <div class="rated-point-box sub-text">
+                        <div class="rated-point-box description">
                             {{ review.rating }}
                             <span class="rating-standard">/5</span>
                         </div>
