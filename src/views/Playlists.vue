@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { addPlaylist, getPlaylists } from '../api/youtube';
 import type { Playlist } from '../api/youtube';
-import { PhPlus } from '@phosphor-icons/vue';
+import { PhListPlus } from '@phosphor-icons/vue';
 
 const router = useRouter();
 const playlistUrl = ref('');
@@ -72,9 +72,11 @@ onMounted(async () => {
                     </div>
                 </div>
             </div>
-            <div class="floating-box icon-box">
-                <button class='modal-open-btn' @click="isAddPlaylistModalOpen = true">
-                    <PhPlus :size='24' />
+        </div>
+        <div class="floating-box">
+            <div class="icon-box add-playlist">
+                <button @click="isAddPlaylistModalOpen = true">
+                    <PhListPlus :size='24' />
                 </button>
             </div>
         </div>
@@ -121,8 +123,7 @@ onMounted(async () => {
     z-index: inherit;
 }
 
-.playlists-section .modal-open-btn {
-    background-color: var(--btn-active-bg);
-    color: var(--text-inverse);
+.playlists-section .floating-box .add-playlist {
+    background-color: var(--bg-surface);
 }
 </style>
