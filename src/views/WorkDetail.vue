@@ -219,8 +219,8 @@ getWorkDetail()
                     <PhHeart :weight="isWatchlisted ? 'fill' : 'regular'" :size="24" />
                 </button>
             </div>
-            <div class="icon-box review-create" @click="goToCreate">
-                <button>
+            <div class="icon-box review-create">
+                <button @click="goToCreate">
                     <PhPenNib :size="24" />
                 </button>
             </div>
@@ -233,32 +233,7 @@ getWorkDetail()
     padding-top: 5.8rem;
 }
 
-.work-detail-section .floating-box {
-    display: flex;
-    flex-direction: column;
-    align-items: end;
-    position: fixed;
-    width: 100%;
-    max-width: 47.5rem;
-    left: 0;
-    right: 0;
-    bottom: 124px;
-    margin: 0 auto;
-    z-index: 999;
 
-    pointer-events: none;
-}
-
-.work-detail-section .floating-box .icon-box {
-    width: 60px;
-    aspect-ratio: 1/1;
-    border-radius: 50%;
-    box-shadow: var(--box-default);
-    margin-right: 10px;
-
-    cursor: pointer;
-    pointer-events: auto;
-}
 
 .work-detail-section .floating-box .icon-box.watchlist {
     background-color: var(--bg-surface);
