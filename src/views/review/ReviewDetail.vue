@@ -212,7 +212,7 @@ onMounted(() => {
 
 <style>
 .review-detail-section {
-    padding-top: 58px;
+    padding-top: 50px;
     padding-bottom: 160px;
 }
 

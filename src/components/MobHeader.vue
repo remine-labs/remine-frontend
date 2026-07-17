@@ -64,7 +64,8 @@ header {
 }
 
 .header-section {
-    height: 58px;
+    height: 50px;
+    /* height 값 변경시 reviewDetail, workDetail 추가 수정 필요 */
     box-shadow: 0px 2px 6px #0000001e;
     margin-bottom: 6px;
 }
