@@ -67,7 +67,7 @@ const goToProfile = () => {
 nav {
     position: fixed;
     width: 100%;
-    max-width: 47.5rem;
+    max-width: var(--frame-width);
     bottom: 0;
     left: 0;
     right: 0;
@@ -78,7 +78,7 @@ nav {
 }
 
 .nav-section {
-    height: 60px;
+    height: var(--menu-height);
     color: var(--btn-active-bg)
 }
 
@@ -92,14 +92,9 @@ nav .wrap {
 nav .wrap .icon-container {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 30px;
+    gap: 10px;
     height: inherit;
     padding: 10px 20px;
-}
-
-nav .wrap .icon-container .icon-box {
-    min-width: calc((100% - 120px)/5);
 }
 
 nav .wrap .icon-container .icon-box button {

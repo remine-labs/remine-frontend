@@ -1,8 +1,8 @@
 <script setup lang='ts'>
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { addPlaylist, getPlaylists } from '../api/youtube';
-import type { Playlist } from '../api/youtube';
+import { addPlaylist, getPlaylists } from '../../api/youtube';
+import type { Playlist } from '../../api/youtube';
 import { PhListPlus } from '@phosphor-icons/vue';
 
 const router = useRouter();

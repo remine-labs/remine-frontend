@@ -184,6 +184,8 @@ const submitReview = async () => {
                 </div>
                 <div class="review-write-container">
                     <div class="input-box">
+                        <!-- TODO: 작성한 텍스트 길이에 따라 height 자동 조정 고려
+                         포커싱 되었을 때 mob menu 보이지 않는 UX 고려 -->
                         <textarea v-model="comment" name="review-write" id="review-write"
                             placeholder="자유롭게 감상을 남겨주세요."></textarea>
                     </div>
@@ -198,7 +200,7 @@ const submitReview = async () => {
 
 <style>
 .review-create-section {
-    padding-top: 58px;
+    padding-top: var(--header-height);
 }
 
 .review-create-section .work-info-container {

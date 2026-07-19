@@ -232,7 +232,7 @@ const handleEditSubmit = async () => {
 
 <style>
 .review-edit-section {
-    padding-top: 58px;
+    padding-top: var(--header-height);
 }
 
 .review-edit-section .work-info-container {

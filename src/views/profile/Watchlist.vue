@@ -1,9 +1,9 @@
 <script setup lang='ts'>
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import WorkCard from '../components/WorkCard.vue';
-import { getWatchlist, deleteWatchlist, addWatchlist } from '../api/watchlist.ts';
-import type { Watchlist } from '../api/watchlist.ts';
+import WorkCard from '../../components/WorkCard.vue';
+import { getWatchlist, deleteWatchlist, addWatchlist } from '../../api/watchlist.ts';
+import type { Watchlist } from '../../api/watchlist.ts';
 
 const router = useRouter();
 const watchlist = ref<Watchlist[]>([]);

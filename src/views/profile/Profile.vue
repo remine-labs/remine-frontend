@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { computed, onMounted, ref } from 'vue'
-import { getMe, type MeResponse, logout } from "../api/auth"
-import { api } from '../api/client'
+import { getMe, type MeResponse, logout } from "../../api/auth"
+import { api } from '../../api/client'
 import { useRouter } from 'vue-router';
 import dayjs from 'dayjs';
 
@@ -188,7 +188,7 @@ onMounted(async () => {
 .profile-section .calendar-container .weekday {
     display: flex;
     gap: 4px;
-    /* 변경 시 calendar-body의 gap 같이 조정 필요 -> 추후 변수화 예정*/
+    /* TODO: 변경 시 calendar-body의 gap 같이 조정 필요 -> 추후 변수화 예정*/
     font-size: var(--font-size-title);
     font-weight: 400;
     color: var(--text-sub);
@@ -206,13 +206,13 @@ onMounted(async () => {
     gap: 4px;
 }
 
-.profile-section .calendar-body .empth-box {
+.profile-section .calendar-body .empty-box,
+.profile-section .calendar-body .date-box {
     aspect-ratio: 1 / 1;
 }
 
 .profile-section .calendar-body .date-box {
     position: relative;
-    aspect-ratio: 1;
     overflow: hidden;
     background-color: var(--text-inverse);
 }
@@ -241,5 +241,13 @@ onMounted(async () => {
     height: 100%;
     object-fit: cover;
     object-position: center;
+}
+
+@media screen and (min-width: 402px) {
+
+    .profile-section .calendar-body .empty-box,
+    .profile-section .calendar-body .date-box {
+        aspect-ratio: 2 / 3;
+    }
 }
 </style>

@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { useRouter } from 'vue-router';
-import { deletePlaylist, getPlaylistDetail } from '../api/youtube';
-import type { PlaylistDetail } from '../api/youtube';
+import { deletePlaylist, getPlaylistDetail } from '../../api/youtube';
+import type { PlaylistDetail } from '../../api/youtube';
 import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 

@@ -124,4 +124,11 @@ const goToWorkDetail = () => {
     top: 0;
     padding: 10px;
 }
+
+@media screen and (min-width: 520px) {
+    .work-box {
+        width: calc((100% - 16px) / 3)
+    }
+
+}
 </style>

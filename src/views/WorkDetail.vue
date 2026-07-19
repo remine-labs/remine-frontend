@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { api } from '../api/client'
 import { useRoute, useRouter } from 'vue-router'
 import { PhHeart, PhPenNib } from '@phosphor-icons/vue'
@@ -7,7 +7,6 @@ import { addWatchlist, deleteWatchlist, getWatchlist, type Watchlist } from '../
 
 const route = useRoute()
 const router = useRouter()
-const isWatchlisted = ref(false);
 
 const mediaType = route.params.mediaType as string
 const workId = route.params.workId as string
@@ -44,65 +43,23 @@ export interface WorkDetail {
     numberOfEpisodes: number | null
 }
 
+interface Review {
+    reviewId: number
+    comment: string
+    rating: number
+}
+
 const work = ref<WorkDetail | null>(null)
+const reviews = ref<Review[]>([])
+
 const loading = ref(false)
 const error = ref('')
 
-const toggleWatchlistHandler = async () => {
-    if (!work.value) return;
+const isWatchlisted = ref(false)
 
-    try {
-        if (isWatchlisted.value) {
-            await deleteWatchlist(work.value.mediaType, work.value.workId);
-        } else {
-            await addWatchlist({
-                workId: work.value.workId,
-                mediaType: work.value.mediaType,
-                workTitle: work.value.workTitle,
-                workPosterPath: work.value.workPosterPath,
-                workReleaseDate: work.value.workReleaseDate,
-            });
-        }
-
-        isWatchlisted.value = !isWatchlisted.value;
-    } catch (error) {
-        console.error(error);
-    }
-};
-
-const getWorkDetail = async () => {
-    try {
-        loading.value = true
-        const res = await api.get(
-            `/api/tmdb/contents/${mediaType}/${workId}`
-        )
-
-        work.value = res.data.data
-        const watchlistRes = await getWatchlist();
-
-        isWatchlisted.value = watchlistRes.data.data.content.some(
-            (item: Watchlist) => item.workId === work.value?.workId
-        );
-    } catch (err) {
-        console.error(err)
-        error.value = '작품 정보를 불러오지 못했습니다.'
-    } finally {
-        loading.value = false;
-    }
-}
-
-const goToCreate = () => {
-    router.push({
-        path: '/review/create',
-        state: {
-            id: work.value?.workId,
-            title: work.value?.workTitle,
-            poster: work.value?.workPosterPath,
-            workReleaseDate: work.value?.workReleaseDate,
-            mediaType: work.value?.mediaType
-        },
-    })
-}
+const showSeason = computed(
+    () => (work.value?.numberOfSeasons ?? 0) > 1
+)
 
 const providerMap: Record<string, string> = {
     'Netflix Standard with Ads': 'Netflix',
@@ -137,7 +94,81 @@ const providerMap: Record<string, string> = {
     'YouTube': 'YouTube',
 }
 
+const goToCreate = () => {
+    router.push({
+        path: '/review/create',
+        state: {
+            id: work.value?.workId,
+            title: work.value?.workTitle,
+            poster: work.value?.workPosterPath,
+            workReleaseDate: work.value?.workReleaseDate,
+            mediaType: work.value?.mediaType
+        },
+    })
+}
+
+const toggleWatchlistHandler = async () => {
+    if (!work.value) return
+
+    try {
+        if (isWatchlisted.value) {
+            await deleteWatchlist(work.value.mediaType, work.value.workId)
+        } else {
+            await addWatchlist({
+                workId: work.value.workId,
+                mediaType: work.value.mediaType,
+                workTitle: work.value.workTitle,
+                workPosterPath: work.value.workPosterPath,
+                workReleaseDate: work.value.workReleaseDate,
+            })
+        }
+
+        isWatchlisted.value = !isWatchlisted.value
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+const getWorkDetail = async () => {
+    try {
+        loading.value = true
+
+        const res = await api.get(
+            `/api/tmdb/contents/${mediaType}/${workId}`
+        )
+
+        work.value = res.data.data
+
+        const watchlistRes = await getWatchlist()
+
+        isWatchlisted.value = watchlistRes.data.data.content.some(
+            (item: Watchlist) => item.workId === work.value?.workId
+        )
+    } catch (err) {
+        console.error(err)
+        error.value = '작품 정보를 불러오지 못했습니다.'
+    } finally {
+        loading.value = false
+    }
+}
+
+const getReviewsByWorkId = async () => {
+    try {
+        const res = await api.get(`/api/reviews/work/${workId}`)
+        reviews.value = res.data.data ?? []
+    } catch (err) {
+        console.error(err)
+        reviews.value = []
+    }
+}
+
+// TODO: 하단에 '내가 쓴 리뷰' 부분 연결
+// const goToReviewDetail = (reviewId: number) => {
+//     router.push(`/review/${reviewId}`)
+// }
+
 getWorkDetail()
+getReviewsByWorkId()
 </script>
 
 <template>
@@ -165,16 +196,22 @@ getWorkDetail()
                     <div class="work-detail-box description">
                         <p class="release-date">개봉일: {{ work?.workReleaseDate?.replace(/-/g, '.') }}</p>
                         <p class="runtime" v-if="work?.mediaType === 'movie'">상영 시간: {{ work?.runtime }}분</p>
-                        <p class="season-info" v-if="work?.numberOfSeasons && work?.numberOfSeasons > 1">시즌: {{
-                            work?.numberOfSeasons }}</p>
-                        <p class="episode-info" v-if="work?.numberOfEpisodes">총 {{
-                            work?.numberOfEpisodes }}부작</p>
+                        <p class="tv-info">
+                            <span v-if="showSeason">
+                                전체 {{ work?.numberOfSeasons }} 시즌
+                            </span>
+                            <span v-if="showSeason && work?.numberOfEpisodes">
+                                ·
+                            </span>
+                            <span class="episode-info" v-if="work?.numberOfEpisodes">총 {{
+                                work?.numberOfEpisodes }}부작</span>
+                        </p>
                     </div>
-                    <div class="directors-box description">
+                    <div class="directors-box description" v-if='work?.directors?.length'>
                         감독:
                         <span class="director" v-for='director in work?.directors' :key='director'>{{ director }}</span>
                     </div>
-                    <div class="writers-box description">
+                    <div class="writers-box description" v-if="work?.writers?.length">
                         각본:
                         <span class="writer" v-for='writer in work?.writers' :key='writer'>{{ writer }}</span>
                     </div>
@@ -211,6 +248,9 @@ getWorkDetail()
             </div>
             <div class="review-list-box">
                 <h3>내가 쓴 리뷰</h3>
+                <!-- TODO: 작품 ID를 가지고 작성한 리뷰 조회 api
+                 작성한 리뷰가 있다면 감상일과 평점 간단하게 노출
+                 없다면, "아직 리뷰가 없어요. 리뷰를 쓰고 내 취향의 작품을 추천받아 보세요" 식의 문구 -->
             </div>
         </div>
         <div class="floating-box">
@@ -230,7 +270,7 @@ getWorkDetail()
 
 <style>
 .work-detail-section {
-    padding-top: 50px;
+    padding-top: var(--header-height);
 }
 
 
@@ -339,6 +379,10 @@ getWorkDetail()
     margin-bottom: 6px;
 }
 
+.work-detail-section .work-info-box .work-detail-box {
+    margin-bottom: 6px;
+}
+
 .work-detail-section .work-info-box .directors-box {
     margin-bottom: 6px;
 }
@@ -428,5 +472,11 @@ getWorkDetail()
 
 .work-detail-section .review-list-box {
     margin-top: 30px;
+}
+
+@media screen and (min-width: 520px) {
+    .work-detail-section .work-info-container .img-box {
+        width: calc((80% - 16px) / 2 - 8px);
+    }
 }
 </style>
