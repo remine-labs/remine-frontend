@@ -5,6 +5,7 @@ export interface MeResponse {
   email: string;
   name: string;
   provider: string;
+  profileUrl: string;
 }
 
 export const getMe = async (): Promise<MeResponse> => {
