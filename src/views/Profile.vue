@@ -95,7 +95,8 @@ onMounted(async () => {
             <div class="user-container" v-if='user'>
                 <div class="user-info-box">
                     <div class="img-box profile-img">
-                        img
+                        <img :src="user.profileUrl" :alt="`${user.name}의 프로필 이미지`">
+                        <!-- TODO: 이미지 값이 null 일 때 대체 이미지 필요 -->
                     </div>
                     <p class="username">{{ user.name }}</p>
                     <button>edit</button>
@@ -119,6 +120,7 @@ onMounted(async () => {
             </div>
             <div class="calendar-container">
                 <div class="calendar-header">
+                    <!-- TODO: Monthly + 좌우 버튼으로 월 변경 -->
                     <input type="number" v-model="year" />
                     <input type="number" v-model="month" />
                     <button class='active-btn' @click='getHistory'>조회</button>
