@@ -467,6 +467,10 @@ getReviewsByWorkId()
 }
 
 @media screen and (min-width: 520px) {
+    .work-detail-section .work-bg-box {
+        height: 300px;
+    }
+
     .work-detail-section .work-info-container .img-box {
         width: calc((80% - 16px) / 2 - 8px);
     }

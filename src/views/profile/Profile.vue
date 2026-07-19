@@ -139,9 +139,8 @@ onMounted(async () => {
                     <div class="empty-box" v-for="n in firstDay" :key="'empty-' + n" />
                     <div class="date-box" v-for="n in daysInMonth" :key="n">
                         <span class='date'>{{ n }}</span>
-                        <div class="poster-box img-box">
-                            <img v-if="calendarMap[n]"
-                                :src="'https://image.tmdb.org/t/p/w200' + calendarMap[n]?.[0]?.workPosterPath"
+                        <div class="poster-box img-box" v-if="calendarMap[n]">
+                            <img :src="'https://image.tmdb.org/t/p/w200' + calendarMap[n]?.[0]?.workPosterPath"
                                 :alt="calendarMap[n]?.[0]?.workTitle">
                         </div>
                     </div>
