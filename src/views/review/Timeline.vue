@@ -74,6 +74,7 @@ interface Review {
 <template>
     <section class="timeline-section">
         <div class="wrap">
+            <!-- TODO: filter 구현 -->
             <div class="filter-container">
                 <div class="filter-box sort-date">
                     <button>최신 순</button>
@@ -122,6 +123,7 @@ interface Review {
                     </div>
                 </div>
             </div>
+            <!-- TODO: pagination -->
             <!-- <div class="pagination-container">
                 <button @click="fetchTimeline(currentPage - 1)" :disabled="currentPage === 0">
                     이전
@@ -136,13 +138,9 @@ interface Review {
 </template>
 
 <style>
-.timeline-section .timeline-container {
-    margin: 20px 0;
-}
-
 .timeline-section .timeline-box {
     padding: 14px;
-    margin-bottom: 20px;
+    margin-top: 20px;
     border-radius: 8px;
     background-color: var(--bg-elevated);
     box-shadow: var(--box-default)

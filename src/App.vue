@@ -10,7 +10,7 @@
 
 <style>
 #app-root {
-  max-width: 47.5rem;
+  max-width: var(--frame-width);
   margin: 0 auto;
   min-height: 100dvh;
   overflow: hidden;

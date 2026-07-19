@@ -33,11 +33,13 @@ const showBack = computed(() => header.value?.showBack)
         <div class="header-section">
             <div class="wrap">
                 <div class="title-box">
-                    <div class="icon-box">
-                        <button v-if="showBack" @click="router.back()">
-                            <PhCaretLeft :size='32'></PhCaretLeft>
+                    <div v-if="showBack" class="icon-box">
+                        <button @click="router.back()">
+                            <PhCaretLeft :size="32" />
                         </button>
                     </div>
+                    <!-- 페이지 이동 시, 페이지에 따라 header 값 변경으로 잡아두었으나, 현재 구조로는 딜레이 발생
+                     추후 리팩토링을 통해 첫 렌더 전에 상태가 준비되도록 변경 예정 -->
                     <h1 class='logo'>{{ title }}</h1>
                 </div>
                 <div class="icon-box">
@@ -54,7 +56,7 @@ const showBack = computed(() => header.value?.showBack)
 header {
     position: fixed;
     width: 100%;
-    max-width: 47.5rem;
+    max-width: var(--frame-width);
     top: 0;
     left: 0;
     right: 0;
@@ -64,14 +66,14 @@ header {
 }
 
 .header-section {
-    height: 50px;
-    /* height 값 변경시 reviewDetail, workDetail 추가 수정 필요 */
+    height: var(--header-height);
     box-shadow: 0px 2px 6px #0000001e;
     margin-bottom: 6px;
 }
 
 .header-section .wrap {
     display: flex;
+    gap: 10px;
     height: inherit;
     align-items: center;
     justify-content: space-between;
@@ -80,7 +82,10 @@ header {
 
 .header-section .title-box {
     display: flex;
-    gap: 10px;
     align-items: center;
+}
+
+.header-section .title-box .icon-box {
+    margin-right: 10px;
 }
 </style>

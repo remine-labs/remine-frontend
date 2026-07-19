@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Index from "../views/Index.vue";
-import OAuthCallback from "../views/OAuthCallback.vue";
+import Index from "../views/auth/Index.vue";
+import OAuthCallback from "../views/auth/OAuthCallback.vue";
 import Home from "../views/Home.vue";
 import Search from "../views/Search.vue";
 import DefaultLayout from "../components/DefaultLayout.vue";
@@ -8,13 +8,13 @@ import Timeline from "../views/review/Timeline.vue";
 import ReviewCreate from "../views/review/ReviewCreate.vue";
 import ReviewDetail from "../views/review/ReviewDetail.vue";
 import ReviewEdit from "../views/review/ReviewEdit.vue";
-import Profile from "../views/Profile.vue";
+import Profile from "../views/profile/Profile.vue";
 import WorkDetail from "../views/WorkDetail.vue";
-import Watchlist from "../views/Watchlist.vue";
-import Playlists from "../views/Playlists.vue";
-import Playlist from "../views/Playlist.vue";
-import PrivacyPolicyView from "../views/policy/PrivacyPolicyView.vue";
-import ServiceTermsView from "../views/policy/ServiceTermsView.vue";
+import Watchlist from "../views/profile/Watchlist.vue";
+import Playlists from "../views/profile/Playlists.vue";
+import Playlist from "../views/profile/Playlist.vue";
+import PrivacyPolicyView from "../views/settings/PrivacyPolicyView.vue";
+import ServiceTermsView from "../views/settings/ServiceTermsView.vue";
 
 const router = createRouter({
   history: createWebHistory(),

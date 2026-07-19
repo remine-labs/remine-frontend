@@ -9,29 +9,18 @@ const route = useRoute()
 const router = useRouter()
 const reviewId = Number(route.params.reviewId)
 
-const review = ref<ReviewDetail | null>(null)
-const isLoading = ref(true)
-const errorMessage = ref('')
-
-const goToEdit = () => {
-    router.push(`/review/${route.params.reviewId}/edit`)
-}
-
-const goToWorkDetail = () => {
-    router.push(`/work/${review.value?.mediaType}/${review.value?.workId}`)
-}
-
-const isMenuOpen = ref(false)
-
-const toggleMenu = () => {
-    isMenuOpen.value = !isMenuOpen.value
-}
-
 interface Tag {
     label: string
     category: string | null
     sentiment: string | null
 }
+
+export type AiTagStatus =
+    | 'NONE'
+    | 'PENDING'
+    | 'PROCESSING'
+    | 'SUCCESS'
+    | 'FAILED'
 
 export interface ReviewDetail {
     reviewId: number
@@ -46,8 +35,28 @@ export interface ReviewDetail {
     endDate: string | null
     createdAt: string
     updatedAt: string
+    aiTagStatus: AiTagStatus
     tags: Tag[]
 }
+
+
+const review = ref<ReviewDetail | null>(null)
+const isLoading = ref(true)
+const errorMessage = ref('')
+const isMenuOpen = ref(false)
+
+const toggleMenu = () => {
+    isMenuOpen.value = !isMenuOpen.value
+}
+
+const goToEdit = () => {
+    router.push(`/review/${route.params.reviewId}/edit`)
+}
+
+const goToWorkDetail = () => {
+    router.push(`/work/${review.value?.mediaType}/${review.value?.workId}`)
+}
+
 
 const formatDisplayDate = (date: string | Date | null) => {
     if (!date) return 'ING'
@@ -195,10 +204,22 @@ onMounted(() => {
 
                 <div class="tags-container">
                     <div class="head-box">
-                        <h3>Tags Type</h3>
-                        <p>생성된 태그가 만족스러웠나요? <button>평가하기</button></p>
+                        <template v-if="review.aiTagStatus === 'NONE'">
+                            <h3>내가 선택한 태그</h3>
+                        </template>
+
+                        <template v-else>
+                            <h3>AI 태그</h3>
+
+                            <div class="rating-box">
+                                <button>생성된 태그가 만족스러우셨나요? 평가하기</button>
+                            </div>
+                        </template>
                     </div>
                     <div class="tags-box chips" v-if='review?.tags?.length'>
+                        <!-- TODO: tags.sentiment 에 따라 컬러 차이 필요
+                         태그 생성 과정 동안 스켈레톤 처리
+                         aiTagStatus 값으로 확인 및 처리 -->
                         <span v-for="tag in review.tags" :key="tag.label" class="tag-item chip default">
                             {{ tag.label }}
                         </span>
@@ -212,7 +233,7 @@ onMounted(() => {
 
 <style>
 .review-detail-section {
-    padding-top: 50px;
+    padding-top: var(--header-height);
     padding-bottom: 160px;
 }
 
@@ -328,5 +349,15 @@ onMounted(() => {
 
 .review-detail-section .tags-container .head-box p button {
     margin-left: 8px;
+}
+
+@media screen and (min-width: 520px) {
+    .review-detail-section .work-info-container {
+        aspect-ratio: 3 / 2;
+    }
+
+    .review-detail-section .work-info-container .img-box {
+        margin-top: -10%;
+    }
 }
 </style>

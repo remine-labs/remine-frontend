@@ -66,6 +66,12 @@ html {
 
 /* token */
 :root {
+  /* UI system */
+  /* frame */
+  --frame-width: 401px;
+  --header-height: 44px;
+  --menu-height: 54px;
+
   /* font */
   /* family */
   --font-family-logo: "Cafe24SuperMagic", sans-serif;
@@ -79,6 +85,7 @@ html {
   --font-size-sub: 1.2rem;
 
   /* color */
+  /* brand */
   --color-brand: #a90101;
 
   /* background */
@@ -136,6 +143,7 @@ body {
 @media (prefers-color-scheme: dark) {
   :root {
     /* color */
+    /* brand */
     --color-brand: #bd2c2c;
 
     /* background */
@@ -163,5 +171,31 @@ body {
     /* system */
     --error: #d64545;
     --success: #35974f;
+  }
+}
+
+@media screen and (min-width: 390px) {
+  :root {
+    /* UI system */
+    /* frame */
+    --header-height: 50px;
+  }
+}
+
+@media screen and (min-width: 402px) {
+  :root {
+    /* UI system */
+    /* frame */
+    --frame-width: 520px;
+    --header-height: 54px;
+    --menu-height: 62px;
+  }
+}
+
+@media screen and (min-width: 520px) {
+  :root {
+    /* UI system */
+    /* frame */
+    --frame-with: 768px;
   }
 }
