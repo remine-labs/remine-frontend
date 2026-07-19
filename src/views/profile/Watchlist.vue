@@ -6,6 +6,7 @@ import { getWatchlist, deleteWatchlist, addWatchlist } from '../../api/watchlist
 import type { Watchlist } from '../../api/watchlist.ts';
 
 const router = useRouter();
+
 const watchlist = ref<Watchlist[]>([]);
 
 const goToPlaylists = () => {
@@ -54,6 +55,7 @@ onMounted(async () => {
                 <div class="youtube-playlist-box" @click='goToPlaylists'><button>재생 목록</button></div>
             </div>
             <div class="filter-box">
+                <!-- TODO: filter 디자인 -->
                 <div class="checkbox">
                     <input type="checkbox" id='checkbox-movie'>
                     <label for="checkbox-movie">영화</label>
@@ -93,5 +95,11 @@ onMounted(async () => {
 .tab-container div.active {
     background: var(--btn-active-bg);
     color: var(--text-inverse);
+}
+
+.watchlist-section .filter-box {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
 }
 </style>

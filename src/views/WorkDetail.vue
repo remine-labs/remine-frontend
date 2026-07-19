@@ -174,13 +174,13 @@ getReviewsByWorkId()
 <template>
     <section class="work-detail-section">
         <div class="work-bg-box relative">
-            <div class="img-box">
+            <div class="img-box add-overlay">
                 <img :src="`https://image.tmdb.org/t/p/original${work?.workPosterPath}`" :alt="work?.workTitle" />
             </div>
             <div class="overlay-box"></div>
         </div>
         <div class="wrap">
-            <div class="work-info-container">
+            <div class="work-info-container relative">
                 <div class="img-box poster">
                     <img :src="`https://image.tmdb.org/t/p/w200${work?.workPosterPath}`" :alt="work?.workTitle" />
                 </div>
@@ -239,6 +239,9 @@ getReviewsByWorkId()
             </div>
             <div class="provider-box">
                 <h3>시청 가능 OTT</h3>
+                <!-- TODO: OTT 정보 연결
+                 요금제 따라 차등이 존재하는 경우 어떻게 할지 고민
+                 각 OTT 사이트의 검색 페이지까지 연결은 가능하겠지만, 실제 작품까지는 연결 어려움-->
                 <div class="ott-box">
                     <div class="ott" v-for='provider in work?.watchProviders' :key='provider'>{{ providerMap[provider]
                         ||
@@ -273,7 +276,6 @@ getReviewsByWorkId()
     padding-top: var(--header-height);
 }
 
-
 .work-detail-section .floating-box .icon-box.watchlist {
     background-color: var(--bg-surface);
     color: var(--heart);
@@ -294,27 +296,24 @@ getReviewsByWorkId()
     overflow: hidden;
 }
 
-.work-detail-section .work-bg-box .img-box:before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-color: #5353533c;
-}
-
 .work-detail-section .work-bg-box img {
     margin-top: -15%;
     filter: blur(3px);
     transform: scale(1.1);
 }
 
+.work-detail-section .wrap>div {
+    margin-bottom: 30px;
+}
+
 .work-detail-section .wrap .work-info-container {
     display: flex;
     gap: 16px;
-    transform: translateY(-50px);
+    margin-top: -20%;
     background-color: var(--bg-elevated);
     border-radius: 8px;
     padding: 14px;
-    box-shadow: 0px 0px 10px #0000000d
+    box-shadow: var(--box-default);
 }
 
 .work-detail-section .work-info-container .img-box {
@@ -324,7 +323,7 @@ getReviewsByWorkId()
     margin-bottom: -40px;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0px 0px 10px #0000000d
+    box-shadow: var(--box-default);
 }
 
 .work-detail-section .work-info-container .work-info-box {
@@ -343,6 +342,9 @@ getReviewsByWorkId()
     border-radius: 4px;
     margin-right: 6px;
 }
+
+/* TODO: 연령별 칩 컬러 디자인 필요
+예정 ALL - green, 12 - orange, 15 - yellow, 19 - red, etc - gray */
 
 .work-detail-section .work-meta-box .age-rating.age-15 {
     background-color: #fced1f;
@@ -380,7 +382,7 @@ getReviewsByWorkId()
 }
 
 .work-detail-section .work-info-box .work-detail-box {
-    margin-bottom: 6px;
+    margin-bottom: 16px;
 }
 
 .work-detail-section .work-info-box .directors-box {
@@ -417,6 +419,8 @@ getReviewsByWorkId()
     margin-top: 10px;
 }
 
+/* MEMO: 390px 이하에서 보이는 개수 조절할 건지 고민 필요 */
+
 .work-detail-section .actor-list-box .actor-box {
     display: flex;
     flex-direction: column;
@@ -436,10 +440,6 @@ getReviewsByWorkId()
     text-align: center;
 }
 
-.work-detail-section .overview-box {
-    margin-top: 30px;
-}
-
 .work-detail-section .overview-box .overview {
     margin-top: 10px;
     font-size: var(--font-size-long);
@@ -448,10 +448,6 @@ getReviewsByWorkId()
     background-color: var(--bg-elevated);
     padding: 16px;
     box-shadow: var(--box-default);
-}
-
-.work-detail-section .provider-box {
-    margin-top: 30px;
 }
 
 .work-detail-section .provider-box .ott-box {
@@ -468,10 +464,6 @@ getReviewsByWorkId()
     background-color: #afafaf;
     word-break: break-all;
     text-align: center;
-}
-
-.work-detail-section .review-list-box {
-    margin-top: 30px;
 }
 
 @media screen and (min-width: 520px) {

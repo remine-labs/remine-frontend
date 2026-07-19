@@ -32,7 +32,6 @@ const review = ref<ReviewForm>({
     endDate: undefined,
 })
 
-
 const work = ref<WorkInfo>({
     id: 0,
     title: '',
@@ -41,9 +40,25 @@ const work = ref<WorkInfo>({
     mediaType: '',
 })
 
+const isWatching = ref(false)
 
-// 별점 입력
 const ratingBoxRef = ref<HTMLElement | null>(null)
+
+const formatDate = (date: Date) => {
+    return date.toISOString().slice(0, 10)
+}
+
+watch(isWatching, (newValue, oldValue) => {
+    // 감상중 체크
+    if (newValue) {
+        review.value.endDate = undefined
+    }
+
+    // 감상중 해제
+    if (oldValue && !newValue) {
+        review.value.endDate = new Date()
+    }
+})
 
 const getStarFill = (index: number) => {
     const rating = review.value.rating
@@ -68,50 +83,6 @@ const handleRatingClick = (e: MouseEvent) => {
 
     review.value.rating = Math.min(5, Math.max(0, value))
 }
-
-
-const isWatching = ref(false)
-
-const formatDate = (date: Date) => {
-    return date.toISOString().slice(0, 10)
-}
-
-
-watch(isWatching, (newValue, oldValue) => {
-    // 감상중 체크
-    if (newValue) {
-        review.value.endDate = undefined
-    }
-
-    // 감상중 해제
-    if (oldValue && !newValue) {
-        review.value.endDate = new Date()
-    }
-})
-
-onMounted(async () => {
-    const res = await getReviewDetail(reviewId)
-    const detail = res.data.data
-
-    review.value = {
-        rating: detail.rating,
-        comment: detail.comment,
-        startDate: detail.startDate ? new Date(detail.startDate) : undefined,
-        endDate: detail.endDate ? new Date(detail.endDate) : undefined,
-    }
-
-    isWatching.value = !detail.endDate
-
-    work.value = {
-        id: detail.workId,
-        title: detail.workTitle,
-        posterPath: detail.workPosterPath,
-        workReleaseDate: detail.workReleaseDate,
-        mediaType: detail.mediaType,
-    }
-
-    console.log(detail)
-})
 
 const handleEditSubmit = async () => {
     if (!review.value.startDate) {
@@ -172,15 +143,38 @@ const handleEditSubmit = async () => {
         alert(`수정 실패\n${errorMsg}`)
     }
 }
+
+onMounted(async () => {
+    const res = await getReviewDetail(reviewId)
+    const detail = res.data.data
+
+    review.value = {
+        rating: detail.rating,
+        comment: detail.comment,
+        startDate: detail.startDate ? new Date(detail.startDate) : undefined,
+        endDate: detail.endDate ? new Date(detail.endDate) : undefined,
+    }
+
+    isWatching.value = !detail.endDate
+
+    work.value = {
+        id: detail.workId,
+        title: detail.workTitle,
+        posterPath: detail.workPosterPath,
+        workReleaseDate: detail.workReleaseDate,
+        mediaType: detail.mediaType,
+    }
+
+    console.log(detail)
+})
 </script>
 
 <template>
     <section class="review-edit-section">
         <div class="work-info-container relative" v-if="work.id">
-            <div class="img-box">
+            <div class="img-box add-overlay">
                 <img :src="`https://image.tmdb.org/t/p/original${work.posterPath}`" :alt="work.title" />
             </div>
-            <div class="overlay-box"></div>
         </div>
         <div class="wrap">
             <form @submit.prevent='handleEditSubmit'>

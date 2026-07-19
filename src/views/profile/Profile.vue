@@ -7,22 +7,14 @@ import dayjs from 'dayjs';
 
 const router = useRouter()
 
-const user = ref<MeResponse | null>(null);
-
-const goToWatchlist = () => {
-    router.push('/watchlist')
-}
-
-// const goToReviewDetail = (reviewId: number) => {
-//     router.push(`/review/${reviewId}`)
-// }
-
 interface HistoryItem {
     reviewId: number,
     workTitle: string,
     workPosterPath: string,
     startDate: string
 }
+
+const user = ref<MeResponse | null>(null);
 
 const currentMonth = ref(dayjs())
 
@@ -35,12 +27,20 @@ const firstDay = computed(() =>
     currentMonth.value.startOf('month').day()
 )
 
-console.log(daysInMonth.value, firstDay.value)
-
 const historyList = ref<HistoryItem[]>([])
-
 const historyMap = ref<Record<number, HistoryItem[]>>({})
+
 const calendarMap = computed(() => historyMap.value)
+
+const goToWatchlist = () => {
+    router.push('/watchlist')
+}
+
+// TODO: activity calendar에서 review 클릭시 이동
+// const goToReviewDetail = (reviewId: number) => {
+//     router.push(`/review/${reviewId}`)
+// }
+
 
 const getHistory = async () => {
     currentMonth.value = dayjs(`${year.value}-${month.value}-01`)
@@ -99,10 +99,11 @@ onMounted(async () => {
                         <!-- TODO: 이미지 값이 null 일 때 대체 이미지 필요 -->
                     </div>
                     <p class="username">{{ user.name }}</p>
-                    <button>edit</button>
                 </div>
+                <!-- TODO: settings 버튼은 header bell 위치로 변경
+                 logout은 settings 하위 기능으로 이동 -->
                 <div class="btn-box">
-                    <button>setting</button>
+                    <button>settings</button>
                 </div>
                 <div class="btn-box">
                     <button id='logout-btn' @click='handleLogout'>logout</button>
@@ -146,6 +147,7 @@ onMounted(async () => {
                     </div>
                 </div>
             </div>
+            <!-- MEMO: 추천 시스템 완성 후, 최근 태그 통계 가능한지 확인 필요 -->
         </div>
     </section>
 </template>

@@ -7,10 +7,12 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
-const isDeletePlaylistModalOpen = ref(false);
 
 const playlistUrl = route.query.url as string;
 const playlistName = history.state.playlistName;
+
+const isDeletePlaylistModalOpen = ref(false);
+const videoCount = computed(() => visiblePlaylistDetail.value.length);
 
 const goToWatchlist = () => {
     router.push('/watchlist')
@@ -35,7 +37,6 @@ const visiblePlaylistDetail = computed(() =>
         (item) => item.videoName !== 'Deleted video' && item.videoName !== 'Private video'
     )
 );
-const videoCount = computed(() => visiblePlaylistDetail.value.length);
 
 const handleDeletePlaylist = async () => {
     try {
@@ -69,6 +70,7 @@ onMounted(async () => {
                 <div class="youtube-playlist-box active" @click='goToPlaylists'>재생 목록</div>
             </div>
             <p class='playlist-info'>{{ playlistName }} · {{ videoCount }} 개</p>
+            <!-- TODO: 삭제하기 버튼과 description 디자인 및 위치 설정 필요 -->
             <button class="open-delete-modal-btn" @click='isDeletePlaylistModalOpen = true'>삭제하기</button>
             <p class="desciption">영상을 선택하면, 작품 정보를 알려드립니다.</p>
             <div class="playlist-item-container">

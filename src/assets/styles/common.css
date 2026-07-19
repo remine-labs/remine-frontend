@@ -226,7 +226,8 @@ textarea:focus {
   color: var(--heart);
 }
 
-.overlay-box {
+.img-box.add-overlay:before {
+  content: "";
   position: absolute;
   inset: 0;
   background-color: #53535380;
