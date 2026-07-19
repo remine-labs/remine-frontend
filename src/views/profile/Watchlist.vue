@@ -6,7 +6,6 @@ import { getWatchlist, deleteWatchlist, addWatchlist } from '../../api/watchlist
 import type { Watchlist } from '../../api/watchlist.ts';
 
 const router = useRouter();
-
 const watchlist = ref<Watchlist[]>([]);
 
 const goToPlaylists = () => {
