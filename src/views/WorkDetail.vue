@@ -189,7 +189,7 @@ getReviewsByWorkId()
                 <div class="work-info-box">
                     <div class="work-meta-box">
                         <span class="age-rating" :class="`age-${work?.certification}`">{{ work?.certification
-                            }}</span>
+                        }}</span>
 
                         <div class="genre-box description">
                             <span class="genre" v-for='genre in work?.genres' :key='genre'>{{ genre }}</span>
@@ -217,7 +217,7 @@ getReviewsByWorkId()
                                 >>>>>>> ce47b6a (:art: ui-polich style: 반응형 및 폴더 구조화)
                                 감독:
                                 <span class="director" v-for='director in work?.directors' :key='director'>{{ director
-                                    }}</span>
+                                }}</span>
                             </div>
                             <div class="writers-box description" v-if="work?.writers?.length">
                                 각본:
@@ -258,7 +258,7 @@ getReviewsByWorkId()
                             providerMap[provider]
                             ||
                             provider
-                            }}</div>
+                        }}</div>
                     </div>
                 </div>
                 <div class="review-list-box">
@@ -292,6 +292,7 @@ getReviewsByWorkId()
                     </button>
                 </div>
             </div>
+        </div>
     </section>
 </template>
 
