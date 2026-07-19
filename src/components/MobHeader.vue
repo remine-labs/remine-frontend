@@ -3,15 +3,15 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { PhBell, PhCaretLeft } from '@phosphor-icons/vue'
 
+const route = useRoute()
+const router = useRouter()
+
 // TODO: 추후 vue-router RouteMeta를 확장하는 방식 고려
 type HeaderMeta = {
     title?: string
     titleType?: 'dynamic'
     showBack?: boolean
 }
-
-const route = useRoute()
-const router = useRouter()
 
 const header = computed<HeaderMeta>(() => route.meta.header as HeaderMeta)
 

@@ -6,8 +6,10 @@ import type { Playlist } from '../../api/youtube';
 import { PhListPlus } from '@phosphor-icons/vue';
 
 const router = useRouter();
+
 const playlistUrl = ref('');
 const isAddPlaylistModalOpen = ref(false);
+const playlists = ref<Playlist[]>([]);
 
 const goToWatchlist = () => {
     router.push("/watchlist")
@@ -26,8 +28,6 @@ const goToPlaylistDetail = (playlist: Playlist) => {
     });
 }
 
-const playlists = ref<Playlist[]>([]);
-
 const handleAddPlaylist = async () => {
     try {
         await addPlaylist(playlistUrl.value);
@@ -37,7 +37,6 @@ const handleAddPlaylist = async () => {
         console.error(error)
     }
 }
-
 
 
 onMounted(async () => {
@@ -67,6 +66,11 @@ onMounted(async () => {
                         <p class="playlist-name title" @click='goToPlaylistDetail(item)'>
                             {{ item.playlistName }}
                         </p>
+                        <!-- FIXME: 서버 연결 후, DB에서 가져오지 않을 때 개수 확인 필요
+                         1. videoCount가 58개에서 변경되었는가
+                         2. privateVideo, deletedVideo는 제외된 값인가
+                         3. 아닐 경우 video-count를 삭제하고 updatedAt으로 대체
+                         4. 실제 영상 개수는 상세 페이지에서 확인 -->
                         <p class="video-count">{{ item.videoCount }}개</p>
                         <button class="move-to-total-video-list" @click='goToPlaylistDetail(item)'>전체 영상 보기</button>
                     </div>

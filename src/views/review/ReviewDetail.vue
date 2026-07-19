@@ -150,10 +150,9 @@ onMounted(() => {
 
         <template v-else-if="review">
             <div class="work-info-container relative">
-                <div class="img-box">
+                <div class="img-box add-overlay">
                     <img :src="`https://image.tmdb.org/t/p/original${review.workPosterPath}`" :alt="review.workTitle" />
                 </div>
-                <div class="overlay-box"></div>
                 <div class="icon-box" @click='toggleMenu'>
                     <PhDotsThreeVertical :size='30'></PhDotsThreeVertical>
                 </div>

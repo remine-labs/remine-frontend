@@ -8,12 +8,13 @@ const goToHome = () => {
     router.push('/home')
 }
 
-const goToTimeline = () => {
-    router.push('/timeline')
-}
-
 const goToSearch = () => {
     router.push('/search')
+}
+
+
+const goToTimeline = () => {
+    router.push('/timeline')
 }
 
 const goToProfile = () => {
@@ -106,7 +107,9 @@ nav .wrap .icon-container>.icon-box button svg {
 }
 
 nav .wrap .icon-container span {
-    font-size: var(--font-size-sub);
+    /* MEMO: 메뉴 하단의 텍스트는 디자인의 보조적인 역할로, 아이콘이 메인 버튼
+    디바이스별 디자인 통일을 위해 font-size를 rem대신 px로 고정 */
+    font-size: 12px;
     line-height: 1.6;
     color: var(--text-menu);
 }

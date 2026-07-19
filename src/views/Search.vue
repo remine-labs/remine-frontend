@@ -124,6 +124,7 @@ onMounted(() => {
                     :media-type="work.mediaType" :is-watchlisted="work.isWatchlisted"
                     @toggle-watchlist="toggleWatchlistHandler(work)" />
             </div>
+            <!-- TODO: pagination 위치 -->
         </div>
     </section>
 </template>
