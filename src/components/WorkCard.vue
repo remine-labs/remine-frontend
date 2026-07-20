@@ -57,18 +57,17 @@ const goToWorkDetail = () => {
 
 <style>
 .works-list-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px 8px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
 }
 
 .work-box {
-    width: calc(50% - 4px);
     border-radius: 8px;
     overflow: hidden;
     background-color: var(--bg-elevated);
     cursor: pointer;
-    box-shadow: 0px 0px 8px #00000014
+    box-shadow: var(--box-default);
 }
 
 .work-box .type-box {
@@ -126,9 +125,14 @@ const goToWorkDetail = () => {
 }
 
 @media screen and (min-width: 520px) {
-    .work-box {
-        width: calc((100% - 16px) / 3)
+    .works-list-container {
+        grid-template-columns: repeat(3, 1fr);
     }
+}
 
+@media screen and (min-width: 690px) {
+    .works-list-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
 </style>

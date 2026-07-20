@@ -134,4 +134,10 @@ onMounted(async () => {
     margin-top: 10px;
     line-height: 1.4;
 }
+
+@media screen and (min-width: 640px) {
+    .playlist-section .playlist-item-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
 </style>
