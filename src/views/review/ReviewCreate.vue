@@ -203,6 +203,8 @@ const submitReview = async () => {
 </template>
 
 <style>
+/* TODO: ReviewEdit과 css 파일 동일. scoped 안 쓰기 때문에 공통 section 명 추가하여 css 통일 가능
+반응형까지 진행하였으나, 차이 없음 */
 .review-create-section {
     padding-top: var(--header-height);
 }
@@ -322,5 +324,27 @@ const submitReview = async () => {
 .review-create-section .btn-box {
     margin-top: 3rem;
     text-align: right;
+}
+
+@media screen and (min-width: 520px) {
+    .review-create-section .date-input-box .head-box .input-box {
+        gap: 4px;
+    }
+}
+
+@media screen and (min-width: 600px) {
+    .review-create-section .work-info-container {
+        aspect-ratio: 9 / 5;
+    }
+
+    .review-create-section .input-container {
+        margin-top: -6%;
+    }
+}
+
+@media screen and (min-width: 640px) {
+    .review-create-section .work-info-container {
+        aspect-ratio: 11 / 5;
+    }
 }
 </style>
