@@ -189,14 +189,14 @@ getReviewsByWorkId()
                 <div class="work-info-box">
                     <div class="work-meta-box">
                         <span class="age-rating" :class="`age-${work?.certification}`">{{ work?.certification
-                            }}</span>
+                        }}</span>
 
                         <div class="genre-box description">
                             <span class="genre" v-for='genre in work?.genres' :key='genre'>{{ genre }}</span>
                         </div>
                     </div>
-                    <h2 class="work-title title ellipsis-2">{{ work?.workTitle }}</h2>
-                    <div class="work-detail-box description">
+                    <h2 class="work-title ellipsis-2">{{ work?.workTitle }}</h2>
+                    <div class="work-detail-box">
                         <p class="release-date">개봉일: {{ work?.workReleaseDate?.replace(/-/g, '.') }}</p>
                         <p class="runtime" v-if="work?.mediaType === 'movie'">상영 시간: {{ work?.runtime }}분</p>
                         <p class="tv-info">
@@ -210,20 +210,18 @@ getReviewsByWorkId()
                                 work?.numberOfEpisodes }}부작</span>
                         </p>
                     </div>
-                    <<<<<<< HEAD <!-- TODO: 감독과 각본은 1명 노출 후 그 외 n명 처리 + 말줄임표 처리 -->
-                        <div class="directors-box" v-if='work?.directors?.length'>
-                            =======
-                            <div class="directors-box description" v-if='work?.directors?.length'>
-                                >>>>>>> ce47b6a (:art: ui-polich style: 반응형 및 폴더 구조화)
-                                감독:
-                                <span class="director" v-for='director in work?.directors' :key='director'>{{ director
-                                    }}</span>
-                            </div>
-                            <div class="writers-box description" v-if="work?.writers?.length">
-                                각본:
-                                <span class="writer" v-for='writer in work?.writers' :key='writer'>{{ writer }}</span>
-                            </div>
+                    <!-- TODO: 감독과 각본은 1명 노출 후 그 외 n명 처리 + 말줄임표 처리 -->
+                    <div class="directors-box" v-if='work?.directors?.length'>
+                        <div class="directors-box description" v-if='work?.directors?.length'>
+                            감독:
+                            <span class="director" v-for='director in work?.directors' :key='director'>{{ director
+                            }}</span>
                         </div>
+                        <div class="writers-box description" v-if="work?.writers?.length">
+                            각본:
+                            <span class="writer" v-for='writer in work?.writers' :key='writer'>{{ writer }}</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="actor-container">
                     <h3>출연진</h3>
@@ -266,18 +264,6 @@ getReviewsByWorkId()
                     <!-- TODO: 작품 ID를 가지고 작성한 리뷰 조회 api
                  작성한 리뷰가 있다면 감상일과 평점 간단하게 노출
                  없다면, "아직 리뷰가 없어요. 리뷰를 쓰고 내 취향의 작품을 추천받아 보세요" 식의 문구 -->
-                </div>
-            </div>
-            <div class="floating-box">
-                <div class="icon-box watchlist">
-                    <button @click="toggleWatchlistHandler">
-                        <PhHeart :weight="isWatchlisted ? 'fill' : 'regular'" :size="24" />
-                    </button>
-                </div>
-                <div class="icon-box review-create">
-                    <button @click="goToCreate">
-                        <PhPenNib :size="24" />
-                    </button>
                 </div>
             </div>
             <div class="floating-box">
