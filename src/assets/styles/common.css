@@ -133,7 +133,7 @@ section {
   align-items: flex-end;
   position: fixed;
   width: 100%;
-  max-width: 47.5rem;
+  max-width: var(--frame-width);
   left: 0;
   right: 0;
   bottom: 12%;
@@ -226,11 +226,11 @@ textarea:focus {
   color: var(--heart);
 }
 
-.img-box.add-overlay:before {
+.img-box.add-overlay:after {
   content: "";
   position: absolute;
   inset: 0;
-  background-color: #53535380;
+  background-color: #0000005b;
 }
 
 /* datepicker */
@@ -336,5 +336,17 @@ section div .v3dp__elements[data-v-65eb861b] button.selected span {
 @media screen and (min-width: 390px) {
   .wrap {
     padding: 0 16px;
+  }
+}
+
+@media screen and (min-width: 520px) {
+  .wrap {
+    padding: 0 24px;
+  }
+}
+
+@media screen and (min-width: 690px) {
+  .logo {
+    font-size: 3rem;
   }
 }

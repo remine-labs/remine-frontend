@@ -177,7 +177,6 @@ getReviewsByWorkId()
             <div class="img-box add-overlay">
                 <img :src="`https://image.tmdb.org/t/p/original${work?.workPosterPath}`" :alt="work?.workTitle" />
             </div>
-            <div class="overlay-box"></div>
         </div>
         <div class="wrap">
             <div class="work-info-container relative">
@@ -192,8 +191,8 @@ getReviewsByWorkId()
                             <span class="genre" v-for='genre in work?.genres' :key='genre'>{{ genre }}</span>
                         </div>
                     </div>
-                    <h2 class="work-title title ellipsis-2">{{ work?.workTitle }}</h2>
-                    <div class="work-detail-box description">
+                    <h2 class="work-title ellipsis-2">{{ work?.workTitle }}</h2>
+                    <div class="work-detail-box">
                         <p class="release-date">개봉일: {{ work?.workReleaseDate?.replace(/-/g, '.') }}</p>
                         <p class="runtime" v-if="work?.mediaType === 'movie'">상영 시간: {{ work?.runtime }}분</p>
                         <p class="tv-info">
@@ -207,11 +206,12 @@ getReviewsByWorkId()
                                 work?.numberOfEpisodes }}부작</span>
                         </p>
                     </div>
-                    <div class="directors-box description" v-if='work?.directors?.length'>
+                    <!-- TODO: 감독과 각본은 1명 노출 후 그 외 n명 처리 + 말줄임표 처리 -->
+                    <div class="directors-box" v-if='work?.directors?.length'>
                         감독:
                         <span class="director" v-for='director in work?.directors' :key='director'>{{ director }}</span>
                     </div>
-                    <div class="writers-box description" v-if="work?.writers?.length">
+                    <div class="writers-box" v-if="work?.writers?.length">
                         각본:
                         <span class="writer" v-for='writer in work?.writers' :key='writer'>{{ writer }}</span>
                     </div>
@@ -225,7 +225,7 @@ getReviewsByWorkId()
                             <img v-if="actor.profilePath" :src="`https://image.tmdb.org/t/p/w200${actor.profilePath}`"
                                 :alt="actor.name" />
                         </div>
-                        <span class="actor-name description ellipsis-2">
+                        <span class="actor-name ellipsis-2">
                             {{ actor.name }}
                         </span>
                     </div>
@@ -241,7 +241,9 @@ getReviewsByWorkId()
                 <h3>시청 가능 OTT</h3>
                 <!-- TODO: OTT 정보 연결
                  요금제 따라 차등이 존재하는 경우 어떻게 할지 고민
-                 각 OTT 사이트의 검색 페이지까지 연결은 가능하겠지만, 실제 작품까지는 연결 어려움-->
+                 각 OTT 사이트의 검색 페이지까지 연결은 가능하겠지만, 실제 작품까지는 연결 어려움
+                 ott가 없는 경우도 있음. 대체 디자인 필요
+                 cf) 나는 학교에서 죽었다 -->
                 <div class="ott-box">
                     <div class="ott" v-for='provider in work?.watchProviders' :key='provider'>{{ providerMap[provider]
                         ||
@@ -288,7 +290,7 @@ getReviewsByWorkId()
 }
 
 .work-detail-section .work-bg-box {
-    height: 201px;
+    aspect-ratio: 3 / 2;
 }
 
 .work-detail-section .work-bg-box .img-box {
@@ -307,9 +309,7 @@ getReviewsByWorkId()
 }
 
 .work-detail-section .wrap .work-info-container {
-    display: flex;
-    gap: 16px;
-    margin-top: -20%;
+    margin-top: -22%;
     background-color: var(--bg-elevated);
     border-radius: 8px;
     padding: 14px;
@@ -317,17 +317,21 @@ getReviewsByWorkId()
 }
 
 .work-detail-section .work-info-container .img-box {
-    width: calc((100% - 16px)/2 - 8px);
-    aspect-ratio: 2/3;
-    transform: translateY(-40px);
-    margin-bottom: -40px;
+    position: absolute;
+    bottom: 14px;
+    left: 14px;
+    width: calc(50% - 14px - 8px);
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: var(--box-default);
+}
+
+.work-detail-section .work-info-container .img-box img {
+    object-fit: cover;
 }
 
 .work-detail-section .work-info-container .work-info-box {
-    width: calc((100% - 16px)/2 + 8px)
+    margin-left: calc(50% + 8px);
+    min-height: 160px;
 }
 
 .work-detail-section .work-info-box .work-meta-box {
@@ -367,26 +371,21 @@ getReviewsByWorkId()
 }
 
 .work-detail-section .work-info-box .work-title {
-    font-size: var(--font-size-title);
+    font-size: 2rem;
+    font-weight: 400;
+    font-family: var(--font-family-logo);
     line-height: 1.2;
     margin: 10px 0;
 }
 
 .work-detail-section .work-info-box .work-detail-box {
     color: var(--text-sub);
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
-.work-detail-section .work-info-box .work-detail-box p {
-    margin-bottom: 6px;
-}
-
-.work-detail-section .work-info-box .work-detail-box {
-    margin-bottom: 16px;
-}
-
+.work-detail-section .work-info-box .work-detail-box p,
 .work-detail-section .work-info-box .directors-box {
-    margin-bottom: 6px;
+    margin-bottom: 2px;
 }
 
 .work-detail-section .work-info-box .directors-box,
@@ -419,10 +418,12 @@ getReviewsByWorkId()
     margin-top: 10px;
 }
 
-/* MEMO: 390px 이하에서 보이는 개수 조절할 건지 고민 필요 */
+/* MEMO: 390px 이하에서 보이는 개수 조절할 건지 고민 필요
+425px 이하 6개,  425px 이상 7개, 520px 이상 8개, 640px 이상 9개, 690px 이상 10개 */
 
 .work-detail-section .actor-list-box .actor-box {
     display: flex;
+    gap: 4px;
     flex-direction: column;
     align-items: center;
     width: calc((100% - 42px)/7);
@@ -438,6 +439,15 @@ getReviewsByWorkId()
     border-radius: 50%;
     overflow: hidden;
     text-align: center;
+}
+
+.work-detail-section .actor-list-box .img-box img {
+    margin-top: -7%;
+}
+
+.work-detail-section .work-info-box,
+.work-detail-section .actor-list-box .actor-name {
+    font-size: var(--font-size-sub)
 }
 
 .work-detail-section .overview-box .overview {
@@ -466,13 +476,74 @@ getReviewsByWorkId()
     text-align: center;
 }
 
+@media screen and (min-width: 460px) {
+    .work-detail-section .work-info-container .img-box {
+        width: calc(40% - 7px - 8px);
+    }
+
+    .work-detail-section .work-info-container .work-info-box {
+        margin-left: calc(40% + 8px);
+    }
+}
+
 @media screen and (min-width: 520px) {
     .work-detail-section .work-bg-box {
-        height: 300px;
+        aspect-ratio: 5 / 3;
+    }
+
+    .work-detail-section .work-info-container .work-info-box {
+        min-height: 180px;
+    }
+
+    .work-detail-section .work-info-box .work-detail-box {
+        color: var(--text-sub);
+        margin-bottom: 16px;
+    }
+
+    .work-detail-section .work-info-box .work-detail-box p,
+    .work-detail-section .work-info-box .directors-box {
+        margin-bottom: 4px;
+    }
+}
+
+@media screen and (min-width: 560px) {
+    .work-detail-section .work-info-container .work-info-box {
+        min-height: 200px;
+    }
+}
+
+@media screen and (min-width: 640px) {
+    .work-detail-section .work-bg-box {
+        aspect-ratio: 7 / 4;
+    }
+
+    .work-detail-section .work-info-container .work-info-box {
+        margin-left: calc(40% + 8px);
+        min-height: 220px;
+    }
+
+    .work-detail-section .work-info-box,
+    .work-detail-section .actor-list-box .actor-name {
+        font-size: var(--font-size-long);
+    }
+}
+
+@media screen and (min-width: 690px) {
+    .work-detail-section .work-bg-box {
+        aspect-ratio: 11 / 5;
+    }
+
+    .work-detail-section .wrap .work-info-container {
+        margin-top: -16%;
     }
 
     .work-detail-section .work-info-container .img-box {
-        width: calc((80% - 16px) / 2 - 8px);
+        width: calc(30% - 7px - 8px);
+    }
+
+    .work-detail-section .work-info-container .work-info-box {
+        margin-left: calc(30% + 8px);
+        min-height: 160px;
     }
 }
 </style>
