@@ -359,4 +359,10 @@ onMounted(() => {
         margin-top: -10%;
     }
 }
+
+@media screen and (min-width: 640px) {
+    .review-detail-section .work-info-container {
+        aspect-ratio: 5 / 3;
+    }
+}
 </style>

@@ -344,4 +344,26 @@ onMounted(async () => {
     margin-top: 3rem;
     text-align: right;
 }
+
+@media screen and (min-width: 520px) {
+    .review-edit-section .date-input-box .head-box .input-box {
+        gap: 4px;
+    }
+}
+
+@media screen and (min-width: 600px) {
+    .review-edit-section .work-info-container {
+        aspect-ratio: 9 / 5;
+    }
+
+    .review-edit-section .input-container {
+        margin-top: -6%;
+    }
+}
+
+@media screen and (min-width: 640px) {
+    .review-edit-section .work-info-container {
+        aspect-ratio: 11 / 5;
+    }
+}
 </style>
