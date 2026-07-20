@@ -8,12 +8,13 @@ const goToHome = () => {
     router.push('/home')
 }
 
-const goToTimeline = () => {
-    router.push('/timeline')
-}
-
 const goToSearch = () => {
     router.push('/search')
+}
+
+
+const goToTimeline = () => {
+    router.push('/timeline')
 }
 
 const goToProfile = () => {
@@ -67,7 +68,7 @@ const goToProfile = () => {
 nav {
     position: fixed;
     width: 100%;
-    max-width: 47.5rem;
+    max-width: var(--frame-width);
     bottom: 0;
     left: 0;
     right: 0;
@@ -78,7 +79,7 @@ nav {
 }
 
 .nav-section {
-    height: 60px;
+    height: var(--menu-height);
     color: var(--btn-active-bg)
 }
 
@@ -92,14 +93,9 @@ nav .wrap {
 nav .wrap .icon-container {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 30px;
+    gap: 10px;
     height: inherit;
     padding: 10px 20px;
-}
-
-nav .wrap .icon-container .icon-box {
-    min-width: calc((100% - 120px)/5);
 }
 
 nav .wrap .icon-container .icon-box button {
@@ -111,7 +107,9 @@ nav .wrap .icon-container>.icon-box button svg {
 }
 
 nav .wrap .icon-container span {
-    font-size: var(--font-size-sub);
+    /* MEMO: 메뉴 하단의 텍스트는 디자인의 보조적인 역할로, 아이콘이 메인 버튼
+    디바이스별 디자인 통일을 위해 font-size를 rem대신 px로 고정 */
+    font-size: 12px;
     line-height: 1.6;
     color: var(--text-menu);
 }

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import Loader from '../components/Loader.vue'
+import Loader from '../../components/Loader.vue'
 import { useRouter } from 'vue-router'
-import { getMe } from '../api/auth'
-import { api } from '../api/client'
+import { getMe } from '../../api/auth'
+import { api } from '../../api/client'
 import axios from 'axios'
 
 const router = useRouter()

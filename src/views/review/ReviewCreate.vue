@@ -1,27 +1,63 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { createReview, createTags } from '../../api/review'
-import type { ReviewPayload } from '../../api/review'
 import { useRouter } from 'vue-router'
 import Datepicker from 'vue3-datepicker'
 import { PhStar } from '@phosphor-icons/vue'
 
+import { createReview, createTags } from '../../api/review'
+import type { ReviewPayload } from '../../api/review'
+
+
 const router = useRouter()
+
 const work = history.state
 
-// 감상일 관련
-const now = new Date()
-const startDate = ref<Date>(now)
-const endDate = ref<Date | undefined>(now)
+// Date
+const today = new Date()
+const startDate = ref<Date>(today)
+const endDate = ref<Date | undefined>(today)
+const isWatching = ref(false)
+
+// Rating
+const rating = ref(0)
+const ratingBoxRef = ref<HTMLElement | null>(null)
+
+// Comment
+const comment = ref('')
+
+// Utils
 
 const formatDate = (date?: Date) => {
     if (!date) return null
     return date.toISOString().slice(0, 10)
 }
 
-const isWatching = ref(false)
+const createReviewPayload = (): ReviewPayload => ({
+    workId: work.id,
+    workTitle: work.title,
+    workPosterPath: work.poster,
+    workReleaseDate: work.workReleaseDate,
+    mediaType: work.mediaType,
+    comment: comment.value.trim(),
+    rating: rating.value,
+    startDate: formatDate(startDate.value)!,
+    endDate: isWatching.value ? null : formatDate(endDate.value),
+})
 
-// 감상중 체크
+const getErrorMessage = (err: any) => {
+    if (err.response) {
+        return `${err.response.status} - ${err.response.data?.message || '서버 오류'}`
+    }
+
+    if (err.request) {
+        return '서버 응답 없음 (네트워크 문제)'
+    }
+
+    return err.message
+}
+
+// Watch
+
 watch(isWatching, (val) => {
     if (val) {
         endDate.value = undefined
@@ -30,7 +66,6 @@ watch(isWatching, (val) => {
     }
 })
 
-// 시작일 변경
 watch(startDate, (newStart) => {
     if (isWatching.value) return
 
@@ -38,8 +73,6 @@ watch(startDate, (newStart) => {
         endDate.value = newStart
         return
     }
-
-    const today = new Date()
 
     if (endDate.value.toDateString() === today.toDateString()) {
         endDate.value = newStart
@@ -50,7 +83,6 @@ watch(startDate, (newStart) => {
     }
 })
 
-// 종료일 변경 보정
 watch(endDate, (newEnd) => {
     if (!newEnd || isWatching.value) return
 
@@ -59,13 +91,11 @@ watch(endDate, (newEnd) => {
     }
 })
 
-// 별점 입력
-const rating = ref(0)
-const ratingBoxRef = ref<HTMLElement | null>(null)
+// Rating
 
-const getStarFill = (i: number) => {
-    if (rating.value >= i) return '100%'
-    if (rating.value >= i - 0.5) return '50%'
+const getStarFill = (index: number) => {
+    if (rating.value >= index) return '100%'
+    if (rating.value >= index - 0.5) return '50%'
     return '0%'
 }
 
@@ -82,7 +112,7 @@ const handleRatingClick = (e: MouseEvent) => {
     rating.value = Math.min(5, Math.max(0, value))
 }
 
-const comment = ref('')
+// API
 
 const submitReview = async () => {
     if (!work?.id) {
@@ -90,17 +120,7 @@ const submitReview = async () => {
         return
     }
 
-    const body: ReviewPayload = {
-        workId: work.id,
-        workTitle: work.title,
-        workPosterPath: work.poster,
-        workReleaseDate: work.workReleaseDate,
-        mediaType: work.mediaType,
-        comment: comment.value.trim(),
-        rating: rating.value,
-        startDate: formatDate(startDate.value)!,
-        endDate: isWatching.value ? null : formatDate(endDate.value),
-    }
+    const body = createReviewPayload()
 
     try {
         const res = await createReview(body)
@@ -108,15 +128,9 @@ const submitReview = async () => {
 
         const count = body.comment.replace(/\s/g, '').length
 
-        if (count >= 20) {
-            await createTags(reviewId, {
-                tags: [],
-            })
-        } else {
-            await createTags(reviewId, {
-                tags: ["수동태그 예정"],
-            })
-        }
+        await createTags(reviewId, {
+            tags: count >= 20 ? [] : ['수동태그 예정'],
+        })
 
         alert('저장되었습니다. 리뷰 페이지로 이동합니다.')
 
@@ -125,17 +139,7 @@ const submitReview = async () => {
             params: { reviewId },
         })
     } catch (err: any) {
-        let errorMsg = '알 수 없는 오류'
-
-        if (err.response) {
-            errorMsg = `${err.response.status} - ${err.response.data?.message || '서버 오류'}`
-        } else if (err.request) {
-            errorMsg = '서버 응답 없음 (네트워크 문제)'
-        } else {
-            errorMsg = err.message
-        }
-
-        alert(`저장 실패\n${errorMsg}`)
+        alert(`저장 실패\n${getErrorMessage(err)}`)
     }
 }
 </script>
@@ -143,10 +147,9 @@ const submitReview = async () => {
 <template>
     <section class="review-create-section">
         <div class="work-info-container relative" v-if="work">
-            <div class="img-box">
+            <div class="img-box add-overlay">
                 <img :src="`https://image.tmdb.org/t/p/original${work.poster}`" :alt="work.title" />
             </div>
-            <div class="overlay-box"></div>
         </div>
         <div class="wrap">
             <form @submit.prevent='submitReview'>
@@ -184,6 +187,8 @@ const submitReview = async () => {
                 </div>
                 <div class="review-write-container">
                     <div class="input-box">
+                        <!-- TODO: 작성한 텍스트 길이에 따라 height 자동 조정 고려
+                         포커싱 되었을 때 mob menu 보이지 않는 UX 고려 -->
                         <textarea v-model="comment" name="review-write" id="review-write"
                             placeholder="자유롭게 감상을 남겨주세요."></textarea>
                     </div>
@@ -193,12 +198,15 @@ const submitReview = async () => {
                 </div>
             </form>
         </div>
+        <!-- TODO: 리뷰 글자 수가 일정 이하일 경우, 수동 태그 modal 노출 -->
     </section>
 </template>
 
 <style>
+/* TODO: ReviewEdit과 css 파일 동일. scoped 안 쓰기 때문에 공통 section 명 추가하여 css 통일 가능
+반응형까지 진행하였으나, 차이 없음 */
 .review-create-section {
-    padding-top: 58px;
+    padding-top: var(--header-height);
 }
 
 .review-create-section .work-info-container {
@@ -316,5 +324,27 @@ const submitReview = async () => {
 .review-create-section .btn-box {
     margin-top: 3rem;
     text-align: right;
+}
+
+@media screen and (min-width: 520px) {
+    .review-create-section .date-input-box .head-box .input-box {
+        gap: 4px;
+    }
+}
+
+@media screen and (min-width: 600px) {
+    .review-create-section .work-info-container {
+        aspect-ratio: 9 / 5;
+    }
+
+    .review-create-section .input-container {
+        margin-top: -6%;
+    }
+}
+
+@media screen and (min-width: 640px) {
+    .review-create-section .work-info-container {
+        aspect-ratio: 11 / 5;
+    }
 }
 </style>

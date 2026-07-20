@@ -4,46 +4,6 @@ import { useRouter } from 'vue-router'
 import { api } from '../../api/client'
 
 const router = useRouter()
-const currentPage = ref(0)
-const loading = ref(false)
-const timeline = ref<Review[]>([])
-
-const fetchTimeline = async (page: number) => {
-    loading.value = true
-    try {
-        const res = await api.get('/api/reviews/timeline', {
-            params: { page }
-        })
-
-        timeline.value = res.data.data
-        currentPage.value = page
-    } catch (error) {
-        console.error('timeline 조회 실패', error)
-        timeline.value = []
-    } finally {
-        loading.value = false
-    }
-}
-
-onMounted(() => {
-    fetchTimeline(0)
-})
-
-const goToReviewDetail = (reviewId: number) => {
-    router.push(`/review/${reviewId}`)
-}
-
-const formatDisplayDate = (date: string | Date | null) => {
-    if (!date) return ''
-
-    const d = new Date(date)
-
-    const yy = String(d.getFullYear()).slice(2)
-    const mm = String(d.getMonth() + 1).padStart(2, '0')
-    const dd = String(d.getDate()).padStart(2, '0')
-
-    return `${yy}.${mm}.${dd}`
-}
 
 interface Tag {
     label: string
@@ -67,13 +27,53 @@ interface Review {
     tags: Tag[]
 }
 
+const currentPage = ref(0)
+const loading = ref(false)
+const timeline = ref<Review[]>([])
+
+const formatDisplayDate = (date: string | Date | null) => {
+    if (!date) return ''
+
+    const d = new Date(date)
+
+    const yy = String(d.getFullYear()).slice(2)
+    const mm = String(d.getMonth() + 1).padStart(2, '0')
+    const dd = String(d.getDate()).padStart(2, '0')
+
+    return `${yy}.${mm}.${dd}`
+}
+
+const goToReviewDetail = (reviewId: number) => {
+    router.push(`/review/${reviewId}`)
+}
 
 
+const fetchTimeline = async (page: number) => {
+    loading.value = true
+    try {
+        const res = await api.get('/api/reviews/timeline', {
+            params: { page }
+        })
+
+        timeline.value = res.data.data
+        currentPage.value = page
+    } catch (error) {
+        console.error('timeline 조회 실패', error)
+        timeline.value = []
+    } finally {
+        loading.value = false
+    }
+}
+
+onMounted(() => {
+    fetchTimeline(0)
+})
 </script>
 
 <template>
     <section class="timeline-section">
         <div class="wrap">
+            <!-- TODO: filter 구현 -->
             <div class="filter-container">
                 <div class="filter-box sort-date">
                     <button>최신 순</button>
@@ -122,6 +122,7 @@ interface Review {
                     </div>
                 </div>
             </div>
+            <!-- TODO: pagination -->
             <!-- <div class="pagination-container">
                 <button @click="fetchTimeline(currentPage - 1)" :disabled="currentPage === 0">
                     이전
@@ -136,13 +137,9 @@ interface Review {
 </template>
 
 <style>
-.timeline-section .timeline-container {
-    margin: 20px 0;
-}
-
 .timeline-section .timeline-box {
     padding: 14px;
-    margin-bottom: 20px;
+    margin-top: 20px;
     border-radius: 8px;
     background-color: var(--bg-elevated);
     box-shadow: var(--box-default)
