@@ -147,6 +147,9 @@ const submitReview = async () => {
 <template>
     <section class="review-create-section">
         <div class="work-info-container relative" v-if="work">
+            <!-- TODO: 작품 수정하기 버튼 + 작품 수정 modal 추가
+             search와 AddWork를 추가
+             search일 경우 빈 값, addWork일 경우 patch 화면 우선 -->
             <div class="img-box add-overlay">
                 <img :src="`https://image.tmdb.org/t/p/original${work.poster}`" :alt="work.title" />
             </div>
@@ -187,8 +190,7 @@ const submitReview = async () => {
                 </div>
                 <div class="review-write-container">
                     <div class="input-box">
-                        <!-- TODO: 작성한 텍스트 길이에 따라 height 자동 조정 고려
-                         포커싱 되었을 때 mob menu 보이지 않는 UX 고려 -->
+                        <!-- TODO: 작성한 텍스트 길이에 따라 height 자동 조정 고려 -->
                         <textarea v-model="comment" name="review-write" id="review-write"
                             placeholder="자유롭게 감상을 남겨주세요."></textarea>
                     </div>
@@ -198,7 +200,7 @@ const submitReview = async () => {
                 </div>
             </form>
         </div>
-        <!-- TODO: 리뷰 글자 수가 일정 이하일 경우, 수동 태그 modal 노출 -->
+        <!-- TODO: 리뷰 글자 수가 일정 이하일 경우, 수동 태그 modal 노출 / 작업 이후 edit에도 동일하게 추가 -->
     </section>
 </template>
 

@@ -22,6 +22,8 @@ const goToPlaylist = () => {
     router.push('/playlists')
 }
 
+// TODO: workDetail 페이지에서 다시 돌아오더라도 기존 검색 값 유지하여, tmdb api 사용 횟수 줄이기
+
 const handleSearch = async () => {
     if (!query.value.trim()) return
 
@@ -101,6 +103,8 @@ onMounted(() => {
         <div class="wrap">
             <div class="search-container relative">
                 <div class="input-box">
+                    <!-- TODO: mobile에서 입력값 삭제 버튼 있는지 확인 후, 없을 경우
+                     type을 text로 변경하고 x 버튼 추가하여 clear 기능 추가 -->
                     <input class="work-search-input" v-model="query" type="search" @keyup.enter="handleSearch"
                         placeholder='작품 제목 또는 유튜브 링크를 입력해주세요.' autofocus>
                 </div>
@@ -109,6 +113,7 @@ onMounted(() => {
                         <PhMagnifyingGlass :size="24" />
                     </button>
                 </div>
+                <!-- TODO: 배너 디자인 필요, css로 진행할 것 -->
                 <div class="banner-box description" @click='goToPlaylist'>
                     <p>플레이리스트에 저장하셨다면,</p>
                     <p>한 번 연동으로 검색부터 관심작품까지 한 번에!</p>
@@ -124,6 +129,7 @@ onMounted(() => {
                     :media-type="work.mediaType" :is-watchlisted="work.isWatchlisted"
                     @toggle-watchlist="toggleWatchlistHandler(work)" />
             </div>
+            <!-- TODO: 작품 등록하기 go to page [addWork]-->
             <!-- TODO: pagination 위치 -->
         </div>
     </section>
