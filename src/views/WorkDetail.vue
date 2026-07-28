@@ -189,7 +189,7 @@ getReviewsByWorkId()
                 <div class="work-info-box">
                     <div class="work-meta-box">
                         <span class="age-rating" :class="`age-${work?.certification}`">{{ work?.certification
-                        }}</span>
+                            }}</span>
 
                         <div class="genre-box description">
                             <span class="genre" v-for='genre in work?.genres' :key='genre'>{{ genre }}</span>
@@ -215,7 +215,7 @@ getReviewsByWorkId()
                         <div class="directors-box description" v-if='work?.directors?.length'>
                             감독:
                             <span class="director" v-for='director in work?.directors' :key='director'>{{ director
-                            }}</span>
+                                }}</span>
                         </div>
                         <div class="writers-box description" v-if="work?.writers?.length">
                             각본:
