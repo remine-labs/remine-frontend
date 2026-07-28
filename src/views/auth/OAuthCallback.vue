@@ -9,6 +9,8 @@ import axios from 'axios'
 const router = useRouter()
 const loading = ref(true)
 
+// TODO: 약관 분기 처리
+
 onMounted(async () => {
     try {
         await getMe()

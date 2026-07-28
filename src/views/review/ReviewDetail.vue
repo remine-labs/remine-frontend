@@ -203,14 +203,25 @@ onMounted(() => {
 
                 <div class="tags-container">
                     <div class="head-box">
+                        <!-- TODO: 태그 종류마다 툴팁 노출
+                         AI: 작성한 리뷰를 기반으로 추출한 태그, 작품 추천에 활용됨
+                         리뷰 수정 시, 태그가 수정될 수도 있음
+                         HANDLE: AI 분석 요구가 불가능한 경우,
+                         운영 환경상 일시적으로 생성 불가한 경우, 임시 사용될 수 있음 -->
+                        <!-- TODO: retry btn 생성
+                          AI 분석 요구 1회 이후 문제가 발생할 경우, 유저에게 재시도 버튼 노출
+                          수동태그 노출 기준에서는 나오지 않음 -->
                         <template v-if="review.aiTagStatus === 'NONE'">
                             <h3>내가 선택한 태그</h3>
+                            <!-- TODO: 유저가 선택한 태그 노출 -->
                         </template>
 
                         <template v-else>
                             <h3>AI 태그</h3>
-
+                            <!-- TODO: AI 태그 만족도 조사 modal
+                             태그 생성된 시점 이후 1회만 노출 -->
                             <div class="rating-box">
+                                <!-- TODO: 멘트를 더 축소하여 진행할 것 -->
                                 <button>생성된 태그가 만족스러우셨나요? 평가하기</button>
                             </div>
                         </template>

@@ -61,6 +61,7 @@ const showSeason = computed(
     () => (work.value?.numberOfSeasons ?? 0) > 1
 )
 
+// TODO: 중복 값 어떻게 처리할 것인지
 const providerMap: Record<string, string> = {
     'Netflix Standard with Ads': 'Netflix',
     'Netflix': 'Netflix',
@@ -92,6 +93,8 @@ const providerMap: Record<string, string> = {
 
     'YouTube Premium': 'YouTube',
     'YouTube': 'YouTube',
+
+    'Paramount': 'Paramount',
 }
 
 const goToCreate = () => {
@@ -242,8 +245,9 @@ getReviewsByWorkId()
                 <!-- TODO: OTT 정보 연결
                  요금제 따라 차등이 존재하는 경우 어떻게 할지 고민
                  각 OTT 사이트의 검색 페이지까지 연결은 가능하겠지만, 실제 작품까지는 연결 어려움
-                 ott가 없는 경우도 있음. 대체 디자인 필요
-                 cf) 나는 학교에서 죽었다 -->
+                 cf) 파라마운트에서만 제공하는 작품 체크 필요 나는 학교에서 죽었다 -->
+                <!-- TODO: JustWatch에서 제공한다는 내용 기재 필수, 법적 문제임 -->
+                <!-- TODO: 유저가 사용하는 OTT 정보 받을 경우 구분해서 노출 -->
                 <div class="ott-box">
                     <div class="ott" v-for='provider in work?.watchProviders' :key='provider'>{{ providerMap[provider]
                         ||

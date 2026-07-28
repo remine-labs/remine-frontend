@@ -170,6 +170,7 @@ onMounted(async () => {
 </script>
 
 <template>
+    <!-- TODO: review create에서 작업 이후 가져올 것 -->
     <section class="review-edit-section">
         <div class="work-info-container relative" v-if="work.id">
             <div class="img-box add-overlay">

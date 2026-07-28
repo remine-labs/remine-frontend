@@ -38,7 +38,7 @@ const showBack = computed(() => header.value?.showBack)
                             <PhCaretLeft :size="32" />
                         </button>
                     </div>
-                    <!-- 페이지 이동 시, 페이지에 따라 header 값 변경으로 잡아두었으나, 현재 구조로는 딜레이 발생
+                    <!-- TODO: 페이지 이동 시, 페이지에 따라 header 값 변경으로 잡아두었으나, 현재 구조로는 딜레이 발생
                      추후 리팩토링을 통해 첫 렌더 전에 상태가 준비되도록 변경 예정 -->
                     <h1 class='logo'>{{ title }}</h1>
                 </div>
