@@ -22,6 +22,7 @@ const loginProviders = [
 <template>
     <section class="index-section">
         <div class="wrap">
+            <!-- TODO: 스플래시 화면 구성 -->
             <div class="title-container">
                 <h1 class='logo'>ReMine</h1>
                 <p class="slogun-text">당신의 기록으로,</p>
@@ -29,7 +30,6 @@ const loginProviders = [
                 <p class="slogun-text">당신만을 위한</p>
                 <p class="slogun-text">맞춤 추천 서비스</p>
             </div>
-
             <div class="login-container">
                 <div class="btn-box" :class="provider.id" v-for="provider in loginProviders" :key="provider.id">
                     <button class="oauth-btn" @click="login(provider.url)">
