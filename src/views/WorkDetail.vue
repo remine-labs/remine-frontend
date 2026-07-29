@@ -61,6 +61,15 @@ const showSeason = computed(
     () => (work.value?.numberOfSeasons ?? 0) > 1
 )
 
+const formatPeople = (people: string[]) => {
+    if (!people.length) return '';
+    if (people.length === 1) return people[0];
+
+    return `${people[0]} 외 ${people.length - 1}명`;
+};
+
+const directorText = computed(() => formatPeople(work.value?.directors ?? []));
+const writerText = computed(() => formatPeople(work.value?.writers ?? []));
 // TODO: 중복 값 어떻게 처리할 것인지
 const providerMap: Record<string, string> = {
     'Netflix Standard with Ads': 'Netflix',
@@ -93,8 +102,6 @@ const providerMap: Record<string, string> = {
 
     'YouTube Premium': 'YouTube',
     'YouTube': 'YouTube',
-
-    'Paramount': 'Paramount',
 }
 
 const goToCreate = () => {
@@ -197,7 +204,10 @@ getReviewsByWorkId()
                     </div>
                     <h2 class="work-title ellipsis-2">{{ work?.workTitle }}</h2>
                     <div class="work-detail-box">
-                        <p class="release-date">개봉일: {{ work?.workReleaseDate?.replace(/-/g, '.') }}</p>
+                        <p class="release-date">
+                            {{ work?.workReleaseDate?.replace(/-/g, '.') }}
+                            {{ work?.mediaType === 'tv' ? '공개' : '개봉' }}
+                        </p>
                         <p class="runtime" v-if="work?.mediaType === 'movie'">상영 시간: {{ work?.runtime }}분</p>
                         <p class="tv-info">
                             <span v-if="showSeason">
@@ -356,13 +366,32 @@ getReviewsByWorkId()
     margin-right: 6px;
 }
 
-/* TODO: 연령별 칩 컬러 디자인 필요
-예정 ALL - green, 12 - orange, 15 - yellow, 19 - red, etc - gray */
+.work-detail-section .work-meta-box .age-rating.age-null {
+    display: none;
+}
+
+.work-detail-section .work-meta-box .age-rating {
+    font-weight: 600;
+}
+
+.work-detail-section .work-meta-box .age-rating.age-ALL {
+    background-color: #3fa856;
+    color: var(--text-static-wh);
+}
+
+.work-detail-section .work-meta-box .age-rating.age-12 {
+    background-color: #f08018;
+    color: var(--text-static-bk);
+}
 
 .work-detail-section .work-meta-box .age-rating.age-15 {
     background-color: #fced1f;
-    font-weight: 600;
-    color: var(--text-static);
+    color: var(--text-static-bk);
+}
+
+.work-detail-section .work-meta-box .age-rating.age-19 {
+    background-color: #c01313;
+    color: var(--text-static-wh);
 }
 
 .work-detail-section .work-info-box .work-meta-box .genre {
@@ -427,15 +456,12 @@ getReviewsByWorkId()
     margin-top: 10px;
 }
 
-/* MEMO: 390px 이하에서 보이는 개수 조절할 건지 고민 필요
-425px 이하 6개,  425px 이상 7개, 520px 이상 8개, 640px 이상 9개, 690px 이상 10개 */
-
 .work-detail-section .actor-list-box .actor-box {
     display: flex;
     gap: 4px;
     flex-direction: column;
     align-items: center;
-    width: calc((100% - 42px)/7);
+    width: calc((100% - 35px)/6);
     flex-shrink: 0;
     word-break: keep-all;
     text-align: center;
@@ -513,6 +539,10 @@ getReviewsByWorkId()
     .work-detail-section .work-info-box .directors-box {
         margin-bottom: 4px;
     }
+
+    .work-detail-section .actor-list-box .actor-box {
+        width: calc((100% - 42px)/7);
+    }
 }
 
 @media screen and (min-width: 560px) {
@@ -535,6 +565,10 @@ getReviewsByWorkId()
     .work-detail-section .actor-list-box .actor-name {
         font-size: var(--font-size-long);
     }
+
+    .work-detail-section .actor-list-box .actor-box {
+        width: calc((100% - 49px)/8);
+    }
 }
 
 @media screen and (min-width: 690px) {
@@ -553,6 +587,10 @@ getReviewsByWorkId()
     .work-detail-section .work-info-container .work-info-box {
         margin-left: calc(30% + 8px);
         min-height: 160px;
+    }
+
+    .work-detail-section .actor-list-box .actor-box {
+        width: calc((100% - 56px)/9);
     }
 }
 </style>
