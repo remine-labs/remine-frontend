@@ -15,6 +15,7 @@ import Playlists from "../views/profile/Playlists.vue";
 import Playlist from "../views/profile/Playlist.vue";
 import PrivacyPolicyView from "../views/settings/PrivacyPolicyView.vue";
 import ServiceTermsView from "../views/settings/ServiceTermsView.vue";
+import CustomWork from "../views/CustomWork.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -63,6 +64,17 @@ const router = createRouter({
             header: {
               title: "ReMine",
               showBack: false,
+            },
+          },
+        },
+        {
+          path: "customWork",
+          name: "customWork",
+          component: CustomWork,
+          meta: {
+            header: {
+              title: "작품 등록하기",
+              showBack: true,
             },
           },
         },
