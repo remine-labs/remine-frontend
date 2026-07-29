@@ -10,9 +10,9 @@ const router = useRouter()
 const reviewId = Number(route.params.reviewId)
 
 interface Tag {
-    label: string
-    category: string | null
-    sentiment: string | null
+    label: string;
+    category: string;
+    sentiment: 'POSITIVE' | 'NEGATIVE' | null;
 }
 
 export type AiTagStatus =
@@ -57,6 +57,18 @@ const goToWorkDetail = () => {
     router.push(`/work/${review.value?.mediaType}/${review.value?.workId}`)
 }
 
+const getTagSentimentClass = (
+    sentiment: 'POSITIVE' | 'NEGATIVE' | null,
+) => {
+    switch (sentiment) {
+        case 'POSITIVE':
+            return 'positive';
+        case 'NEGATIVE':
+            return 'negative';
+        default:
+            return 'default';
+    }
+};
 
 const formatDisplayDate = (date: string | Date | null) => {
     if (!date) return 'ING'
@@ -202,15 +214,12 @@ onMounted(() => {
                 </div>
 
                 <div class="tags-container">
-                    <div class="head-box">
-                        <!-- TODO: 태그 종류마다 툴팁 노출
+                    <!-- TODO: 태그 종류마다 툴팁 노출
                          AI: 작성한 리뷰를 기반으로 추출한 태그, 작품 추천에 활용됨
                          리뷰 수정 시, 태그가 수정될 수도 있음
                          HANDLE: AI 분석 요구가 불가능한 경우,
                          운영 환경상 일시적으로 생성 불가한 경우, 임시 사용될 수 있음 -->
-                        <!-- TODO: retry btn 생성
-                          AI 분석 요구 1회 이후 문제가 발생할 경우, 유저에게 재시도 버튼 노출
-                          수동태그 노출 기준에서는 나오지 않음 -->
+                    <div class="head-box">
                         <template v-if="review.aiTagStatus === 'NONE'">
                             <h3>내가 선택한 태그</h3>
                             <!-- TODO: 유저가 선택한 태그 노출 -->
@@ -226,15 +235,27 @@ onMounted(() => {
                             </div>
                         </template>
                     </div>
-                    <div class="tags-box chips" v-if='review?.tags?.length'>
-                        <!-- TODO: tags.sentiment 에 따라 컬러 차이 필요
-                         태그 생성 과정 동안 스켈레톤 처리
-                         aiTagStatus 값으로 확인 및 처리 -->
-                        <span v-for="tag in review.tags" :key="tag.label" class="tag-item chip default">
-                            {{ tag.label }}
-                        </span>
+                    <div class="tags-box chips">
+                        <template v-if="review.aiTagStatus === 'PENDING' || review.aiTagStatus === 'PROCESSING'">
+                            <span class="skeleton"></span>
+                            <span class="skeleton"></span>
+                            <span class="skeleton"></span>
+                            <span class="skeleton"></span>
+                        </template>
+                        <template v-else-if="review.tags?.length">
+                            <span v-for="tag in review.tags" :key="tag.label" class="tag-item chip default"
+                                :class="getTagSentimentClass(tag.sentiment)">
+                                {{ tag.label }}
+                            </span>
+                        </template>
+                        <template v-else-if="review.aiTagStatus === 'FAILED'">
+                            AI 태그 생성에 실패했습니다.
+                            <div class="btn-box">
+                                <button class='active-btn'>재시도</button>
+                            </div>
+                        </template>
+                        <span v-else>생성된 태그가 없어요.</span>
                     </div>
-                    <span v-else>생성된 태그가 없어요.</span>
                 </div>
             </div>
         </template>
@@ -355,6 +376,24 @@ onMounted(() => {
 
 .review-detail-section .tags-box {
     margin-top: 12px;
+}
+
+.review-detail-section .tags-box .tag-item.positive:before,
+.review-detail-section .tags-box .tag-item.negative:before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    margin-right: 4px;
+}
+
+.review-detail-section .tags-box .tag-item.positive:before {
+    background-color: var(--success);
+}
+
+.review-detail-section .tags-box .tag-item.negative:before {
+    background-color: var(--error);
 }
 
 .review-detail-section .tags-container .head-box p button {

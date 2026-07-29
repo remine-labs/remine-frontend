@@ -102,7 +102,8 @@ html {
   --text-inverse: #f6f4f0;
   --text-menu: #666b77;
   --text-icon: #a0a6b2;
-  --text-static: #2d2f35;
+  --text-static-bk: #2d2f35;
+  --text-static-wh: #eeeeee;
 
   /* button */
   --btn-active-bg: #1f3059;

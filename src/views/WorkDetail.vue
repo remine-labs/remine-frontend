@@ -61,6 +61,15 @@ const showSeason = computed(
     () => (work.value?.numberOfSeasons ?? 0) > 1
 )
 
+const formatPeople = (people: string[]) => {
+    if (!people.length) return '';
+    if (people.length === 1) return people[0];
+
+    return `${people[0]} 외 ${people.length - 1}명`;
+};
+
+const directorText = computed(() => formatPeople(work.value?.directors ?? []));
+const writerText = computed(() => formatPeople(work.value?.writers ?? []));
 // TODO: 중복 값 어떻게 처리할 것인지
 const providerMap: Record<string, string> = {
     'Netflix Standard with Ads': 'Netflix',
@@ -93,8 +102,6 @@ const providerMap: Record<string, string> = {
 
     'YouTube Premium': 'YouTube',
     'YouTube': 'YouTube',
-
-    'Paramount': 'Paramount',
 }
 
 const goToCreate = () => {
@@ -188,7 +195,8 @@ getReviewsByWorkId()
                 </div>
                 <div class="work-info-box">
                     <div class="work-meta-box">
-                        <span class="age-rating" :class="`age-${work?.certification}`">{{ work?.certification }}</span>
+                        <span class="age-rating" :class="`age-${work?.certification}`">{{ work?.certification
+                            }}</span>
 
                         <div class="genre-box description">
                             <span class="genre" v-for='genre in work?.genres' :key='genre'>{{ genre }}</span>
@@ -196,7 +204,10 @@ getReviewsByWorkId()
                     </div>
                     <h2 class="work-title ellipsis-2">{{ work?.workTitle }}</h2>
                     <div class="work-detail-box">
-                        <p class="release-date">개봉일: {{ work?.workReleaseDate?.replace(/-/g, '.') }}</p>
+                        <p class="release-date">
+                            {{ work?.workReleaseDate?.replace(/-/g, '.') }}
+                            {{ work?.mediaType === 'tv' ? '공개' : '개봉' }}
+                        </p>
                         <p class="runtime" v-if="work?.mediaType === 'movie'">상영 시간: {{ work?.runtime }}분</p>
                         <p class="tv-info">
                             <span v-if="showSeason">
@@ -211,67 +222,71 @@ getReviewsByWorkId()
                     </div>
                     <!-- TODO: 감독과 각본은 1명 노출 후 그 외 n명 처리 + 말줄임표 처리 -->
                     <div class="directors-box" v-if='work?.directors?.length'>
-                        감독:
-                        <span class="director" v-for='director in work?.directors' :key='director'>{{ director }}</span>
-                    </div>
-                    <div class="writers-box" v-if="work?.writers?.length">
-                        각본:
-                        <span class="writer" v-for='writer in work?.writers' :key='writer'>{{ writer }}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="actor-container">
-                <h3>출연진</h3>
-                <div class="actor-list-box">
-                    <div class="actor-box" v-for="actor in work?.actors" :key="actor.name">
-                        <div class="img-box">
-                            <img v-if="actor.profilePath" :src="`https://image.tmdb.org/t/p/w200${actor.profilePath}`"
-                                :alt="actor.name" />
+                        <div class="directors-box description" v-if='work?.directors?.length'>
+                            감독:
+                            <span class="director" v-for='director in work?.directors' :key='director'>{{ director
+                                }}</span>
                         </div>
-                        <span class="actor-name ellipsis-2">
-                            {{ actor.name }}
-                        </span>
+                        <div class="writers-box description" v-if="work?.writers?.length">
+                            각본:
+                            <span class="writer" v-for='writer in work?.writers' :key='writer'>{{ writer }}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class=" overview-box">
-                <h3>줄거리</h3>
-                <div class="overview">
-                    {{ work?.workOverview }}
+                <div class="actor-container">
+                    <h3>출연진</h3>
+                    <div class="actor-list-box">
+                        <div class="actor-box" v-for="actor in work?.actors" :key="actor.name">
+                            <div class="img-box">
+                                <img v-if="actor.profilePath"
+                                    :src="`https://image.tmdb.org/t/p/w200${actor.profilePath}`" :alt="actor.name" />
+                            </div>
+                            <span class="actor-name description ellipsis-2">
+                                {{ actor.name }}
+                            </span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="provider-box">
-                <h3>시청 가능 OTT</h3>
-                <!-- TODO: OTT 정보 연결
+                <div class=" overview-box">
+                    <h3>줄거리</h3>
+                    <div class="overview">
+                        {{ work?.workOverview }}
+                    </div>
+                </div>
+                <div class="provider-box">
+                    <h3>시청 가능 OTT</h3>
+                    <!-- TODO: OTT 정보 연결
                  요금제 따라 차등이 존재하는 경우 어떻게 할지 고민
                  각 OTT 사이트의 검색 페이지까지 연결은 가능하겠지만, 실제 작품까지는 연결 어려움
                  cf) 파라마운트에서만 제공하는 작품 체크 필요 나는 학교에서 죽었다 -->
-                <!-- TODO: JustWatch에서 제공한다는 내용 기재 필수, 법적 문제임 -->
-                <!-- TODO: 유저가 사용하는 OTT 정보 받을 경우 구분해서 노출 -->
-                <div class="ott-box">
-                    <div class="ott" v-for='provider in work?.watchProviders' :key='provider'>{{ providerMap[provider]
-                        ||
-                        provider
-                    }}</div>
+                    <!-- TODO: JustWatch에서 제공한다는 내용 기재 필수, 법적 문제임 -->
+                    <!-- TODO: 유저가 사용하는 OTT 정보 받을 경우 구분해서 노출 -->
+                    <div class="ott-box">
+                        <div class="ott" v-for='provider in work?.watchProviders' :key='provider'>{{
+                            providerMap[provider]
+                            ||
+                            provider
+                        }}</div>
+                    </div>
                 </div>
-            </div>
-            <div class="review-list-box">
-                <h3>내가 쓴 리뷰</h3>
-                <!-- TODO: 작품 ID를 가지고 작성한 리뷰 조회 api
+                <div class="review-list-box">
+                    <h3>내가 쓴 리뷰</h3>
+                    <!-- TODO: 작품 ID를 가지고 작성한 리뷰 조회 api
                  작성한 리뷰가 있다면 감상일과 평점 간단하게 노출
                  없다면, "아직 리뷰가 없어요. 리뷰를 쓰고 내 취향의 작품을 추천받아 보세요" 식의 문구 -->
+                </div>
             </div>
-        </div>
-        <div class="floating-box">
-            <div class="icon-box watchlist">
-                <button @click="toggleWatchlistHandler">
-                    <PhHeart :weight="isWatchlisted ? 'fill' : 'regular'" :size="24" />
-                </button>
-            </div>
-            <div class="icon-box review-create">
-                <button @click="goToCreate">
-                    <PhPenNib :size="24" />
-                </button>
+            <div class="floating-box">
+                <div class="icon-box watchlist">
+                    <button @click="toggleWatchlistHandler">
+                        <PhHeart :weight="isWatchlisted ? 'fill' : 'regular'" :size="24" />
+                    </button>
+                </div>
+                <div class="icon-box review-create">
+                    <button @click="goToCreate">
+                        <PhPenNib :size="24" />
+                    </button>
+                </div>
             </div>
         </div>
     </section>
@@ -351,13 +366,32 @@ getReviewsByWorkId()
     margin-right: 6px;
 }
 
-/* TODO: 연령별 칩 컬러 디자인 필요
-예정 ALL - green, 12 - orange, 15 - yellow, 19 - red, etc - gray */
+.work-detail-section .work-meta-box .age-rating.age-null {
+    display: none;
+}
+
+.work-detail-section .work-meta-box .age-rating {
+    font-weight: 600;
+}
+
+.work-detail-section .work-meta-box .age-rating.age-ALL {
+    background-color: #3fa856;
+    color: var(--text-static-wh);
+}
+
+.work-detail-section .work-meta-box .age-rating.age-12 {
+    background-color: #f08018;
+    color: var(--text-static-bk);
+}
 
 .work-detail-section .work-meta-box .age-rating.age-15 {
     background-color: #fced1f;
-    font-weight: 600;
-    color: var(--text-static);
+    color: var(--text-static-bk);
+}
+
+.work-detail-section .work-meta-box .age-rating.age-19 {
+    background-color: #c01313;
+    color: var(--text-static-wh);
 }
 
 .work-detail-section .work-info-box .work-meta-box .genre {
@@ -422,15 +456,12 @@ getReviewsByWorkId()
     margin-top: 10px;
 }
 
-/* MEMO: 390px 이하에서 보이는 개수 조절할 건지 고민 필요
-425px 이하 6개,  425px 이상 7개, 520px 이상 8개, 640px 이상 9개, 690px 이상 10개 */
-
 .work-detail-section .actor-list-box .actor-box {
     display: flex;
     gap: 4px;
     flex-direction: column;
     align-items: center;
-    width: calc((100% - 42px)/7);
+    width: calc((100% - 35px)/6);
     flex-shrink: 0;
     word-break: keep-all;
     text-align: center;
@@ -508,6 +539,10 @@ getReviewsByWorkId()
     .work-detail-section .work-info-box .directors-box {
         margin-bottom: 4px;
     }
+
+    .work-detail-section .actor-list-box .actor-box {
+        width: calc((100% - 42px)/7);
+    }
 }
 
 @media screen and (min-width: 560px) {
@@ -530,6 +565,10 @@ getReviewsByWorkId()
     .work-detail-section .actor-list-box .actor-name {
         font-size: var(--font-size-long);
     }
+
+    .work-detail-section .actor-list-box .actor-box {
+        width: calc((100% - 49px)/8);
+    }
 }
 
 @media screen and (min-width: 690px) {
@@ -548,6 +587,10 @@ getReviewsByWorkId()
     .work-detail-section .work-info-container .work-info-box {
         margin-left: calc(30% + 8px);
         min-height: 160px;
+    }
+
+    .work-detail-section .actor-list-box .actor-box {
+        width: calc((100% - 56px)/9);
     }
 }
 </style>
