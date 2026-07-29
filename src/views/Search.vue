@@ -23,7 +23,7 @@ const goToPlaylist = () => {
 }
 
 const goToCustomWork = () => {
-    router.push('/addWork')
+    router.push('/customWork')
 }
 
 // TODO: workDetail 페이지에서 다시 돌아오더라도 기존 검색 값 유지하여, tmdb api 사용 횟수 줄이기
