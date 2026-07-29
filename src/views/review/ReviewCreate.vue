@@ -148,9 +148,10 @@ const submitReview = async () => {
     <section class="review-create-section">
         <div class="work-info-container relative" v-if="work">
             <!-- TODO: 작품 수정하기 버튼 + 작품 수정 modal 추가
-             search와 AddWork를 추가
+             search와 CustomWork를 추가
              search일 경우 빈 값, addWork일 경우 patch 화면 우선 -->
             <div class="img-box add-overlay">
+                <!-- TODO: poster 값이 없을 경우, ReMine 로고 작업하여 노출 -->
                 <img :src="`https://image.tmdb.org/t/p/original${work.poster}`" :alt="work.title" />
             </div>
         </div>
