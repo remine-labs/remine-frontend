@@ -22,6 +22,10 @@ const goToPlaylist = () => {
     router.push('/playlists')
 }
 
+const goToCustomWork = () => {
+    router.push('/customWork')
+}
+
 // TODO: workDetail 페이지에서 다시 돌아오더라도 기존 검색 값 유지하여, tmdb api 사용 횟수 줄이기
 
 const handleSearch = async () => {
@@ -114,7 +118,7 @@ onMounted(() => {
                     </button>
                 </div>
                 <!-- TODO: 배너 디자인 필요, css로 진행할 것 -->
-                <div class="banner-box description" @click='goToPlaylist'>
+                <div class="banner-box add-playlist description" @click='goToPlaylist'>
                     <p>플레이리스트에 저장하셨다면,</p>
                     <p>한 번 연동으로 검색부터 관심작품까지 한 번에!</p>
                 </div>
@@ -129,7 +133,11 @@ onMounted(() => {
                     :media-type="work.mediaType" :is-watchlisted="work.isWatchlisted"
                     @toggle-watchlist="toggleWatchlistHandler(work)" />
             </div>
-            <!-- TODO: 작품 등록하기 go to page [addWork]-->
+            <!-- TODO: 검색 이후에 노출 -->
+            <div class='banner-box add-work description' @click='goToCustomWork'>
+                <p>찾으시는 작품이 없다면,</p>
+                <p>직접 입력할 수 있어요! <span>작품 등록하고 리뷰 쓰기</span></p>
+            </div>
             <!-- TODO: pagination 위치 -->
         </div>
     </section>
@@ -151,7 +159,7 @@ onMounted(() => {
     color: var(--text-sub);
 }
 
-.search-section .search-container .banner-box {
+.search-section .banner-box {
     text-align: center;
     margin-top: 16px;
     background-color: var(--bg-gray);
