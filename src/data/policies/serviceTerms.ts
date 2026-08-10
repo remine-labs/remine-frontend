@@ -1,5 +1,6 @@
 export const termsOfService = {
   title: "ReMine 서비스 이용약관",
+  termsType: "SERVICE",
   metadata: {
     createdAt: "2026-06-01",
     updatedAt: "2026-06-01",

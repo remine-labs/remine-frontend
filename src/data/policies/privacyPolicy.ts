@@ -1,5 +1,6 @@
 export const privacyPolicy = {
   title: "개인정보 처리방침",
+  termsType: "PRIVACY",
   metadata: {
     createdAt: "2026-06-01",
     updatedAt: "2026-06-01",
