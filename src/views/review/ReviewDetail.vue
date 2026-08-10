@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../../api/client'
 import { deleteReview } from '../../api/review'
@@ -8,6 +8,8 @@ import { PhCalendar, PhDotsThreeVertical, PhInfo, PhStar } from '@phosphor-icons
 const route = useRoute()
 const router = useRouter()
 const reviewId = Number(route.params.reviewId)
+
+let pollTimer: ReturnType<typeof setTimeout> | null = null;
 
 interface Tag {
     label: string;
@@ -82,6 +84,28 @@ const formatDisplayDate = (date: string | Date | null) => {
     return `${yy}.${mm}.${dd}`
 }
 
+const pollReview = async () => {
+    try {
+        const reviewId = route.params.reviewId;
+        const res = await api.get(`/api/reviews/${reviewId}`);
+
+        const reviewData = res.data.data;
+
+        review.value = reviewData;
+
+        if (
+            reviewData.aiTagStatus === 'PENDING' ||
+            reviewData.aiTagStatus === 'PROCESSING'
+        ) {
+            pollTimer = setTimeout(pollReview, 2000);
+        } else {
+            pollTimer = null;
+        }
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 const fetchReviewDetail = async () => {
     try {
         isLoading.value = true
@@ -90,7 +114,16 @@ const fetchReviewDetail = async () => {
         const reviewId = route.params.reviewId
         const res = await api.get(`/api/reviews/${reviewId}`)
 
-        review.value = res.data.data
+        const reviewData = res.data.data;
+
+        review.value = reviewData;
+
+        if (
+            reviewData.aiTagStatus === 'PENDING' ||
+            reviewData.aiTagStatus === 'PROCESSING'
+        ) {
+            pollReview();
+        }
 
         history.replaceState(
             {
@@ -153,6 +186,13 @@ const handleDeleteReview = async () => {
 onMounted(() => {
     fetchReviewDetail()
 })
+
+onUnmounted(() => {
+    if (pollTimer) {
+        clearTimeout(pollTimer);
+        pollTimer = null;
+    }
+});
 </script>
 
 <template>
@@ -378,6 +418,19 @@ onMounted(() => {
     margin-top: 12px;
 }
 
+.review-detail-section .tags-box .skeleton {
+    width: 60px;
+    height: 22px;
+    border-radius: 5px;
+    margin-right: 2px;
+    background: linear-gradient(120deg,
+            #d6d6d6 25%,
+            #e5e5e5 50%,
+            #d6d6d6 75%);
+    background-size: 250% 100%;
+    animation: skeleton-shimmer 4s infinite linear;
+}
+
 .review-detail-section .tags-box .tag-item.positive:before,
 .review-detail-section .tags-box .tag-item.negative:before {
     content: '';
@@ -399,6 +452,17 @@ onMounted(() => {
 .review-detail-section .tags-container .head-box p button {
     margin-left: 8px;
 }
+
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
 
 @media screen and (min-width: 520px) {
     .review-detail-section .work-info-container {
