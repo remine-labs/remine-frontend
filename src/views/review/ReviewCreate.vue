@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import Datepicker from 'vue3-datepicker'
 import { PhStar } from '@phosphor-icons/vue'
@@ -12,25 +12,61 @@ const router = useRouter()
 
 const work = history.state
 
-// Date
 const today = new Date()
 const startDate = ref<Date>(today)
 const endDate = ref<Date | undefined>(today)
 const isWatching = ref(false)
+const isTagModalOpen = ref(false)
 
-// Rating
+
+// ref
 const rating = ref(0)
-const ratingBoxRef = ref<HTMLElement | null>(null)
+const ratingBoxRef = ref<HTMLElement | null>(null);
 
-// Comment
+const selectedCategories = ref<string[]>([]);
+
 const comment = ref('')
 
-// Utils
 
+const modalDescription = computed(() => {
+    return rating.value >= 3 ? '작품의 좋았던 점을 알려주세요.' : '작품의 아쉬웠던 점을 알려주세요.'
+})
+// Utils
 const formatDate = (date?: Date) => {
     if (!date) return null
     return date.toISOString().slice(0, 10)
 }
+
+const submitReview = () => {
+    const count = comment.value.replace(/\s/g, '').length
+
+    if (count >= 20) {
+        processReviewSubmission([])
+    } else {
+        isTagModalOpen.value = true
+    }
+}
+
+const submitWithManualTags = () => {
+    const sentiment = rating.value >= 3 ? 'POSITIVE' : 'NEGATIVE'
+    processReviewSubmission(selectedCategories.value, sentiment)
+}
+
+
+const manualTags = [
+    { id: 'STORY', label: '스토리' },
+    { id: 'ACTING', label: '연기' },
+    { id: 'DIRECTING', label: '연출' },
+    { id: 'VISUAL', label: '영상미' },
+    { id: 'MUSIC', label: '음악' },
+    { id: 'IMMERSION', label: '몰입감' },
+    { id: 'PLOT', label: '전개' },
+    { id: 'CHARACTER', label: '캐릭터' },
+    { id: 'EMOTION', label: '감정' },
+    { id: 'AFTERGLOW', label: '여운' },
+    { id: 'HUMOR', label: '개그' },
+    { id: 'ACTION', label: '액션' }
+];
 
 // TODO: custom work로 작성한 리뷰 전송할 방법 필요
 const createReviewPayload = (): ReviewPayload => ({
@@ -115,7 +151,7 @@ const handleRatingClick = (e: MouseEvent) => {
 
 // API
 
-const submitReview = async () => {
+const processReviewSubmission = async (tags: string[], sentiment?: string) => {
     if (!work?.id) {
         console.error('작품 정보가 없습니다.')
         return
@@ -127,14 +163,15 @@ const submitReview = async () => {
         const res = await createReview(body)
         const reviewId = res.data.data.reviewId
 
-        const count = body.comment.replace(/\s/g, '').length
+        const formattedTags = tags.map(tag => ({
+            category: tag,
+            sentiment: sentiment!
+        }))
 
-        await createTags(reviewId, {
-            tags: count >= 20 ? [] : ['수동태그 예정'],
-        })
+        // 3. 태그 등록
+        await createTags(reviewId, { tags: formattedTags })
 
         alert('저장되었습니다. 리뷰 페이지로 이동합니다.')
-
         router.push({
             name: 'reviewDetail',
             params: { reviewId },
@@ -203,7 +240,30 @@ const submitReview = async () => {
                 </div>
             </form>
         </div>
-        <!-- TODO: 리뷰 글자 수가 일정 이하일 경우, 수동 태그 modal 노출 / 작업 이후 edit에도 동일하게 추가 -->
+        <div class="modal-bg manual-tags-modal" v-if="isTagModalOpen">
+            <div class="modal-container">
+                <div class="header">
+                    <p class="title">작품을 평가해주세요.</p>
+                </div>
+                <div class="body">
+                    <p>{{ modalDescription }} (중복 선택 가능)</p>
+                    <div class="tags-container">
+                        <div class="input-box" v-for="tag in manualTags" :key="tag.id">
+                            <input type="checkbox" :id="tag.id" :value="tag.id" v-model="selectedCategories">
+                            <label :for="tag.id">{{ tag.label }}</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <div class="btn-box">
+                        <button class="close neutral-btn" @click="isTagModalOpen = false">돌아가기</button>
+                        <button class="active-btn post-manual-tags" @click="submitWithManualTags">
+                            저장하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 </template>
 
@@ -330,6 +390,34 @@ const submitReview = async () => {
     margin-top: 3rem;
     text-align: right;
 }
+
+.manual-tags-modal .body p {
+    margin-bottom: 20px;
+}
+
+.manual-tags-modal .tags-container .input-box {
+    display: inline;
+}
+
+.manual-tags-modal .tags-container .input-box input {
+    display: none;
+}
+
+.manual-tags-modal .tags-container .input-box input[type="checkbox"]:checked+label {
+    background-color: var(--chip-important-bg);
+    color: var(--text-inverse)
+}
+
+.manual-tags-modal .tags-container .input-box label {
+    background-color: var(--chip-default-bg);
+    white-space: nowrap;
+    padding: 2px 12px;
+    border-radius: 16px;
+    margin: 0 4px 4px 0;
+    transition: ease 0.2s;
+    cursor: pointer;
+}
+
 
 @media screen and (min-width: 520px) {
     .review-create-section .date-input-box .head-box .input-box {
