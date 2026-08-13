@@ -3,7 +3,6 @@ import { ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import Datepicker from 'vue3-datepicker'
 import { PhStar } from '@phosphor-icons/vue'
-
 import { createReview, createTags } from '../../api/review'
 import type { ReviewPayload } from '../../api/review'
 
@@ -31,27 +30,12 @@ const comment = ref('')
 const modalDescription = computed(() => {
     return rating.value >= 3 ? '작품의 좋았던 점을 알려주세요.' : '작품의 아쉬웠던 점을 알려주세요.'
 })
+
 // Utils
 const formatDate = (date?: Date) => {
     if (!date) return null
     return date.toISOString().slice(0, 10)
 }
-
-const submitReview = () => {
-    const count = comment.value.replace(/\s/g, '').length
-
-    if (count >= 20) {
-        processReviewSubmission([])
-    } else {
-        isTagModalOpen.value = true
-    }
-}
-
-const submitWithManualTags = () => {
-    const sentiment = rating.value >= 3 ? 'POSITIVE' : 'NEGATIVE'
-    processReviewSubmission(selectedCategories.value, sentiment)
-}
-
 
 const manualTags = [
     { id: 'STORY', label: '스토리' },
@@ -151,35 +135,70 @@ const handleRatingClick = (e: MouseEvent) => {
 
 // API
 
-const processReviewSubmission = async (tags: string[], sentiment?: string) => {
+const submitReview = async () => {
     if (!work?.id) {
-        console.error('작품 정보가 없습니다.')
-        return
+        console.error("작품 정보가 없습니다.");
+        return;
     }
 
-    const body = createReviewPayload()
+    const body = createReviewPayload();
+    const count = body.comment.replace(/\s/g, "").length;
+
+    if (count < 20) {
+        isTagModalOpen.value = true;
+        return;
+    }
 
     try {
-        const res = await createReview(body)
-        const reviewId = res.data.data.reviewId
+        const res = await createReview(body);
+        const reviewId = res.data.data.reviewId;
 
-        const formattedTags = tags.map(tag => ({
-            category: tag,
-            sentiment: sentiment!
-        }))
+        await createTags(reviewId, {
+            tags: [],
+        });
 
-        // 3. 태그 등록
-        await createTags(reviewId, { tags: formattedTags })
+        alert("저장되었습니다. 리뷰 페이지로 이동합니다.");
 
-        alert('저장되었습니다. 리뷰 페이지로 이동합니다.')
         router.push({
-            name: 'reviewDetail',
+            name: "reviewDetail",
             params: { reviewId },
-        })
+        });
     } catch (err: any) {
-        alert(`저장 실패\n${getErrorMessage(err)}`)
+        alert(`저장 실패\n${getErrorMessage(err)}`);
     }
-}
+};
+
+const submitWithManualTags = async () => {
+    if (!work?.id || selectedCategories.value.length === 0) {
+        return;
+    }
+
+    const body = createReviewPayload();
+
+    try {
+        const res = await createReview(body);
+        const reviewId = res.data.data.reviewId;
+
+        const sentiment: "POSITIVE" | "NEGATIVE" =
+            rating.value >= 3 ? "POSITIVE" : "NEGATIVE";
+
+        const tags = selectedCategories.value.map((category) => ({
+            category,
+            sentiment,
+        }));
+
+        await createTags(reviewId, { tags });
+
+        alert("저장되었습니다. 리뷰 페이지로 이동합니다.");
+
+        router.push({
+            name: "reviewDetail",
+            params: { reviewId },
+        });
+    } catch (err: any) {
+        alert(`저장 실패\n${getErrorMessage(err)}`);
+    }
+};
 </script>
 
 <template>
