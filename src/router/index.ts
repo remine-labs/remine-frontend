@@ -16,6 +16,7 @@ import Playlist from "../views/profile/Playlist.vue";
 import PrivacyPolicyView from "../views/settings/PrivacyPolicyView.vue";
 import ServiceTermsView from "../views/settings/ServiceTermsView.vue";
 import CustomWork from "../views/CustomWork.vue";
+import Discover from "../views/Discover.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -119,6 +120,17 @@ const router = createRouter({
             header: {
               titleType: "dynamic",
               showBack: true,
+            },
+          },
+        },
+        {
+          path: "discover",
+          name: "discover",
+          component: Discover,
+          meta: {
+            header: {
+              title: "discover",
+              showBack: false,
             },
           },
         },

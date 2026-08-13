@@ -1,15 +1,17 @@
 <script setup lang='ts'>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { api } from '../api/client'
 import { useRoute, useRouter } from 'vue-router'
 import { PhHeart, PhPenNib } from '@phosphor-icons/vue'
 import { addWatchlist, deleteWatchlist, getWatchlist, type Watchlist } from '../api/watchlist'
+import { getMyReviewByWork } from "../api/review";
 
 const route = useRoute()
 const router = useRouter()
 
 const mediaType = route.params.mediaType as string
 const workId = route.params.workId as string
+
 
 export interface Actor {
     name: string
@@ -49,6 +51,14 @@ interface Review {
     rating: number
 }
 
+type MyReview = {
+    reviewId: number;
+    rating: number;
+    startDate: string;
+    endDate: string | null;
+};
+
+
 const work = ref<WorkDetail | null>(null)
 const reviews = ref<Review[]>([])
 
@@ -56,6 +66,8 @@ const loading = ref(false)
 const error = ref('')
 
 const isWatchlisted = ref(false)
+
+const myReview = ref<MyReview | null>(null);
 
 const showSeason = computed(
     () => (work.value?.numberOfSeasons ?? 0) > 1
@@ -66,6 +78,18 @@ const formatPeople = (people: string[]) => {
     if (people.length === 1) return people[0];
 
     return `${people[0]} 외 ${people.length - 1}명`;
+};
+
+const formatReviewDate = (
+    startDate: string,
+    endDate: string | null
+) => {
+    const start = startDate.replace(/-/g, ".");
+    const end = endDate
+        ? endDate.replace(/-/g, ".")
+        : "감상 중";
+
+    return `${start} ~ ${end}`;
 };
 
 const directorText = computed(() => formatPeople(work.value?.directors ?? []));
@@ -116,6 +140,19 @@ const goToCreate = () => {
         },
     })
 }
+
+const getMyReview = async () => {
+    try {
+        const response = await getMyReviewByWork(
+            mediaType,
+            Number(workId)
+        );
+
+        myReview.value = response.data.data[0] ?? null;
+    } catch (error) {
+        console.error("내 리뷰 조회 실패:", error);
+    }
+};
 
 const toggleWatchlistHandler = async () => {
     if (!work.value) return
@@ -179,6 +216,9 @@ const getReviewsByWorkId = async () => {
 
 getWorkDetail()
 getReviewsByWorkId()
+onMounted(() => {
+    getMyReview();
+});
 </script>
 
 <template>
@@ -267,9 +307,20 @@ getReviewsByWorkId()
             </div>
             <div class="review-list-box">
                 <h3>내가 쓴 리뷰</h3>
-                <!-- TODO: 작품 ID를 가지고 작성한 리뷰 조회 api
-                 작성한 리뷰가 있다면 감상일과 평점 간단하게 노출
-                 없다면, "아직 리뷰가 없어요. 리뷰를 쓰고 내 취향의 작품을 추천받아 보세요" 식의 문구 -->
+
+                <template v-if="myReview">
+                    <div class="review-summary" @click="router.push(`/review/${myReview.reviewId}`)">
+                        <span>
+                            {{ formatReviewDate(myReview.startDate, myReview.endDate) }}
+                        </span>
+                        <span>{{ myReview.rating }}/5</span>
+                    </div>
+                </template>
+
+                <p v-else>
+                    아직 리뷰가 없어요.<br />
+                    리뷰를 쓰고 내 취향의 작품을 추천받아 보세요.
+                </p>
             </div>
         </div>
         <div class="floating-box">
