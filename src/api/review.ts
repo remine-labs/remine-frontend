@@ -33,16 +33,16 @@ export const deleteReview = (reviewId: number) => {
   return api.delete(`/api/reviews/${reviewId}`);
 };
 
-export interface CreateTagsPayload {
+export type CreateTagsPayload = {
   tags: {
     category: string;
-    sentiment: string;
+    sentiment: "POSITIVE" | "NEGATIVE";
   }[];
-}
-export const createTags = (reviewId: number, payload: CreateTagsPayload) => {
-  return api.post(`/api/reviews/${reviewId}/tags`, payload);
 };
 
+export const createTags = (reviewId: number, payload?: CreateTagsPayload) => {
+  return api.post(`/api/reviews/${reviewId}/tags`, payload);
+};
 export const getMyReviewByWork = (mediaType: string, workId: number) => {
   return api.get(`/api/reviews/work/${mediaType}/${workId}`);
 };
