@@ -1,27 +1,34 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { api } from '../api/client'
+import { ref } from "vue"
+import { useRouter } from "vue-router"
+import { api } from "../api/client"
 
 const router = useRouter()
 
-const workTitle = ref('')
-const mediaType = ref<'movie' | 'tv'>('movie')
-const memo = ref('')
+const workTitle = ref("")
+const mediaType = ref<"movie" | "tv">("movie")
+const memo = ref("")
 
 const addWork = async () => {
     if (!workTitle.value.trim()) return
 
     try {
-        await api.post('/api/custom-works', {
+        const response = await api.post("/api/custom-works", {
             workTitle: workTitle.value.trim(),
             mediaType: mediaType.value,
             memo: memo.value.trim()
         })
 
-        router.push('/review/create')
+        router.push({
+            path: "/review/create",
+            query: {
+                workId: response.data.workId,
+                workSource: "CUSTOM",
+                mediaType: mediaType.value
+            }
+        })
     } catch (error) {
-        console.error('작품 등록 실패:', error)
+        console.error("작품 등록 실패:", error)
     }
 }
 </script>
