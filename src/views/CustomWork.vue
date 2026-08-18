@@ -21,10 +21,13 @@ const addWork = async () => {
 
         router.push({
             path: "/review/create",
-            query: {
-                workId: response.data.workId,
-                workSource: "CUSTOM",
-                mediaType: mediaType.value
+            state: {
+                id: response.data.data.id,
+                title: response.data.data.workTitle,
+                poster: "",
+                workReleaseDate: undefined,
+                mediaType: response.data.data.mediaType,
+                workSource: "CUSTOM"
             }
         })
     } catch (error) {
