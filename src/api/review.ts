@@ -6,11 +6,11 @@ export const getReviewDetail = (reviewId: number) => {
 
 export type ReviewPayload = {
   workId: number;
+  workSource: "TMDB" | "CUSTOM";
   workTitle: string;
   workPosterPath: string;
   workReleaseDate?: string;
   mediaType: string;
-
   comment: string;
   rating: number;
   startDate: string;

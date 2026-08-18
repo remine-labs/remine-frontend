@@ -130,13 +130,14 @@ const providerMap: Record<string, string> = {
 
 const goToCreate = () => {
     router.push({
-        path: '/review/create',
+        path: "/review/create",
         state: {
             id: work.value?.workId,
             title: work.value?.workTitle,
             poster: work.value?.workPosterPath,
             workReleaseDate: work.value?.workReleaseDate,
-            mediaType: work.value?.mediaType
+            mediaType: work.value?.mediaType,
+            workSource: "TMDB"
         },
     })
 }
@@ -236,7 +237,7 @@ onMounted(() => {
                 <div class="work-info-box">
                     <div class="work-meta-box">
                         <span class="age-rating" :class="`age-${work?.certification}`">{{ work?.certification
-                        }}</span>
+                            }}</span>
 
                         <div class="genre-box description">
                             <span class="genre" v-for='genre in work?.genres' :key='genre'>{{ genre }}</span>
