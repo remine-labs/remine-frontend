@@ -52,9 +52,9 @@ const manualTags = [
     { id: 'ACTION', label: '액션' }
 ];
 
-// TODO: custom work로 작성한 리뷰 전송할 방법 필요
 const createReviewPayload = (): ReviewPayload => ({
     workId: work.id,
+    workSource: work.workSource,
     workTitle: work.title,
     workPosterPath: work.poster,
     workReleaseDate: work.workReleaseDate,
