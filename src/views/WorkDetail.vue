@@ -132,9 +132,9 @@ const goToCreate = () => {
     router.push({
         path: "/review/create",
         state: {
-            id: work.value?.workId,
-            title: work.value?.workTitle,
-            poster: work.value?.workPosterPath,
+            workId: work.value?.workId,
+            workTitle: work.value?.workTitle,
+            workPosterPath: work.value?.workPosterPath,
             workReleaseDate: work.value?.workReleaseDate,
             mediaType: work.value?.mediaType,
             workSource: "TMDB"
