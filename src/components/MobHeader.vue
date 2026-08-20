@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { PhBell, PhCaretLeft } from '@phosphor-icons/vue'
+import { PhCaretLeft, PhGear } from '@phosphor-icons/vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -26,6 +26,11 @@ const title = computed(() => {
 })
 
 const showBack = computed(() => header.value?.showBack)
+
+const goToSettings = () => {
+    router.push(`/settings`)
+}
+
 </script>
 
 <template>
@@ -42,9 +47,9 @@ const showBack = computed(() => header.value?.showBack)
                      추후 리팩토링을 통해 첫 렌더 전에 상태가 준비되도록 변경 예정 -->
                     <h1 class='logo'>{{ title }}</h1>
                 </div>
-                <div class="icon-box">
-                    <button class='icon header-notice' type='button' aria-label='알림'>
-                        <PhBell :size='24'></PhBell>
+                <div class="icon-box" @click="goToSettings">
+                    <button class="icon settings">
+                        <PhGear :size="24"></PhGear>
                     </button>
                 </div>
             </div>

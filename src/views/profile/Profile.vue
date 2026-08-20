@@ -103,9 +103,6 @@ onMounted(async () => {
                 <!-- TODO: settings 버튼은 header bell 위치로 변경
                  logout은 settings 하위 기능으로 이동 -->
                 <div class="btn-box">
-                    <button>settings</button>
-                </div>
-                <div class="btn-box">
                     <button id='logout-btn' @click='handleLogout'>logout</button>
                 </div>
             </div>
