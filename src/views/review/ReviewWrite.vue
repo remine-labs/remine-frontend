@@ -21,7 +21,6 @@ const {
     submitReview,
     submitWithManualTags,
 } = useReviewForm()
-
 </script>
 
 <template>
