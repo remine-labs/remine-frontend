@@ -1,17 +1,37 @@
 <script setup lang='ts'>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import WorkCard from '../../components/WorkCard.vue';
 import { getWatchlist, deleteWatchlist, addWatchlist } from '../../api/watchlist.ts';
 import type { Watchlist } from '../../api/watchlist.ts';
 
 const router = useRouter();
-
 const watchlist = ref<Watchlist[]>([]);
+const isMovieChecked = ref(true);
+const isTvChecked = ref(true);
 
 const goToPlaylists = () => {
     router.push("/playlists")
 }
+
+const fetchWatchlist = async () => {
+    try {
+        let params = {};
+        if (isMovieChecked.value && !isTvChecked.value) {
+            params = { mediaType: 'movie' };
+        } else if (!isMovieChecked.value && isTvChecked.value) {
+            params = { mediaType: 'tv' };
+        }
+
+        const res = await getWatchlist(params);
+        watchlist.value = res.data.data.content.map((work: Watchlist) => ({
+            ...work,
+            isWatchlisted: true
+        }));
+    } catch (error) {
+        console.error(error);
+    }
+};
 
 const toggleWatchlistHandler = async (work: any) => {
     try {
@@ -26,24 +46,18 @@ const toggleWatchlistHandler = async (work: any) => {
                 workReleaseDate: work.workReleaseDate,
             });
         }
-
         work.isWatchlisted = !work.isWatchlisted;
+        // 목록 갱신 필요 시 fetchWatchlist() 호출
     } catch (error) {
         console.error(error);
     }
 };
 
-onMounted(async () => {
-    try {
-        const res = await getWatchlist();
-        watchlist.value = res.data.data.content.map((work: Watchlist) => ({
-            ...work,
-            isWatchlisted: true
-        }));
-    } catch (error) {
-        console.error(error)
-    }
-})
+watch([isMovieChecked, isTvChecked], () => {
+    fetchWatchlist();
+});
+
+onMounted(fetchWatchlist);
 
 </script>
 
@@ -57,11 +71,11 @@ onMounted(async () => {
             <div class="filter-box">
                 <!-- TODO: filter 디자인 -->
                 <div class="checkbox">
-                    <input type="checkbox" id='checkbox-movie'>
+                    <input type="checkbox" id='checkbox-movie' v-model='isMovieChecked'>
                     <label for="checkbox-movie">영화</label>
                 </div>
                 <div class="checkbox">
-                    <input type="checkbox" id='checkbox-tv'>
+                    <input type="checkbox" id='checkbox-tv' v-model='isTvChecked'>
                     <label for="checkbox-tv">TV</label>
                 </div>
             </div>
