@@ -5,9 +5,8 @@ import Home from "../views/Home.vue";
 import Search from "../views/Search.vue";
 import DefaultLayout from "../components/DefaultLayout.vue";
 import Timeline from "../views/review/Timeline.vue";
-import ReviewCreate from "../views/review/ReviewCreate.vue";
+import ReviewWrite from "../views/review/ReviewWrite.vue";
 import ReviewDetail from "../views/review/ReviewDetail.vue";
-import ReviewEdit from "../views/review/ReviewEdit.vue";
 import Profile from "../views/profile/Profile.vue";
 import WorkDetail from "../views/WorkDetail.vue";
 import Watchlist from "../views/profile/Watchlist.vue";
@@ -93,7 +92,7 @@ const router = createRouter({
         {
           path: "review/create",
           name: "reviewCreate",
-          component: ReviewCreate,
+          component: ReviewWrite,
           meta: {
             header: {
               titleType: "dynamic",
@@ -115,7 +114,7 @@ const router = createRouter({
         {
           path: "review/:reviewId/edit",
           name: "reviewEdit",
-          component: ReviewEdit,
+          component: ReviewWrite,
           meta: {
             header: {
               titleType: "dynamic",

@@ -13,7 +13,7 @@ const addWork = async () => {
     if (!workTitle.value.trim()) return
 
     try {
-        const response = await api.post("/api/custom-works", {
+        const res = await api.post("/api/custom-works", {
             workTitle: workTitle.value.trim(),
             mediaType: mediaType.value,
             memo: memo.value.trim()
@@ -22,11 +22,11 @@ const addWork = async () => {
         router.push({
             path: "/review/create",
             state: {
-                id: response.data.data.id,
-                title: response.data.data.workTitle,
-                poster: "",
+                workId: res.data.data.id,
+                workTitle: res.data.data.workTitle,
+                workPosterPath: "",
                 workReleaseDate: undefined,
-                mediaType: response.data.data.mediaType,
+                mediaType: res.data.data.mediaType,
                 workSource: "CUSTOM"
             }
         })
