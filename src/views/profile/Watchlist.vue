@@ -84,7 +84,6 @@ onMounted(fetchWatchlist);
                     :work-title="work.workTitle" :work-poster-path="work.workPosterPath" :media-type="work.mediaType"
                     :work-release-date='work.workReleaseDate' :is-watchlisted="work.isWatchlisted"
                     @toggle-watchlist="toggleWatchlistHandler(work)" />
-                <!-- TODO: :work-release-date는 추후 api 수정 후에 기입 -->
             </div>
         </div>
     </section>
