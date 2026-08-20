@@ -43,6 +43,7 @@ export type CreateTagsPayload = {
 export const createTags = (reviewId: number, payload?: CreateTagsPayload) => {
   return api.post(`/api/reviews/${reviewId}/tags`, payload);
 };
-export const getMyReviewByWork = (mediaType: string, workId: number) => {
-  return api.get(`/api/reviews/work/${mediaType}/${workId}`);
-};
+
+// export const getMyReviewByWork = (mediaType: string, workId: number) => {
+//   return api.get(`/api/reviews/work/${mediaType}/${workId}`);
+// };

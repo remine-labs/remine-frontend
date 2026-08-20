@@ -3,7 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../../api/client'
 import { deleteReview } from '../../api/review'
-import { PhCalendar, PhDotsThreeVertical, PhInfo, PhStar } from '@phosphor-icons/vue'
+import { PhCalendar, PhDotsThreeVertical, PhPencil, PhStar } from '@phosphor-icons/vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -216,11 +216,14 @@ onUnmounted(() => {
             </div>
             <div class="wrap">
                 <div class="meta-container relative">
-                    <div class="info-box">
+                    <div class="rating-box">
                         <span class="icon">
-                            <PhInfo :size='24'></PhInfo>
+                            <PhStar :size='24'></PhStar>
                         </span>
-                        <p class="release-date description">{{ formatDisplayDate(review.workReleaseDate) }}</p>
+                        <div class="rated-point-box description">
+                            {{ review.rating }}
+                            <span class="rating-standard">/5</span>
+                        </div>
                     </div>
                     <div class="watch-period-box">
                         <span class="icon">
@@ -236,21 +239,24 @@ onUnmounted(() => {
                             </div>
                         </div>
                     </div>
-                    <div class="rating-box">
+                    <div class="created-at-box">
                         <span class="icon">
-                            <PhStar :size='24'></PhStar>
+                            <PhPencil :size="24"></PhPencil>
                         </span>
-                        <div class="rated-point-box description">
-                            {{ review.rating }}
-                            <span class="rating-standard">/5</span>
-                        </div>
+                        <p class="created-at description">{{ formatDisplayDate(review.createdAt) }}</p>
                     </div>
                 </div>
                 <div class="comment-container">
-                    <div class="text-box">
-                        {{ review.comment }}
+                    <div class="text-box" :class="{ 'state-null': !review.comment }">
+                        <template v-if="review.comment">
+                            {{ review.comment }}
+                        </template>
+                        <template v-else>
+                            <p>작성된 내용이 없어요.</p>
+                            <p>리뷰를 일정 길이 이상 작성하면,</p>
+                            <p>AI가 분석하여 태그를 만들어드려요.</p>
+                        </template>
                     </div>
-                    <p class="created-at number">{{ formatDisplayDate(review.createdAt) }}</p>
                 </div>
 
                 <div class="tags-container">
@@ -400,9 +406,10 @@ onUnmounted(() => {
     box-shadow: var(--box-default)
 }
 
-.review-detail-section .comment-container .created-at {
-    text-align: right;
-    margin: 4px 6px 0 0;
+
+.review-detail-section .comment-container .state-null {
+    text-align: center;
+    padding: 40px 0;
 }
 
 .review-detail-section .tags-container {
@@ -433,20 +440,18 @@ onUnmounted(() => {
 
 .review-detail-section .tags-box .tag-item.positive:before,
 .review-detail-section .tags-box .tag-item.negative:before {
-    content: '';
     display: inline-block;
-    width: 8px;
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
     margin-right: 4px;
 }
 
 .review-detail-section .tags-box .tag-item.positive:before {
-    background-color: var(--success);
+    content: '▲';
+    color: var(--success);
 }
 
 .review-detail-section .tags-box .tag-item.negative:before {
-    background-color: var(--error);
+    content: '▼';
+    color: var(--error);
 }
 
 .review-detail-section .tags-container .head-box p button {
