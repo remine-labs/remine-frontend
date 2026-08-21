@@ -16,6 +16,7 @@ import PrivacyPolicyView from "../views/settings/PrivacyPolicyView.vue";
 import ServiceTermsView from "../views/settings/ServiceTermsView.vue";
 import CustomWork from "../views/CustomWork.vue";
 import Discover from "../views/Discover.vue";
+import Settings from "../views/settings/Settings.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -173,6 +174,17 @@ const router = createRouter({
           meta: {
             header: {
               title: "Playlist",
+              showBack: true,
+            },
+          },
+        },
+        {
+          path: "settings",
+          name: "settings",
+          component: Settings,
+          meta: {
+            header: {
+              title: "설정",
               showBack: true,
             },
           },

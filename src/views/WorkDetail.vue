@@ -4,7 +4,7 @@ import { api } from '../api/client'
 import { useRoute, useRouter } from 'vue-router'
 import { PhHeart, PhPenNib } from '@phosphor-icons/vue'
 import { addWatchlist, deleteWatchlist, getWatchlist, type Watchlist } from '../api/watchlist'
-import { getMyReviewByWork } from "../api/review";
+// import { getMyReviewByWork } from "../api/review";
 
 const route = useRoute()
 const router = useRouter()
@@ -142,18 +142,18 @@ const goToCreate = () => {
     })
 }
 
-const getMyReview = async () => {
-    try {
-        const response = await getMyReviewByWork(
-            mediaType,
-            Number(workId)
-        );
+// const getMyReview = async () => {
+//     try {
+//         const response = await getMyReviewByWork(
+//             mediaType,
+//             Number(workId)
+//         );
 
-        myReview.value = response.data.data[0] ?? null;
-    } catch (error) {
-        console.error("내 리뷰 조회 실패:", error);
-    }
-};
+//         myReview.value = response.data.data[0] ?? null;
+//     } catch (error) {
+//         console.error("내 리뷰 조회 실패:", error);
+//     }
+// };
 
 const toggleWatchlistHandler = async () => {
     if (!work.value) return
@@ -200,15 +200,15 @@ const getWorkDetail = async () => {
     }
 }
 
-const getReviewsByWorkId = async () => {
-    try {
-        const res = await api.get(`/api/reviews/work/${workId}`)
-        reviews.value = res.data.data ?? []
-    } catch (err) {
-        console.error(err)
-        reviews.value = []
-    }
-}
+// const getReviewsByWorkId = async () => {
+//     try {
+//         const res = await api.get(`/api/reviews/work/${workId}`)
+//         reviews.value = res.data.data ?? []
+//     } catch (err) {
+//         console.error(err)
+//         reviews.value = []
+//     }
+// }
 
 // TODO: 하단에 '내가 쓴 리뷰' 부분 연결
 // const goToReviewDetail = (reviewId: number) => {
@@ -216,10 +216,10 @@ const getReviewsByWorkId = async () => {
 // }
 
 getWorkDetail()
-getReviewsByWorkId()
-onMounted(() => {
-    getMyReview();
-});
+// getReviewsByWorkId()
+// onMounted(() => {
+//     getMyReview();
+// });
 </script>
 
 <template>
