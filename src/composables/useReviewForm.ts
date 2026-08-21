@@ -197,11 +197,16 @@ export function useReviewForm() {
     }
 
     try {
+      let targetReviewId: number;
+
       if (isEditMode.value && reviewIdParam) {
+        targetReviewId = Number(reviewIdParam);
+
         const patchPayload: PatchReviewPayload = {
-          reviewId: Number(reviewIdParam),
+          reviewId: targetReviewId,
           ...basePayload,
         };
+
         await patchReview(patchPayload);
         alert("수정되었습니다. 리뷰 페이지로 이동합니다.");
       } else {
@@ -209,15 +214,17 @@ export function useReviewForm() {
           console.error("작품 정보가 없습니다.");
           return;
         }
+
         const res = await createReview(basePayload);
-        const reviewId = res.data.data.reviewId;
-        await createTags(reviewId, { tags: [] });
+        targetReviewId = res.data.data.reviewId;
+
+        await createTags(targetReviewId, { tags: [] });
         alert("저장되었습니다. 리뷰 페이지로 이동합니다.");
       }
 
       router.push({
         name: "reviewDetail",
-        params: { reviewId: reviewIdParam || history.state?.id },
+        params: { reviewId: targetReviewId },
       });
     } catch (err: any) {
       alert(`요청 실패\n${getErrorMessage(err)}`);
