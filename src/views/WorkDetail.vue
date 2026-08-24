@@ -138,62 +138,59 @@ const providerAliasMap: Record<string, string> = {
     'YouTube Premium': 'youtube'
 }
 
-// TODO: 직접 해당 작품으로 연결할 수 없다면, search 화면으로라도 연결해 보자
-// netfilx.com/search?q=, 디즈니 불가
-// primevideo.com/-/ko/search?phrase=, tv.apple.com/kr/search?term=
-// watcha.com/kr /search?query=, wavve.com/search?searchWord=
-// tving.com/search?keyword=, coupangplay.com/query?keyword=
-// laftel.net/search?keyword=, youtube.com/results?search_query=
+const getCleanSearchQuery = (title: string = '') => {
+    return title.replace(/[^a-zA-Z0-9가-힣]/g, '')
+}
 
-const providerMetaMap: Record<string, ProviderMeta> = {
+const providerMetaMap: Record<string, Omit<ProviderMeta, 'url'> & { getUrl: (query: string) => string }> = {
     'netflix': {
         name: 'netflix',
-        url: 'https://www.netflix.com',
+        getUrl: (query) => `https://www.netflix.com/search?q=${query}`,
         imgType: 'jpeg'
     },
     'disney': {
         name: 'disney',
-        url: 'https://www.disneyplus.com',
+        getUrl: () => 'https://www.disneyplus.com',
         imgType: 'jpeg'
     },
     'amazon': {
         name: 'amazon',
-        url: 'https://www.primevideo.com',
+        getUrl: (query) => `https://www.primevideo.com/-/ko/search?phrase=${query}`,
         imgType: 'jpeg'
     },
     'apple': {
         name: 'apple',
-        url: 'https://tv.apple.com',
+        getUrl: (query) => `https://tv.apple.com/kr/search?term=${query}`,
         imgType: 'png'
     },
     'watcha': {
         name: 'watcha',
-        url: 'https://watcha.com',
+        getUrl: (query) => `https://watcha.com/search?query=${query}`,
         imgType: 'jpeg'
     },
     'wavve': {
         name: 'wavve',
-        url: 'https://www.wavve.com',
+        getUrl: (query) => `https://www.wavve.com/search?searchWord=${query}`,
         imgType: 'png'
     },
     'tving': {
         name: 'tving',
-        url: 'https://www.tving.com',
+        getUrl: (query) => `https://www.tving.com/search?keyword=${query}`,
         imgType: 'png'
     },
     'coupang': {
         name: 'coupang',
-        url: 'https://www.coupangplay.com',
+        getUrl: (query) => `https://www.coupangplay.com/query?keyword=${query}`,
         imgType: 'png'
     },
     'laftel': {
         name: 'laftel',
-        url: 'https://laftel.net',
+        getUrl: (query) => `https://laftel.net/search?keyword=${query}`,
         imgType: 'jpeg'
     },
     'youtube': {
         name: 'youtube',
-        url: 'https://www.youtube.com',
+        getUrl: (query) => `https://www.youtube.com/results?search_query=${query}`,
         imgType: 'jpeg'
     }
 }
@@ -224,7 +221,16 @@ const getProviderInfo = (
 
     if (!brandKey) return undefined
 
-    return providerMetaMap[brandKey]
+    const meta = providerMetaMap[brandKey]
+    if (!meta) return undefined
+
+    const query = getCleanSearchQuery(work.value?.workTitle ?? '')
+
+    return {
+        name: meta.name,
+        url: meta.getUrl(query),
+        imgType: meta.imgType
+    }
 }
 
 const getProviderImage = (provider: string) => {
@@ -330,6 +336,8 @@ getWorkDetail()
 //     getMyReview();
 // });
 </script>
+
+
 <template>
     <section class="work-detail-section">
         <div class="work-bg-box relative">
