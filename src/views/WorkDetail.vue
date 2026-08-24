@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { api } from '../api/client'
 import { useRoute, useRouter } from 'vue-router'
 import { PhHeart, PhPenNib } from '@phosphor-icons/vue'
@@ -12,13 +12,12 @@ const router = useRouter()
 const mediaType = route.params.mediaType as string
 const workId = route.params.workId as string
 
-
-export interface Actor {
+interface Actor {
     name: string
     profilePath: string
 }
 
-export interface WorkDetail {
+interface WorkDetail {
     workId: number
     workTitle: string
     originalTitle: string
@@ -52,80 +51,196 @@ interface Review {
 }
 
 type MyReview = {
-    reviewId: number;
-    rating: number;
-    startDate: string;
-    endDate: string | null;
-};
+    reviewId: number
+    rating: number
+    startDate: string
+    endDate: string | null
+}
 
+interface ProviderMeta {
+    name: string
+    url: string
+    imgType: string
+}
+
+const providerImages = import.meta.glob<string>(
+    '../assets/images/providers/*.{png,jpeg,jpg}',
+    {
+        eager: true,
+        import: 'default',
+    }
+)
 
 const work = ref<WorkDetail | null>(null)
-const reviews = ref<Review[]>([])
+// const reviews = ref<Review[]>([])
 
 const loading = ref(false)
 const error = ref('')
 
 const isWatchlisted = ref(false)
 
-const myReview = ref<MyReview | null>(null);
+const myReview = ref<MyReview | null>(null)
 
 const showSeason = computed(
     () => (work.value?.numberOfSeasons ?? 0) > 1
 )
 
 const formatPeople = (people: string[]) => {
-    if (!people.length) return '';
-    if (people.length === 1) return people[0];
+    if (!people.length) return ''
+    if (people.length === 1) return people[0]
 
-    return `${people[0]} 외 ${people.length - 1}명`;
-};
+    return `${people[0]} 외 ${people.length - 1}명`
+}
 
 const formatReviewDate = (
     startDate: string,
     endDate: string | null
 ) => {
-    const start = startDate.replace(/-/g, ".");
+    const start = startDate.replace(/-/g, '.')
     const end = endDate
-        ? endDate.replace(/-/g, ".")
-        : "감상 중";
+        ? endDate.replace(/-/g, '.')
+        : '감상 중'
 
-    return `${start} ~ ${end}`;
-};
+    return `${start} ~ ${end}`
+}
 
-const directorText = computed(() => formatPeople(work.value?.directors ?? []));
-const writerText = computed(() => formatPeople(work.value?.writers ?? []));
-// TODO: 중복 값 어떻게 처리할 것인지
-const providerMap: Record<string, string> = {
-    'Netflix Standard with Ads': 'Netflix',
-    'Netflix': 'Netflix',
+const directorText = computed(() => formatPeople(work.value?.directors ?? []))
+const writerText = computed(() => formatPeople(work.value?.writers ?? []))
 
-    'Disney Plus': 'Disney+',
-    'Disney+': 'Disney+',
+const providerAliasMap: Record<string, string> = {
+    'Netflix': 'netflix',
+    'Netflix Standard with Ads': 'netflix',
 
-    'Amazon Prime Video': 'Prime Video',
-    'Amazon Video': 'Prime Video',
+    'Disney+': 'disney',
+    'Disney Plus': 'disney',
 
-    'Apple TV': 'Apple TV+',
-    'Apple TV Plus': 'Apple TV+',
-    'Apple TV+': 'Apple TV+',
+    'Amazon Prime Video': 'amazon',
+    'Amazon Video': 'amazon',
 
-    'Watcha': 'WATCHA',
-    'WATCHA': 'WATCHA',
+    'Apple TV+': 'apple',
+    'Apple TV': 'apple',
+    'Apple TV Plus': 'apple',
+
+    'WATCHA': 'watcha',
+    'Watcha': 'watcha',
 
     'wavve': 'wavve',
     'Wavve': 'wavve',
 
-    'TVING': 'TVING',
-    'Tving': 'TVING',
+    'TVING': 'tving',
+    'Tving': 'tving',
 
-    'Coupang Play': 'Coupang Play',
+    'Coupang Play': 'coupang',
 
-    'Laftel': 'Laftel',
+    'Laftel': 'laftel',
 
-    'Google Play Movies': 'Google Play',
+    'YouTube': 'youtube',
+    'YouTube Premium': 'youtube'
+}
 
-    'YouTube Premium': 'YouTube',
-    'YouTube': 'YouTube',
+const getCleanSearchQuery = (title: string = '') => {
+    return title.replace(/[^a-zA-Z0-9가-힣]/g, '')
+}
+
+const providerMetaMap: Record<string, Omit<ProviderMeta, 'url'> & { getUrl: (query: string) => string }> = {
+    'netflix': {
+        name: 'netflix',
+        getUrl: (query) => `https://www.netflix.com/search?q=${query}`,
+        imgType: 'jpeg'
+    },
+    'disney': {
+        name: 'disney',
+        getUrl: () => 'https://www.disneyplus.com',
+        imgType: 'jpeg'
+    },
+    'amazon': {
+        name: 'amazon',
+        getUrl: (query) => `https://www.primevideo.com/-/ko/search?phrase=${query}`,
+        imgType: 'jpeg'
+    },
+    'apple': {
+        name: 'apple',
+        getUrl: (query) => `https://tv.apple.com/kr/search?term=${query}`,
+        imgType: 'png'
+    },
+    'watcha': {
+        name: 'watcha',
+        getUrl: (query) => `https://watcha.com/search?query=${query}`,
+        imgType: 'jpeg'
+    },
+    'wavve': {
+        name: 'wavve',
+        getUrl: (query) => `https://www.wavve.com/search?searchWord=${query}`,
+        imgType: 'png'
+    },
+    'tving': {
+        name: 'tving',
+        getUrl: (query) => `https://www.tving.com/search?keyword=${query}`,
+        imgType: 'png'
+    },
+    'coupang': {
+        name: 'coupang',
+        getUrl: (query) => `https://www.coupangplay.com/query?keyword=${query}`,
+        imgType: 'png'
+    },
+    'laftel': {
+        name: 'laftel',
+        getUrl: (query) => `https://laftel.net/search?keyword=${query}`,
+        imgType: 'jpeg'
+    },
+    'youtube': {
+        name: 'youtube',
+        getUrl: (query) => `https://www.youtube.com/results?search_query=${query}`,
+        imgType: 'jpeg'
+    }
+}
+
+const uniqueProviders = computed(() => {
+    const providers = work.value?.watchProviders ?? []
+    const seen = new Set<string>()
+
+    return providers.filter(provider => {
+        const brandKey = providerAliasMap[provider]
+
+        if (brandKey) {
+            if (seen.has(brandKey)) {
+                return false
+            }
+            seen.add(brandKey)
+            return true
+        }
+
+        return true
+    })
+})
+
+const getProviderInfo = (
+    rawProviderName: string
+): ProviderMeta | undefined => {
+    const brandKey = providerAliasMap[rawProviderName]
+
+    if (!brandKey) return undefined
+
+    const meta = providerMetaMap[brandKey]
+    if (!meta) return undefined
+
+    const query = getCleanSearchQuery(work.value?.workTitle ?? '')
+
+    return {
+        name: meta.name,
+        url: meta.getUrl(query),
+        imgType: meta.imgType
+    }
+}
+
+const getProviderImage = (provider: string) => {
+    const info = getProviderInfo(provider)
+
+    if (!info) return undefined
+
+    const imagePath = `../assets/images/providers/${info.name}.${info.imgType}`
+
+    return providerImages[imagePath]
 }
 
 const goToCreate = () => {
@@ -222,6 +337,7 @@ getWorkDetail()
 // });
 </script>
 
+
 <template>
     <section class="work-detail-section">
         <div class="work-bg-box relative">
@@ -292,19 +408,34 @@ getWorkDetail()
             </div>
             <div class="provider-box">
                 <h3>시청 가능 OTT</h3>
-                <!-- TODO: OTT 정보 연결
-                 요금제 따라 차등이 존재하는 경우 어떻게 할지 고민
-                 각 OTT 사이트의 검색 페이지까지 연결은 가능하겠지만, 실제 작품까지는 연결 어려움
-                 cf) 파라마운트에서만 제공하는 작품 체크 필요 나는 학교에서 죽었다 -->
-                <!-- TODO: JustWatch에서 제공한다는 내용 기재 필수, 법적 문제임 -->
-                <!-- TODO: 유저가 사용하는 OTT 정보 받을 경우 구분해서 노출 -->
+                <p class="description">
+                    스트리밍 제공 정보는 국가, 요금제 및 플랫폼 사정에 따라 다를 수 있습니다.
+                </p>
                 <div class="ott-box">
-                    <div class="ott" v-for='provider in work?.watchProviders' :key='provider'>{{
-                        providerMap[provider]
-                        ||
-                        provider
-                    }}</div>
+                    <template v-if="work?.watchProviders && work.watchProviders.length > 0">
+                        <template v-for="provider in uniqueProviders" :key="provider">
+                            <a v-if="getProviderInfo(provider)" :href="getProviderInfo(provider)?.url" target="_blank"
+                                rel="noopener noreferrer" class="ott">
+                                <img :src="getProviderImage(provider)" :alt="getProviderInfo(provider)?.name"
+                                    class="ott-icon" />
+                            </a>
+
+                            <div v-else class="no-data-ott">
+                                {{ provider }}
+                            </div>
+                        </template>
+                    </template>
+
+                    <div v-else class="no-ott-provided">
+                        <p>현재 제공되는 OTT를 확인할 수 없어요.</p>
+                    </div>
                 </div>
+                <p class="description">
+                    정보 출처:
+                    <a href="https://www.justwatch.com" target="_blank" rel="noopener noreferrer">
+                        JustWatch
+                    </a>
+                </p>
             </div>
             <div class="review-list-box">
                 <h3>내가 쓴 리뷰</h3>
@@ -545,17 +676,18 @@ getWorkDetail()
 .work-detail-section .provider-box .ott-box {
     margin-top: 10px;
     display: flex;
-    gap: 10px;
+    gap: 6px;
 }
 
 .work-detail-section .provider-box .ott-box .ott {
     width: 50px;
     aspect-ratio: 1/1;
-    border-radius: 6px;
+    border-radius: 12px;
     cursor: pointer;
     background-color: #afafaf;
     word-break: break-all;
     text-align: center;
+    overflow: hidden;
 }
 
 @media screen and (min-width: 460px) {
