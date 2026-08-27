@@ -209,7 +209,6 @@ const uniqueProviders = computed(() => {
             seen.add(brandKey)
             return true
         }
-
         return true
     })
 })
@@ -419,7 +418,6 @@ getWorkDetail()
                                 <img :src="getProviderImage(provider)" :alt="getProviderInfo(provider)?.name"
                                     class="ott-icon" />
                             </a>
-
                             <div v-else class="no-data-ott">
                                 {{ provider }}
                             </div>
