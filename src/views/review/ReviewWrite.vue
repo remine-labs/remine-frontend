@@ -237,7 +237,6 @@ const {
 }
 
 .manual-tags-modal .tags-container .input-box input[type="checkbox"]:checked+label {
-    background-color: var(--chip-important-bg);
     color: var(--text-inverse)
 }
 

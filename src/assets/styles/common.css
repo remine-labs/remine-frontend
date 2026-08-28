@@ -240,8 +240,10 @@ section div .v3dp__popout[data-v-65eb861b] {
 }
 
 section div button.v3dp__heading__center[data-v-65eb861b]:hover,
-section div .v3dp__heading__button[data-v-65eb861b]:not(:disabled):hover {
+section div .v3dp__heading__button[data-v-65eb861b]:not(:disabled):hover,
+section div .v3dp__elements[data-v-65eb861b] button:not(:disabled):hover span {
   background-color: var(--bg-surface);
+  color: var(--text-main);
 }
 
 section div .v3dp__elements[data-v-65eb861b] button:disabled {

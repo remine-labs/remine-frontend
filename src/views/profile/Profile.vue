@@ -1,27 +1,35 @@
 <script setup lang='ts'>
-import { computed, onMounted, ref } from 'vue'
+import Datepicker from 'vue3-datepicker'
+import { computed, onMounted, ref, watch } from 'vue'
 import { getMe, type MeResponse, logout } from "../../api/auth"
 import { api } from '../../api/client'
-import { useRouter } from 'vue-router';
-import dayjs from 'dayjs';
+import { useRouter } from 'vue-router'
+import { PhCaretLeft, PhCaretRight } from "@phosphor-icons/vue"
+import dayjs from 'dayjs'
 
 const router = useRouter()
 
 interface HistoryItem {
-    reviewId: number,
-    workTitle: string,
-    workPosterPath: string,
+    reviewId: number
+    workTitle: string
+    workPosterPath: string
     startDate: string
 }
 
-const user = ref<MeResponse | null>(null);
+const user = ref<MeResponse | null>(null)
 
-const currentMonth = ref(dayjs())
+const pickedDate = ref(new Date())
 
-const year = ref(currentMonth.value.year())
-const month = ref(currentMonth.value.month() + 1)
+const year = computed(() => pickedDate.value.getFullYear())
+const month = computed(() => pickedDate.value.getMonth() + 1)
 
-const daysInMonth = computed(() => currentMonth.value.daysInMonth())
+const currentMonth = computed(() =>
+    dayjs(pickedDate.value)
+)
+
+const daysInMonth = computed(() =>
+    currentMonth.value.daysInMonth()
+)
 
 const firstDay = computed(() =>
     currentMonth.value.startOf('month').day()
@@ -36,15 +44,13 @@ const goToWatchlist = () => {
     router.push('/watchlist')
 }
 
-// TODO: activity calendar에서 review 클릭시 이동
-// const goToReviewDetail = (reviewId: number) => {
-//     router.push(`/review/${reviewId}`)
-// }
-
+const changeMonth = (step: number) => {
+    pickedDate.value = dayjs(pickedDate.value)
+        .add(step, 'month')
+        .toDate()
+}
 
 const getHistory = async () => {
-    currentMonth.value = dayjs(`${year.value}-${month.value}-01`)
-
     try {
         const res = await api.get('/api/users/history', {
             params: {
@@ -52,8 +58,8 @@ const getHistory = async () => {
                 month: month.value,
             }
         })
-        historyList.value = res.data.data
 
+        historyList.value = res.data.data
         historyMap.value = {}
 
         for (const item of historyList.value) {
@@ -65,7 +71,6 @@ const getHistory = async () => {
 
             historyMap.value[day].push(item)
         }
-        console.log(historyMap.value)
     } catch (error) {
         console.error('history 조회 실패', error)
     }
@@ -73,20 +78,27 @@ const getHistory = async () => {
 
 const handleLogout = async () => {
     try {
-        await logout();
+        await logout()
     } finally {
-        router.replace("/");
+        router.replace("/")
     }
-};
+}
+
+watch(
+    pickedDate,
+    () => {
+        getHistory()
+    },
+    { immediate: true }
+)
 
 onMounted(async () => {
-    getHistory();
     try {
-        user.value = await getMe();
+        user.value = await getMe()
     } catch (err) {
-        console.error(err);
+        console.error(err)
     }
-});
+})
 </script>
 
 <template>
@@ -100,29 +112,42 @@ onMounted(async () => {
                     </div>
                     <p class="username">{{ user.name }}</p>
                 </div>
+
                 <!-- TODO: settings 버튼은 header bell 위치로 변경
                  logout은 settings 하위 기능으로 이동 -->
                 <div class="btn-box">
                     <button id='logout-btn' @click='handleLogout'>logout</button>
                 </div>
             </div>
+
             <div class="collection-container">
                 <div class="created-review-box">
                     작성한 리뷰
                     <p class="count-num">NNN개</p>
                 </div>
+
                 <div class="watchlist-box" @click='goToWatchlist'>
                     관심 작품
                     <p class="count-num">NNN개</p>
                 </div>
             </div>
+
             <div class="calendar-container">
                 <div class="calendar-header">
-                    <!-- TODO: Monthly + 좌우 버튼으로 월 변경 -->
-                    <input type="number" v-model="year" />
-                    <input type="number" v-model="month" />
-                    <button class='active-btn' @click='getHistory'>조회</button>
+                    <button class="nav-btn" @click="changeMonth(-1)">
+                        <PhCaretLeft :size="24"></PhCaretLeft>
+                    </button>
+
+                    <div class="month-selector-wrapper">
+                        <Datepicker v-model="pickedDate" inputFormat="yyyy.MM" startingView="month" minimumView="month"
+                            placeholder="YYYY.MM" size="7" />
+                    </div>
+
+                    <button class="nav-btn" @click="changeMonth(1)">
+                        <PhCaretRight :size="24"></PhCaretRight>
+                    </button>
                 </div>
+
                 <div class="weekday">
                     <p>SUN</p>
                     <p>MON</p>
@@ -132,10 +157,13 @@ onMounted(async () => {
                     <p>FRI</p>
                     <p>SAT</p>
                 </div>
+
                 <div class="calendar-body">
                     <div class="empty-box" v-for="n in firstDay" :key="'empty-' + n" />
+
                     <div class="date-box" v-for="n in daysInMonth" :key="n">
-                        <span class='date'>{{ n }}</span>
+                        <span class="date">{{ n }}</span>
+
                         <div class="poster-box img-box" v-if="calendarMap[n]">
                             <img :src="'https://image.tmdb.org/t/p/w200' + calendarMap[n]?.[0]?.workPosterPath"
                                 :alt="calendarMap[n]?.[0]?.workTitle">
@@ -143,6 +171,7 @@ onMounted(async () => {
                     </div>
                 </div>
             </div>
+
             <!-- MEMO: 추천 시스템 완성 후, 최근 태그 통계 가능한지 확인 필요 -->
         </div>
     </section>
@@ -181,6 +210,41 @@ onMounted(async () => {
 
 .profile-section .calendar-container {
     margin-top: 30px;
+}
+
+.profile-section .calendar-container .calendar-header {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.profile-section .calendar-header .nav-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    aspect-ratio: 1 / 1;
+    border-radius: 30px;
+    background-color: var(--chip-default-bg);
+}
+
+.profile-section .calendar-header .month-selector-wrapper .v3dp__input_wrapper {
+    font-family: var(--font-family-logo);
+    font-size: 2.6rem;
+}
+
+.profile-section .v3dp__input_wrapper input {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    text-align: center;
+    cursor: pointer;
+}
+
+.profile-section .v3dp__popout {
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .profile-section .calendar-container .weekday {
