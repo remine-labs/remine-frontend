@@ -73,7 +73,12 @@ export function useReviewForm() {
 
   const formatDate = (date?: Date) => {
     if (!date) return null;
-    return date.toISOString().slice(0, 10);
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
   };
 
   onMounted(async () => {
@@ -189,6 +194,11 @@ export function useReviewForm() {
 
   const submitReview = async () => {
     const basePayload = createReviewPayload();
+    // MEMO: startDate, endDate 변경 로직 미작동으로 추가한 부분
+    console.log("startDate:", startDate.value);
+    console.log("endDate:", endDate.value);
+    console.log("basePayload:", basePayload);
+
     const count = basePayload.comment.replace(/\s/g, "").length;
 
     if (count < 20) {
