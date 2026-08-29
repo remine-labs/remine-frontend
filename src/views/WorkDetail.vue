@@ -4,7 +4,7 @@ import { api } from '../api/client'
 import { useRoute, useRouter } from 'vue-router'
 import { PhHeart, PhPenNib } from '@phosphor-icons/vue'
 import { addWatchlist, deleteWatchlist, getWatchlist, type Watchlist } from '../api/watchlist'
-// import { getMyReviewByWork } from "../api/review";
+import { getMyReviewByWork } from "../api/review";
 
 const route = useRoute()
 const router = useRouter()
@@ -72,7 +72,7 @@ const providerImages = import.meta.glob<string>(
 )
 
 const work = ref<WorkDetail | null>(null)
-// const reviews = ref<Review[]>([])
+const reviews = ref<Review[]>([])
 
 const loading = ref(false)
 const error = ref('')
@@ -256,18 +256,18 @@ const goToCreate = () => {
     })
 }
 
-// const getMyReview = async () => {
-//     try {
-//         const response = await getMyReviewByWork(
-//             mediaType,
-//             Number(workId)
-//         );
+const getMyReview = async () => {
+    try {
+        const response = await getMyReviewByWork(
+            mediaType,
+            Number(workId)
+        );
 
-//         myReview.value = response.data.data[0] ?? null;
-//     } catch (error) {
-//         console.error("내 리뷰 조회 실패:", error);
-//     }
-// };
+        myReview.value = response.data.data[0] ?? null;
+    } catch (error) {
+        console.error("내 리뷰 조회 실패:", error);
+    }
+};
 
 const toggleWatchlistHandler = async () => {
     if (!work.value) return

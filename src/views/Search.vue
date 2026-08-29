@@ -118,26 +118,31 @@ onMounted(() => {
                     </button>
                 </div>
                 <!-- TODO: 배너 디자인 필요, css로 진행할 것 -->
-                <div class="banner-box add-playlist description" @click='goToPlaylist'>
-                    <p>플레이리스트에 저장하셨다면,</p>
-                    <p>한 번 연동으로 검색부터 관심작품까지 한 번에!</p>
+                <div class="banner-box add-playlist" @click='goToPlaylist'>
+                    <p>유튜브 플레이리스트 쓰세요?</p>
+                    <p class="description">연동하면 클릭만으로도 작품을 검색 할 수 있어요!</p>
                 </div>
             </div>
 
             <p v-if="loading">loading...</p>
             <p v-if="error">{{ error }}</p>
-            <div class="total-count" :class="{ invisible: totalCount === 0 }">총 {{ totalCount }}건의 결과</div>
-            <div class="works-list-container">
-                <WorkCard v-for="work in works" :key="work.workId" :work-id="work.workId" :work-title="work.workTitle"
-                    :work-poster-path="work.workPosterPath" :work-release-date="work.workReleaseDate"
-                    :media-type="work.mediaType" :is-watchlisted="work.isWatchlisted"
-                    @toggle-watchlist="toggleWatchlistHandler(work)" />
+            <div class="search-result" v-if="totalCount > 0">
+                <div class="total-count" :class="{ invisible: totalCount === 0 }">총 {{ totalCount }}건의 결과</div>
+                <div class="works-list-container">
+                    <WorkCard v-for="work in works" :key="work.workId" :work-id="work.workId"
+                        :work-title="work.workTitle" :work-poster-path="work.workPosterPath"
+                        :work-release-date="work.workReleaseDate" :media-type="work.mediaType"
+                        :is-watchlisted="work.isWatchlisted" @toggle-watchlist="toggleWatchlistHandler(work)" />
+                    <div class="custom-work" @click="goToCustomWork">
+                        <p>찾으시는 작품이 없나요?</p>
+                        <div class="btn-box">
+                            <button class="active-btn">작품 등록하기</button>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- TODO: 검색 이후에 노출 -->
-            <div class='banner-box add-work description' @click='goToCustomWork'>
-                <p>찾으시는 작품이 없다면,</p>
-                <p>직접 입력할 수 있어요! <span>작품 등록하고 리뷰 쓰기</span></p>
-            </div>
+
             <!-- TODO: pagination 위치 -->
         </div>
     </section>
@@ -173,5 +178,21 @@ onMounted(() => {
     text-align: right;
     font-size: var(--font-size-sub);
     line-height: 4;
+}
+
+.search-section .custom-work {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    padding: 8px;
+    text-align: center;
+    word-break: keep-all;
+    background-color: var(--bg-surface);
+    box-shadow: var(--box-default);
 }
 </style>
