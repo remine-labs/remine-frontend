@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import Datepicker from 'vue3-datepicker'
 import { computed, onMounted, ref, watch } from 'vue'
-import { getMe, type MeResponse, logout } from "../../api/auth"
+import { getMe, type MeResponse } from "../../api/auth"
 import { api } from '../../api/client'
 import { useRouter } from 'vue-router'
 import { PhCaretLeft, PhCaretRight } from "@phosphor-icons/vue"
@@ -76,13 +76,7 @@ const getHistory = async () => {
     }
 }
 
-const handleLogout = async () => {
-    try {
-        await logout()
-    } finally {
-        router.replace("/")
-    }
-}
+
 
 watch(
     pickedDate,
@@ -112,14 +106,10 @@ onMounted(async () => {
                     </div>
                     <p class="username">{{ user.name }}</p>
                 </div>
-
                 <!-- TODO: settings 버튼은 header bell 위치로 변경
                  logout은 settings 하위 기능으로 이동 -->
-                <div class="btn-box">
-                    <button id='logout-btn' @click='handleLogout'>logout</button>
-                </div>
-            </div>
 
+            </div>
             <div class="collection-container">
                 <div class="created-review-box">
                     작성한 리뷰
