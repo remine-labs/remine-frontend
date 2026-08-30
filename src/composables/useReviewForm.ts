@@ -7,10 +7,12 @@ import {
   createTags,
 } from "../api/review";
 import type { ReviewPayload, PatchReviewPayload } from "../api/review";
+import { useToast } from "../composables/useToast";
 
 export function useReviewForm() {
   const route = useRoute();
   const router = useRouter();
+  const { showToast } = useToast();
 
   const reviewIdParam = route.params.reviewId as string | undefined;
   const isEditMode = computed(() => !!reviewIdParam);
@@ -35,7 +37,6 @@ export function useReviewForm() {
     workSource?: string;
   };
 
-  // 기존 컴포넌트가 바라보던 work 객체 구조로 통합
   const work = ref({
     id: state?.workId || 0,
     title: state?.workTitle || "",
@@ -103,7 +104,11 @@ export function useReviewForm() {
           workSource: data.workSource || "TMDB",
         };
       } catch (err) {
-        console.error("기존 리뷰 데이터를 불러오지 못했습니다.", err);
+        showToast("리뷰 정보를 불러오지 못했습니다.", "error");
+        router.push({
+          name: "reviewDetail",
+          params: { reviewId: reviewIdParam },
+        });
       }
     }
   });

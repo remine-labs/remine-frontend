@@ -1,12 +1,13 @@
 <script setup lang="ts">
-// import Header from './components/Header.vue'
+import Toast from "./components/Toast.vue";
 </script>
 
 <template>
   <div id="app-root">
     <router-view />
+    <Toast />
   </div>
-</template>v
+</template>
 
 <style>
 #app-root {
