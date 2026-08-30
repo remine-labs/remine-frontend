@@ -99,13 +99,11 @@ onMounted(async () => {
     <section class="profile-section">
         <div class="wrap">
             <div class="user-container" v-if='user'>
-                <div class="user-info-box">
-                    <div class="img-box profile-img">
-                        <img :src="user.profileUrl" :alt="`${user.name}의 프로필 이미지`">
-                        <!-- TODO: 이미지 값이 null 일 때 대체 이미지 필요 -->
-                    </div>
-                    <p class="username">{{ user.name }}</p>
+                <div class="img-box profile-img">
+                    <img :src="user.profileUrl" :alt="`${user.name}의 프로필 이미지`">
+                    <!-- TODO: 이미지 값이 null 일 때 대체 이미지 필요 -->
                 </div>
+                <p class="username title">{{ user.name }}</p>
                 <!-- TODO: settings 버튼은 header bell 위치로 변경
                  logout은 settings 하위 기능으로 이동 -->
 
@@ -170,6 +168,15 @@ onMounted(async () => {
 <style>
 .profile-section .user-container {
     display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.profile-section .user-container .img-box {
+    max-width: 50px;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 50%;
 }
 
 .profile-section .collection-container {
