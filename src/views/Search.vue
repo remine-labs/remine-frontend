@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { PhMagnifyingGlass } from '@phosphor-icons/vue'
+import { PhMagnifyingGlass, PhXCircle } from '@phosphor-icons/vue'
 import WorkCard from '../components/WorkCard.vue'
 import { api } from '../api/client'
 import { addWatchlist, deleteWatchlist, getWatchlist } from '../api/watchlist.ts'
@@ -24,6 +24,10 @@ const goToPlaylist = () => {
 
 const goToCustomWork = () => {
     router.push('/customWork')
+}
+
+const handleEmptyInput = () => {
+    query.value = "";
 }
 
 // TODO: workDetail 페이지에서 다시 돌아오더라도 기존 검색 값 유지하여, tmdb api 사용 횟수 줄이기
@@ -112,7 +116,12 @@ onMounted(() => {
                     <input class="work-search-input" v-model="query" type="search" @keyup.enter="handleSearch"
                         placeholder='작품 제목 또는 유튜브 링크를 입력해주세요.' autofocus>
                 </div>
-                <div class="icon-box">
+                <div class="icon-box empty-input-btn" :class="{ active: query }">
+                    <button class="icon-btn" @click="handleEmptyInput">
+                        <PhXCircle :size="20" weight="fill" />
+                    </button>
+                </div>
+                <div class="icon-box search-btn">
                     <button class="icon-btn" @click="handleSearch">
                         <PhMagnifyingGlass :size="24" />
                     </button>
@@ -152,9 +161,26 @@ onMounted(() => {
 .search-section .input-box .work-search-input {
     width: 100%;
     box-sizing: border-box;
+    padding-right: 60px;
 }
 
-.search-section .search-container .icon-box {
+.search-section .search-container .empty-input-btn {
+    position: absolute;
+    right: 45px;
+    top: 10px;
+    z-index: 10;
+    color: var(--text-sub);
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.3s ease-in-out;
+}
+
+.search-section .search-container .empty-input-btn.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.search-section .search-container .search-btn {
     position: absolute;
     right: 3px;
     top: 3px;
