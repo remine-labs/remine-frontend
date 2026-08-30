@@ -58,6 +58,7 @@ onMounted(async () => {
                 <div class="youtube-playlist-box active">재생 목록</div>
             </div>
             <div class="playlists-container">
+                <!-- TODO: playlist 연결된 값 없을 때, 연결해보라며 유도 -->
                 <div class="playlist-box relative" v-for="item in playlists" :key='item.playlistName'>
                     <div class="img-box" @click='goToPlaylistDetail(item)'>
                         <img :src="item.thumbnailUrl" :alt="item.playlistName">

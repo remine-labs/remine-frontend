@@ -69,9 +69,11 @@ onMounted(async () => {
                 <div class="saved-works-box" @click='goToWatchlist'>저장한 작품</div>
                 <div class="youtube-playlist-box active" @click='goToPlaylists'>재생 목록</div>
             </div>
-            <p class='playlist-info'>{{ playlistName }} · {{ videoCount }} 개</p>
-            <!-- TODO: 삭제하기 버튼과 description 디자인 및 위치 설정 필요 -->
-            <button class="open-delete-modal-btn" @click='isDeletePlaylistModalOpen = true'>삭제하기</button>
+            <div class="meta-box">
+                <button class="open-delete-modal-btn description"
+                    @click='isDeletePlaylistModalOpen = true'>삭제하기</button>
+                <p class='playlist-info'>{{ playlistName }} · {{ videoCount }} 개</p>
+            </div>
             <p class="desciption">영상을 선택하면, 작품 정보를 알려드립니다.</p>
             <div class="playlist-item-container">
                 <div class="item-box" v-for='item in visiblePlaylistDetail' :key='item.videoName'
@@ -113,10 +115,18 @@ onMounted(async () => {
     gap: 20px 10px;
 }
 
-.playlist-section .playlist-info {
-    font-weight: 500;
+.playlist-section .meta-box {
     text-align: right;
-    margin-top: 20px;
+}
+
+.playlist-section .meta-box .open-delete-modal-btn {
+    color: var(--error);
+    margin: 10px 0 20px;
+    font-weight: bold;
+}
+
+.playlist-section .meta-box .playlist-info {
+    font-weight: 500;
 }
 
 .playlist-section .item-box .img-box {
