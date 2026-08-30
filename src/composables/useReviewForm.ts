@@ -218,6 +218,7 @@ export function useReviewForm() {
         };
 
         await patchReview(patchPayload);
+        await createTags(targetReviewId, { tags: [] });
         alert("수정되었습니다. 리뷰 페이지로 이동합니다.");
       } else {
         if (!work.value.id) {
