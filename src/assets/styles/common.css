@@ -9,6 +9,22 @@ section {
   padding: 0 12px;
 }
 
+.frame {
+  position: relative;
+  overflow: hidden;
+}
+
+.frame::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(to right, transparent, var(--bg-default));
+}
+
 /* font setting */
 .logo {
   font-family: var(--font-family-logo);

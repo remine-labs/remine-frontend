@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { api } from '../../api/client'
 import { deleteReview } from '../../api/review'
 import { PhCalendar, PhDotsThreeVertical, PhPencil, PhStar } from '@phosphor-icons/vue'
+import Tooltip from "../../components/Tooltip.vue"
 
 const route = useRoute()
 const router = useRouter()
@@ -263,21 +264,30 @@ onUnmounted(() => {
                     <!-- TODO: 태그 종류마다 툴팁 노출
                          AI: 작성한 리뷰를 기반으로 추출한 태그, 작품 추천에 활용됨
                          리뷰 수정 시, 태그가 수정될 수도 있음
-                         HANDLE: AI 분석 요구가 불가능한 경우,
+                         MANUAL: AI 분석 요구가 불가능한 경우,
                          운영 환경상 일시적으로 생성 불가한 경우, 임시 사용될 수 있음 -->
                     <div class="head-box">
                         <template v-if="review.aiTagStatus === 'NONE'">
-                            <h3>내가 선택한 태그</h3>
+                            <div class="title-box">
+                                <h3>내가 선택한 태그</h3>
+                                <Tooltip type="info"
+                                    :text="['태그 생성이 어려운 경우, 태그를 직접 선택할 수 있습니다.', '- 리뷰가 짧아 분석이 어려운 경우', '- 태그 생성에 문제가 발생한 경우']" />
+                            </div>
                             <!-- TODO: 유저가 선택한 태그 노출 -->
                         </template>
 
                         <template v-else>
-                            <h3>AI 태그</h3>
+                            <div class="title-box">
+                                <h3>AI 태그</h3>
+                                <Tooltip type="info" :text="[
+                                    '작성한 리뷰에서 추출한 키워드로, 작품 추천에 활용됩니다.',
+                                    '리뷰 수정 시, 태그가 변경될 수 있습니다.'
+                                ]" />
+                            </div>
                             <!-- TODO: AI 태그 만족도 조사 modal
                              태그 생성된 시점 이후 1회만 노출 -->
-                            <div class="rating-box">
-                                <!-- TODO: 멘트를 더 축소하여 진행할 것 -->
-                                <button>생성된 태그가 만족스러우셨나요? 평가하기</button>
+                            <div class="satisfaction-rate-box">
+                                <button>AI 태그 만족도 평가</button>
                             </div>
                         </template>
                     </div>
@@ -352,7 +362,6 @@ onUnmounted(() => {
 .review-detail-section .work-info-container .modal-menu-box p {
     margin-bottom: 4px;
     cursor: pointer;
-    ;
 }
 
 .review-detail-section .work-info-container .modal-menu-box p:last-child {
@@ -419,6 +428,16 @@ onUnmounted(() => {
 .review-detail-section .tags-container .head-box {
     display: flex;
     justify-content: space-between;
+}
+
+.review-detail-section .tags-container .head-box .title-box {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.review-detail-section .tooltip .tooltip-content {
+    max-width: 320px;
 }
 
 .review-detail-section .tags-box {

@@ -99,16 +99,11 @@ onMounted(async () => {
     <section class="profile-section">
         <div class="wrap">
             <div class="user-container" v-if='user'>
-                <div class="user-info-box">
-                    <div class="img-box profile-img">
-                        <img :src="user.profileUrl" :alt="`${user.name}의 프로필 이미지`">
-                        <!-- TODO: 이미지 값이 null 일 때 대체 이미지 필요 -->
-                    </div>
-                    <p class="username">{{ user.name }}</p>
+                <div class="img-box profile-img">
+                    <img :src="user.profileUrl" :alt="`${user.name}의 프로필 이미지`">
+                    <!-- TODO: 이미지 값이 null 일 때 대체 이미지 필요 -->
                 </div>
-                <!-- TODO: settings 버튼은 header bell 위치로 변경
-                 logout은 settings 하위 기능으로 이동 -->
-
+                <p class="username title">{{ user.name }}</p>
             </div>
             <div class="collection-container">
                 <div class="created-review-box">
@@ -161,7 +156,6 @@ onMounted(async () => {
                     </div>
                 </div>
             </div>
-
             <!-- MEMO: 추천 시스템 완성 후, 최근 태그 통계 가능한지 확인 필요 -->
         </div>
     </section>
@@ -170,6 +164,15 @@ onMounted(async () => {
 <style>
 .profile-section .user-container {
     display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.profile-section .user-container .img-box {
+    max-width: 50px;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 50%;
 }
 
 .profile-section .collection-container {
