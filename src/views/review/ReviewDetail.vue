@@ -2,7 +2,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../../api/client'
-import { deleteReview } from '../../api/review'
+import { createTags, deleteReview } from '../../api/review'
 import { PhCalendar, PhDotsThreeVertical, PhPencil, PhStar } from '@phosphor-icons/vue'
 import Tooltip from "../../components/Tooltip.vue"
 
@@ -148,6 +148,20 @@ const fetchReviewDetail = async () => {
     }
 }
 
+const handleRetryTags = async () => {
+    if (review.value?.reviewId === undefined) return;
+
+    try {
+        await createTags(review.value.reviewId, {
+            tags: []
+        });
+
+        await pollReview();
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 const handleDeleteReview = async () => {
     const ok = confirm('리뷰를 삭제하시겠습니까?')
 
@@ -291,6 +305,14 @@ onUnmounted(() => {
                             </div>
                         </template>
                     </div>
+                    <div class="retry">
+                        <template v-if="review.aiTagStatus === 'FAILED'">
+                            <p>AI 태그 생성에 실패했습니다.</p>
+                            <div class="btn-box">
+                                <button class='active-btn' @click="handleRetryTags">재시도</button>
+                            </div>
+                        </template>
+                    </div>
                     <div class="tags-box chips">
                         <template v-if="review.aiTagStatus === 'PENDING' || review.aiTagStatus === 'PROCESSING'">
                             <span class="skeleton"></span>
@@ -304,13 +326,6 @@ onUnmounted(() => {
                                 {{ tag.label }}
                             </span>
                         </template>
-                        <template v-else-if="review.aiTagStatus === 'FAILED'">
-                            AI 태그 생성에 실패했습니다.
-                            <div class="btn-box">
-                                <button class='active-btn'>재시도</button>
-                            </div>
-                        </template>
-                        <span v-else>생성된 태그가 없어요.</span>
                     </div>
                 </div>
             </div>
@@ -440,6 +455,14 @@ onUnmounted(() => {
     max-width: 320px;
 }
 
+.review-detail-section .tags-container .retry {
+    text-align: center;
+}
+
+.review-detail-section .tags-container .retry .btn-box {
+    margin-top: 10px;
+}
+
 .review-detail-section .tags-box {
     margin-top: 12px;
 }
@@ -472,6 +495,8 @@ onUnmounted(() => {
     content: '▼';
     color: var(--error);
 }
+
+
 
 .review-detail-section .tags-container .head-box p button {
     margin-left: 8px;
