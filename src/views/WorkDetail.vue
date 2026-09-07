@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { api } from '../api/client'
 import { useRoute, useRouter } from 'vue-router'
 import { PhHeart, PhPenNib } from '@phosphor-icons/vue'
@@ -331,9 +331,9 @@ const getWorkDetail = async () => {
 
 getWorkDetail()
 // getReviewsByWorkId()
-// onMounted(() => {
-//     getMyReview();
-// });
+onMounted(() => {
+    getMyReview();
+});
 </script>
 
 
@@ -437,20 +437,31 @@ getWorkDetail()
             </div>
             <div class="review-list-box">
                 <h3>내가 쓴 리뷰</h3>
+                <div class="review-list">
+                    <template v-if="myReview">
+                        <div class="review-summary" @click="router.push(`/review/${myReview.reviewId}`)">
+                            <div class="date">
+                                <span class="label">감상 기간: </span>
+                                <span>
+                                    {{ formatReviewDate(myReview.startDate, myReview.endDate) }}
+                                </span>
+                            </div>
+                            <div class="rating">
+                                <span class="label">평점: </span>
+                                <span>{{ myReview.rating }}/5</span>
+                            </div>
+                        </div>
+                    </template>
 
-                <template v-if="myReview">
-                    <div class="review-summary" @click="router.push(`/review/${myReview.reviewId}`)">
-                        <span>
-                            {{ formatReviewDate(myReview.startDate, myReview.endDate) }}
-                        </span>
-                        <span>{{ myReview.rating }}/5</span>
+                    <div class="review-empty" v-else @click="goToCreate">
+                        <p>
+                            아직 리뷰가 없어요.
+                        </p>
+                        <p>
+                            리뷰를 쓰고 내 취향의 작품을 추천받아 보세요.
+                        </p>
                     </div>
-                </template>
-
-                <p v-else>
-                    아직 리뷰가 없어요.<br />
-                    리뷰를 쓰고 내 취향의 작품을 추천받아 보세요.
-                </p>
+                </div>
             </div>
         </div>
         <div class="floating-box">
@@ -672,7 +683,7 @@ getWorkDetail()
 }
 
 .work-detail-section .provider-box .ott-box {
-    margin-top: 10px;
+    margin: 10px 0;
     display: flex;
     gap: 6px;
 }
@@ -686,6 +697,42 @@ getWorkDetail()
     word-break: break-all;
     text-align: center;
     overflow: hidden;
+}
+
+.work-detail-section .provider-box .description {
+    color: var(--text-sub);
+}
+
+.work-detail-section .review-list-box .review-list {
+    margin-top: 10px;
+    text-align: justify;
+    color: var(--text-sub);
+    background-color: var(--bg-elevated);
+    padding: 16px;
+    box-shadow: var(--box-default);
+}
+
+.work-detail-section .review-list .review-summary {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.work-detail-section .review-list .review-summary .label {
+    display: none;
+}
+
+.work-detail-section .review-list .review-empty {
+    text-align: center;
+    cursor: pointer;
+}
+
+@media screen and (min-width: 425px) {
+
+    .work-detail-section .review-list .review-summary .label {
+        display: inline-block;
+        margin-right: 4px;
+    }
 }
 
 @media screen and (min-width: 460px) {
