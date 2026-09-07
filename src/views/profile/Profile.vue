@@ -186,6 +186,7 @@ onMounted(async () => {
     width: calc(50% - 4px);
     border-radius: 8px;
     padding: 4px 0;
+    cursor: pointer;
 }
 
 .profile-section .collection-container .count-num {
@@ -269,7 +270,7 @@ onMounted(async () => {
 .profile-section .calendar-body .date-box {
     position: relative;
     overflow: hidden;
-    background-color: var(--text-inverse);
+    background-color: var(--bg-overlay);
 }
 
 .profile-section .calendar-body .date {
