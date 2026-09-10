@@ -3,35 +3,40 @@ import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { PhMagnifyingGlass, PhXCircle } from '@phosphor-icons/vue'
 import WorkCard from '../components/WorkCard.vue'
+import Pagination from "../components/Pagination.vue"
 import { api } from '../api/client'
-import { addWatchlist, deleteWatchlist, getWatchlist } from '../api/watchlist.ts'
+import {
+    addWatchlist,
+    deleteWatchlist,
+    getWatchlist,
+} from '../api/watchlist.ts'
 
-const route = useRoute();
+const route = useRoute()
 const router = useRouter()
 
+// 검색 상태
 const query = ref('')
 const works = ref<any[]>([])
 const loading = ref(false)
 const error = ref('')
 
+// 페이지네이션 상태
+const currentPage = ref(1)
+const totalPages = ref(0)
+const totalCount = ref(0)
+
+// 검색어 타입 확인
 const isYoutubeLink = (value: string) => {
     return value.includes('youtube.com') || value.includes('youtu.be')
 }
 
-const goToPlaylist = () => {
-    router.push('/playlists')
+// 페이지 이동
+const handlePageChange = (page: number) => {
+    currentPage.value = page
+    handleSearch()
 }
 
-const goToCustomWork = () => {
-    router.push('/customWork')
-}
-
-const handleEmptyInput = () => {
-    query.value = "";
-}
-
-// TODO: workDetail 페이지에서 다시 돌아오더라도 기존 검색 값 유지하여, tmdb api 사용 횟수 줄이기
-
+// 검색
 const handleSearch = async () => {
     if (!query.value.trim()) return
 
@@ -45,27 +50,32 @@ const handleSearch = async () => {
             res = await api.get('/api/youtube', {
                 params: {
                     url: query.value,
+                    page: currentPage.value,
                 },
             })
         } else {
             res = await api.get('/api/tmdb/contents/search', {
                 params: {
                     query: query.value.trim(),
+                    page: currentPage.value,
                 },
             })
         }
-        const watchlistRes = await getWatchlist();
-        const watchlist = watchlistRes.data.data.content;
+
+        const watchlistRes = await getWatchlist()
+        const watchlist = watchlistRes.data.data.content
 
         const watchlistSet = new Set(
             watchlist.map((item: any) => item.workId)
-        );
+        )
+
+        totalPages.value = res.data.data.total_pages
+        totalCount.value = res.data.data.total_results
 
         works.value = res.data.data.results.map((work: any) => ({
             ...work,
-            isWatchlisted: watchlistSet.has(work.workId)
-        }));
-        totalCount.value = res.data.data.total_results
+            isWatchlisted: watchlistSet.has(work.workId),
+        }))
     } catch (err) {
         error.value = '검색 중 오류가 발생했습니다.'
         console.error(err)
@@ -74,12 +84,32 @@ const handleSearch = async () => {
     }
 }
 
-const totalCount = ref(0)
+// 새 검색 시작
+const handleSearchButton = () => {
+    currentPage.value = 1
+    handleSearch()
+}
 
+// 검색어 초기화
+const handleEmptyInput = () => {
+    query.value = ''
+}
+
+// 플레이리스트 이동
+const goToPlaylist = () => {
+    router.push('/playlists')
+}
+
+// 커스텀 작품 이동
+const goToCustomWork = () => {
+    router.push('/customWork')
+}
+
+// 관심 목록 토글
 const toggleWatchlistHandler = async (work: any) => {
     try {
         if (work.isWatchlisted) {
-            await deleteWatchlist(work.mediaType, work.workId);
+            await deleteWatchlist(work.mediaType, work.workId)
         } else {
             await addWatchlist({
                 workId: work.workId,
@@ -87,21 +117,24 @@ const toggleWatchlistHandler = async (work: any) => {
                 workTitle: work.workTitle,
                 workPosterPath: work.workPosterPath,
                 workReleaseDate: work.workReleaseDate,
-            });
+            })
         }
 
-        work.isWatchlisted = !work.isWatchlisted;
+        work.isWatchlisted = !work.isWatchlisted
     } catch (error) {
-        console.error(error);
+        console.error(error)
     }
-};
+}
+
+// TODO: workDetail 페이지에서 다시 돌아오더라도 기존 검색 값 유지하여,
+// TMDB API 사용 횟수 줄이기
 
 onMounted(() => {
-    const url = route.query.url as string;
+    const url = route.query.url as string
 
     if (url) {
-        query.value = url;
-        handleSearch();
+        query.value = url
+        handleSearch()
     }
 })
 </script>
@@ -149,10 +182,9 @@ onMounted(() => {
                         </div>
                     </div>
                 </div>
+                <Pagination v-if="totalPages > 1" :current-page="currentPage" :total-pages="totalPages"
+                    @page-change="handlePageChange" />
             </div>
-            <!-- TODO: 검색 이후에 노출 -->
-
-            <!-- TODO: pagination 위치 -->
         </div>
     </section>
 </template>
