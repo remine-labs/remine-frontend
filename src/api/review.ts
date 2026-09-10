@@ -17,6 +17,13 @@ export type ReviewPayload = {
   endDate: string | null;
 };
 
+export interface AiTagFeedbackPayload {
+  rating: number;
+  positiveComment?: string;
+  negativeReasons?: string[];
+  customNegativeReason?: string;
+}
+
 export type PatchReviewPayload = ReviewPayload & {
   reviewId: number;
 };
@@ -46,4 +53,11 @@ export const createTags = (reviewId: number, payload?: CreateTagsPayload) => {
 
 export const getMyReviewByWork = (mediaType: string, workId: number) => {
   return api.get(`/api/reviews/me/work/${mediaType}/${workId}`);
+};
+
+export const submitAiTagFeedback = (
+  reviewId: number,
+  payload: AiTagFeedbackPayload,
+) => {
+  return api.post(`/api/reviews/${reviewId}/ai-tag-feedback`, payload);
 };
