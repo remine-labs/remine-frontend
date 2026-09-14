@@ -2,7 +2,8 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../../api/client'
-import { createTags, deleteReview } from '../../api/review'
+import { createTags, deleteReview, submitAiTagFeedback } from '../../api/review'
+import type { AiTagFeedbackPayload } from '../../api/review'
 import { PhCalendar, PhDotsThreeVertical, PhPencil, PhStar } from '@phosphor-icons/vue'
 import Tooltip from "../../components/Tooltip.vue"
 
@@ -39,6 +40,7 @@ export interface ReviewDetail {
     createdAt: string
     updatedAt: string
     aiTagStatus: AiTagStatus
+    aiTagFeedbackPending: boolean
     tags: Tag[]
 }
 
@@ -47,6 +49,19 @@ const review = ref<ReviewDetail | null>(null)
 const isLoading = ref(true)
 const errorMessage = ref('')
 const isMenuOpen = ref(false)
+
+const negativeReasons = ref<string[]>([])
+const customNegativeReason = ref('')
+const feedbackRating = ref<number | null>(null)
+
+const isTagSurveyOpen = ref(false)
+
+const surveyStep = ref(1)
+const positiveComment = ref('')
+
+const openTagSurvey = () => {
+    isTagSurveyOpen.value = true
+}
 
 const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value
@@ -162,6 +177,36 @@ const handleRetryTags = async () => {
     }
 };
 
+const handleSubmitFeedback = async () => {
+    if (feedbackRating.value === null) return
+
+    const rating = feedbackRating.value
+
+    try {
+        const payload: AiTagFeedbackPayload = {
+            rating,
+        }
+
+        if (rating >= 4) {
+            if (positiveComment.value.trim()) {
+                payload.positiveComment = positiveComment.value.trim()
+            }
+        } else {
+            payload.negativeReasons = negativeReasons.value
+
+            if (negativeReasons.value.includes('OTHER')) {
+                payload.customNegativeReason = customNegativeReason.value.trim()
+            }
+        }
+
+        await submitAiTagFeedback(reviewId, payload)
+        await pollReview()
+        isTagSurveyOpen.value = false
+    } catch (err) {
+        console.error(err)
+    }
+}
+
 const handleDeleteReview = async () => {
     const ok = confirm('리뷰를 삭제하시겠습니까?')
 
@@ -275,11 +320,6 @@ onUnmounted(() => {
                 </div>
 
                 <div class="tags-container">
-                    <!-- TODO: 태그 종류마다 툴팁 노출
-                         AI: 작성한 리뷰를 기반으로 추출한 태그, 작품 추천에 활용됨
-                         리뷰 수정 시, 태그가 수정될 수도 있음
-                         MANUAL: AI 분석 요구가 불가능한 경우,
-                         운영 환경상 일시적으로 생성 불가한 경우, 임시 사용될 수 있음 -->
                     <div class="head-box">
                         <template v-if="review.aiTagStatus === 'NONE'">
                             <div class="title-box">
@@ -287,9 +327,7 @@ onUnmounted(() => {
                                 <Tooltip type="info"
                                     :text="['태그 생성이 어려운 경우, 태그를 직접 선택할 수 있습니다.', '- 리뷰가 짧아 분석이 어려운 경우', '- 태그 생성에 문제가 발생한 경우']" />
                             </div>
-                            <!-- TODO: 유저가 선택한 태그 노출 -->
                         </template>
-
                         <template v-else>
                             <div class="title-box">
                                 <h3>AI 태그</h3>
@@ -300,8 +338,10 @@ onUnmounted(() => {
                             </div>
                             <!-- TODO: AI 태그 만족도 조사 modal
                              태그 생성된 시점 이후 1회만 노출 -->
-                            <div class="satisfaction-rate-box">
-                                <button>AI 태그 만족도 평가</button>
+                            <div v-if="review.aiTagFeedbackPending" class="satisfaction-rate-box">
+                                <button @click="openTagSurvey">
+                                    AI 태그 만족도 평가
+                                </button>
                             </div>
                         </template>
                     </div>
@@ -325,6 +365,123 @@ onUnmounted(() => {
                                 :class="getTagSentimentClass(tag.sentiment)">
                                 {{ tag.label }}
                             </span>
+                        </template>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-bg ai-tag-survey-modal" v-if="isTagSurveyOpen">
+                <div class="modal-container">
+                    <div class="header">
+                        <p class="title">AI 태그 만족도 조사</p>
+                    </div>
+                    <div class="body">
+                        <template v-if="surveyStep === 1">
+                            <p>현재 리뷰에 생성된 AI 태그를 얼마나 만족하시나요?</p>
+
+                            <div class="rating-box">
+                                <div class="input-box">
+                                    <input type="radio" id="rating-1" :value="1" v-model="feedbackRating">
+                                    <label for="rating-1">1</label>
+                                </div>
+
+                                <div class="input-box">
+                                    <input type="radio" id="rating-2" :value="2" v-model="feedbackRating">
+                                    <label for="rating-2">2</label>
+                                </div>
+
+                                <div class="input-box">
+                                    <input type="radio" id="rating-3" :value="3" v-model="feedbackRating">
+                                    <label for="rating-3">3</label>
+                                </div>
+
+                                <div class="input-box">
+                                    <input type="radio" id="rating-4" :value="4" v-model="feedbackRating">
+                                    <label for="rating-4">4</label>
+                                </div>
+
+                                <div class="input-box">
+                                    <input type="radio" id="rating-5" :value="5" v-model="feedbackRating">
+                                    <label for="rating-5">5</label>
+                                </div>
+                            </div>
+
+                            <div class="btn-box">
+                                <button :class="feedbackRating === null ? 'disabled' : 'active-btn'"
+                                    :disabled="feedbackRating === null" @click="surveyStep = 2">
+                                    다음
+                                </button>
+                            </div>
+                        </template>
+                        <template v-else-if="surveyStep === 2 && feedbackRating !== null && feedbackRating >= 4">
+                            <div class="score-4-plus">
+                                <p>어떤 점이 마음에 드셨나요? (선택)</p>
+
+                                <input type="text" v-model="positiveComment" placeholder="자유롭게 작성해주세요.">
+
+                                <div class="btn-box">
+                                    <button class="neutral-btn" @click="surveyStep = 1">
+                                        이전
+                                    </button>
+
+                                    <button class="active-btn" @click="handleSubmitFeedback">
+                                        제출
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-else-if="surveyStep === 2 && feedbackRating !== null && feedbackRating <= 3">
+                            <div class="score-3-minus">
+                                <p>어떤 점이 아쉬우셨나요? (복수 선택 가능)</p>
+
+                                <div class="feedback-reason">
+                                    <div class="input-box">
+                                        <input type="checkbox" id="LOW_ACCURACY" value="LOW_ACCURACY"
+                                            v-model="negativeReasons">
+                                        <label for="LOW_ACCURACY">정확도 낮음</label>
+                                    </div>
+
+                                    <div class="input-box">
+                                        <input type="checkbox" id="SENTIMENT_ERROR" value="SENTIMENT_ERROR"
+                                            v-model="negativeReasons">
+                                        <label for="SENTIMENT_ERROR">긍부정 분석 오류</label>
+                                    </div>
+
+                                    <div class="input-box">
+                                        <input type="checkbox" id="IRRELEVANT_TAG" value="IRRELEVANT_TAG"
+                                            v-model="negativeReasons">
+                                        <label for="IRRELEVANT_TAG">관련 없는 태그 생성</label>
+                                    </div>
+
+                                    <div class="input-box">
+                                        <input type="checkbox" id="TYPO" value="TYPO" v-model="negativeReasons">
+                                        <label for="TYPO">오탈자</label>
+                                    </div>
+
+                                    <div class="input-box">
+                                        <input type="checkbox" id="OTHER" value="OTHER" v-model="negativeReasons">
+                                        <label for="OTHER">기타</label>
+                                    </div>
+
+                                    <input v-if="negativeReasons.includes('OTHER')" v-model="customNegativeReason"
+                                        type="text" placeholder="사유를 입력해주세요.">
+                                </div>
+
+                                <div class="btn-box">
+                                    <button class="neutral-btn" @click="surveyStep = 1">
+                                        이전
+                                    </button>
+
+                                    <button :class="negativeReasons.length === 0 ||
+                                        (negativeReasons.includes('OTHER') && !customNegativeReason.trim())
+                                        ? 'disabled'
+                                        : 'active-btn'
+                                        " :disabled="negativeReasons.length === 0 ||
+                                            (negativeReasons.includes('OTHER') && !customNegativeReason.trim())
+                                            " @click="handleSubmitFeedback">
+                                        제출
+                                    </button>
+                                </div>
+                            </div>
                         </template>
                     </div>
                 </div>
@@ -501,6 +658,62 @@ onUnmounted(() => {
 .review-detail-section .tags-container .head-box p button {
     margin-left: 8px;
 }
+
+.ai-tag-survey-modal .rating-box {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.ai-tag-survey-modal .input-box {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.modal-bg.ai-tag-survey-modal .input-box input {
+    margin-top: 0;
+}
+
+.ai-tag-survey-modal .btn-box {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: right;
+}
+
+.ai-tag-survey-modal .feedback-reason {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    margin-top: 20px;
+}
+
+.ai-tag-survey-modal .feedback-reason .input-box {
+    display: inline-flex;
+    flex: 0 0 auto;
+    width: auto;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.ai-tag-survey-modal .feedback-reason .input-box input {
+    flex: 0 0 auto;
+    width: auto;
+    margin: 0;
+}
+
+.ai-tag-survey-modal .feedback-reason .input-box label {
+    white-space: nowrap;
+}
+
+.ai-tag-survey-modal .disabled {
+    background-color: #a4a9b5;
+    color: var(--text-menu);
+    cursor: not-allowed;
+}
+
 
 @keyframes skeleton-shimmer {
     0% {
