@@ -80,7 +80,7 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-button {
+.btn-box button {
     display: flex;
     align-items: center;
     justify-content: center;

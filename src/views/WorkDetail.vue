@@ -3,7 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { api } from '../api/client'
 import { useRoute, useRouter } from 'vue-router'
 import { PhHeart, PhPenNib } from '@phosphor-icons/vue'
-import { addWatchlist, deleteWatchlist, getWatchlist, type Watchlist } from '../api/watchlist'
+import { addWatchlist, deleteWatchlist } from '../api/watchlist'
 import { getMyReviewByWork } from "../api/review";
 
 const route = useRoute()
@@ -301,11 +301,11 @@ const getWorkDetail = async () => {
 
         work.value = res.data.data
 
-        const watchlistRes = await getWatchlist()
-
-        isWatchlisted.value = watchlistRes.data.data.content.some(
-            (item: Watchlist) => item.workId === work.value?.workId
+        const watchlistRes = await api.get(
+            `/api/watchlist/${mediaType}/${workId}`
         )
+
+        isWatchlisted.value = watchlistRes.data.data.inWatchlist
     } catch (err) {
         console.error(err)
         error.value = '작품 정보를 불러오지 못했습니다.'
