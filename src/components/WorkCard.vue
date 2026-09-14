@@ -60,6 +60,8 @@ const goToWorkDetail = () => {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
+    align-items: stretch;
+    grid-auto-rows: 1fr;
 }
 
 .work-box {
