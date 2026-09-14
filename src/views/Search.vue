@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { PhMagnifyingGlass, PhXCircle } from '@phosphor-icons/vue'
+import Loader from '../components/Loader.vue'
 import WorkCard from '../components/WorkCard.vue'
 import Pagination from "../components/Pagination.vue"
 import { api } from '../api/client'
@@ -41,6 +42,8 @@ const handleSearch = async () => {
 
     loading.value = true
     error.value = ''
+    works.value = []
+    totalCount.value = 0
 
     try {
         let res
@@ -170,9 +173,9 @@ onMounted(() => {
                 </div>
             </div>
 
-            <p v-if="loading">loading...</p>
+            <Loader v-if="loading">작품을 찾고 있어요.</Loader>
             <p v-if="error">{{ error }}</p>
-            <div class="search-result" v-if="totalCount > 0">
+            <div class="search-result" v-if="!loading && totalCount > 0">
                 <div class="total-count" :class="{ invisible: totalCount === 0 }">총 {{ totalCount }}건의 결과</div>
                 <div class="works-list-container">
                     <WorkCard v-for="work in works" :key="work.workId" :work-id="work.workId"
@@ -256,5 +259,6 @@ onMounted(() => {
     word-break: keep-all;
     background-color: var(--bg-surface);
     box-shadow: var(--box-default);
+    height: 100%;
 }
 </style>

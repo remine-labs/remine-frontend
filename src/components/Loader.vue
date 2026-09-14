@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <div class="spinner-overlay">
+    <div class="spinner">
         <div class="dots-loader">
             <span class='first'></span>
             <span class='second'></span>
@@ -16,19 +16,14 @@
 </template>
 
 <style>
-.spinner-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
+.spinner {
     width: 100%;
-    height: 100vh;
-    background-color: var(--bg-overlay);
+    min-height: 300px;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     gap: 20px;
-    z-index: 999;
 }
 
 .dots-loader {
