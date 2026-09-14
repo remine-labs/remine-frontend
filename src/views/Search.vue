@@ -8,7 +8,6 @@ import { api } from '../api/client'
 import {
     addWatchlist,
     deleteWatchlist,
-    getWatchlist,
 } from '../api/watchlist.ts'
 
 const route = useRoute()
@@ -62,20 +61,25 @@ const handleSearch = async () => {
             })
         }
 
-        const watchlistRes = await getWatchlist()
-        const watchlist = watchlistRes.data.data.content
-
-        const watchlistSet = new Set(
-            watchlist.map((item: any) => item.workId)
-        )
-
         totalPages.value = res.data.data.total_pages
         totalCount.value = res.data.data.total_results
 
-        works.value = res.data.data.results.map((work: any) => ({
-            ...work,
-            isWatchlisted: watchlistSet.has(work.workId),
-        }))
+        const results = res.data.data.results
+
+        const worksWithWatchlist = await Promise.all(
+            results.map(async (work: any) => {
+                const watchlistRes = await api.get(
+                    `/api/watchlist/${work.mediaType}/${work.workId}`
+                )
+
+                return {
+                    ...work,
+                    isWatchlisted: watchlistRes.data.data.inWatchlist,
+                }
+            })
+        )
+
+        works.value = worksWithWatchlist
     } catch (err) {
         error.value = '검색 중 오류가 발생했습니다.'
         console.error(err)
