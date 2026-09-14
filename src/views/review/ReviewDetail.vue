@@ -653,6 +653,8 @@ onUnmounted(() => {
     color: var(--error);
 }
 
+
+
 .review-detail-section .tags-container .head-box p button {
     margin-left: 8px;
 }
