@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Index from "../views/auth/Index.vue";
-import OAuthCallback from "../views/auth/OAuthCallback.vue";
 import Home from "../views/Home.vue";
+import Login from "../views/auth/Login.vue";
+import OAuthCallback from "../views/auth/OAuthCallback.vue";
 import Search from "../views/Search.vue";
 import DefaultLayout from "../components/DefaultLayout.vue";
 import Timeline from "../views/review/Timeline.vue";
@@ -22,22 +22,33 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: "/",
-      name: "index",
-      component: Index,
-    },
-    {
       path: "/oauth/callback",
       name: "oauthCallback",
       component: OAuthCallback,
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: Login,
     },
     {
       path: "/",
       component: DefaultLayout,
       children: [
         {
-          path: "home",
+          path: "",
           name: "home",
+          component: Home,
+          meta: {
+            header: {
+              title: "ReMine",
+              showBack: false,
+            },
+          },
+        },
+        {
+          path: "home",
+          name: "homeLegacy",
           component: Home,
           meta: {
             header: {

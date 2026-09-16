@@ -5,8 +5,8 @@ import MobMenu from "./MobMenu.vue";
 
 <template>
     <MobHeader />
-    <main>
+    <div>
         <RouterView />
-    </main>
+    </div>
     <MobMenu />
 </template>

@@ -20,7 +20,7 @@ const loginProviders = [
 </script>
 
 <template>
-    <section class="index-section">
+    <section class="login-section">
         <div class="wrap">
             <!-- TODO: 스플래시 화면 구성 -->
             <div class="title-container">
@@ -46,25 +46,25 @@ const loginProviders = [
 /* google design guide */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,500;1,500&display=swap');
 
-.index-section .title-container {
+.login-section .title-container {
     text-align: center;
 }
 
-.index-section .title-container .slogun-text {
+.login-section .title-container .slogun-text {
     font-size: var(--font-size-title);
     font-weight: 500;
 }
 
-.index-section .title-container .logo {
+.login-section .title-container .logo {
     margin: 2rem 0;
 }
 
-.index-section .login-container {
+.login-section .login-container {
     width: 300px;
     margin: 5rem auto 0;
 }
 
-.index-section .login-container .btn-box {
+.login-section .login-container .btn-box {
     width: 100%;
     margin-bottom: 1rem;
     text-align: center;
@@ -73,22 +73,22 @@ const loginProviders = [
 }
 
 
-.index-section .login-container .btn-box button {
+.login-section .login-container .btn-box button {
     width: 100%;
 }
 
-.index-section .btn-box.google {
+.login-section .btn-box.google {
     background-color: #ffff;
     color: rgba(0, 0, 0, .54);
 }
 
-.index-section .btn-box.kakao {
+.login-section .btn-box.kakao {
     background-color: #fee500;
     color: rgba(0, 0, 0, .85);
 }
 
 @media (prefers-color-scheme: dark) {
-    .index-section .login-container .btn-box.google {
+    .login-section .login-container .btn-box.google {
         background-color: #222;
         border: #747775 solid 1px;
     }
