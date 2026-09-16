@@ -106,8 +106,8 @@ onMounted(() => {
 <template>
     <section class="home-section">
         <div class="wrap">
-            <!-- TODO: 내가 최근에 쓴 리뷰 -->
             <h3 class="title">최근에 어떤 리뷰를 썼을까요?✏</h3>
+            <!-- TODO: login prompt -->
             <div class="frame">
                 <div ref="container" class="recent-reviews-container" @mousedown="handleMouseDown"
                     @mousemove="handleMouseMove" @mouseup="handleMouseUp" @mouseleave="handleMouseUp">
