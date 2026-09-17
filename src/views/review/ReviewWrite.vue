@@ -1,10 +1,19 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import Datepicker from 'vue3-datepicker'
-import { PhStar } from '@phosphor-icons/vue'
+import { PhNotePencil, PhStar } from '@phosphor-icons/vue'
 import { useReviewForm } from '../../composables/useReviewForm'
+import WorkSearch from "../../components/WorkSearch.vue";
+import Loader from '../../components/Loader.vue'
+import WorkCard from '../../components/WorkCard.vue'
+import Pagination from '../../components/Pagination.vue'
+import CustomWork from "../CustomWork.vue";
+import { addWatchlist, deleteWatchlist } from '../../api/watchlist.ts'
+
 
 const {
     work,
+    changeWork,
     isEditMode,
     startDate,
     endDate,
@@ -22,6 +31,81 @@ const {
     submitWithManualTags,
 } = useReviewForm()
 
+const isChangeWorkModalOpen = ref(false)
+const isCustomWork = ref(false)
+
+const query = ref('')
+const works = ref<any[]>([])
+const loading = ref(false)
+const error = ref('')
+
+const currentPage = ref(1)
+const totalPages = ref(0)
+const totalCount = ref(0)
+
+const openChangeWorkModal = () => {
+    isChangeWorkModalOpen.value = true
+    isCustomWork.value = false
+    query.value = ''
+    works.value = []
+    totalPages.value = 0
+    totalCount.value = 0
+    error.value = ''
+    currentPage.value = 1
+}
+
+const handleSearch = (data: {
+    works: any[]
+    totalPages: number
+    totalCount: number
+}) => {
+    works.value = data.works
+    totalPages.value = data.totalPages
+    totalCount.value = data.totalCount
+}
+
+const handleWorkSelect = (selectedWork: any) => {
+    changeWork(selectedWork)
+    isChangeWorkModalOpen.value = false
+}
+
+const handleCustomWorkRegistered = (selectedWork: any) => {
+    changeWork(selectedWork)
+    isChangeWorkModalOpen.value = false
+    isCustomWork.value = false
+}
+
+const toggleWatchlistHandler = async (work: any) => {
+    try {
+        if (work.isWatchlisted) {
+            await deleteWatchlist(work.mediaType, work.workId)
+        } else {
+            await addWatchlist({
+                workId: work.workId,
+                mediaType: work.mediaType,
+                workTitle: work.workTitle,
+                workPosterPath: work.workPosterPath,
+                workReleaseDate: work.workReleaseDate,
+            })
+        }
+
+        work.isWatchlisted = !work.isWatchlisted
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+const handleLoading = (value: boolean) => {
+    loading.value = value
+}
+
+const handleError = (message: string) => {
+    error.value = message
+}
+
+const handlePageChange = (page: number) => {
+    currentPage.value = page
+}
 </script>
 
 <template>
@@ -29,6 +113,9 @@ const {
         <div class="work-info-container relative" v-if="work.id">
             <div class="img-box add-overlay">
                 <img :src="`https://image.tmdb.org/t/p/original${work.poster}`" :alt="work.title" />
+            </div>
+            <div class="icon-box" @click="openChangeWorkModal">
+                <PhNotePencil :size="24" />
             </div>
         </div>
         <div class="wrap">
@@ -94,11 +181,49 @@ const {
                 </div>
                 <div class="footer">
                     <div class="btn-box">
-                        <button class="close neutral-btn" @click="isTagModalOpen = false">돌아가기</button>
-                        <button class="active-btn post-manual-tags" @click="submitWithManualTags">
+                        <button type="button" class="close neutral-btn" @click="isTagModalOpen = false">돌아가기</button>
+                        <button type="button" class="active-btn post-manual-tags" @click="submitWithManualTags">
                             저장하기
                         </button>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-bg change-work-modal" v-if="isChangeWorkModalOpen">
+            <div class="modal-container">
+                <div class="header">
+                    <p class="title">작품 변경</p>
+                </div>
+                <div class="body">
+                    <CustomWork v-if="isCustomWork" :embedded="true" @registered="handleCustomWorkRegistered"
+                        @cancel="isCustomWork = false" />
+                    <template v-else>
+                        <WorkSearch v-model="query" v-model:current-page="currentPage" @search="handleSearch"
+                            @loading="handleLoading" @error="handleError" />
+                        <Loader v-if="loading">작품을 찾고 있어요.</Loader>
+                        <p v-if="error">{{ error }}</p>
+                        <div class="search-result" v-if="!loading && totalCount > 0">
+                            <div class="total-count" :class="{ invisible: totalCount === 0 }">총 {{ totalCount }}건의 결과
+                            </div>
+                            <div class="works-list-container">
+                                <WorkCard v-for="work in works" :key="work.workId" :work-id="work.workId"
+                                    :work-title="work.workTitle" :work-poster-path="work.workPosterPath"
+                                    :work-release-date="work.workReleaseDate" :media-type="work.mediaType"
+                                    :is-watchlisted="work.isWatchlisted" :selectable="true"
+                                    @select="handleWorkSelect(work)" />
+                                <div class="custom-work">
+                                    <p>찾으시는 작품이 없나요?</p>
+                                    <div class="btn-box">
+                                        <button type="button" class="active-btn" @click="isCustomWork = true">
+                                            작품 등록하기
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <Pagination v-if="totalPages > 1" :current-page="currentPage" :total-pages="totalPages"
+                                @page-change="handlePageChange" />
+                        </div>
+                    </template>
                 </div>
             </div>
         </div>
@@ -118,6 +243,13 @@ const {
 
 .review-write-section .work-info-container .img-box {
     margin-top: -15%;
+}
+
+.review-write-section .work-info-container .icon-box {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color: #f6f4f0;
 }
 
 .review-write-section .input-container {
@@ -172,6 +304,20 @@ const {
 .review-write-section .date-picker-box input {
     width: 100%;
     text-align: center;
+    color: var(--text-main);
+    border-radius: 8px;
+    background-color: var(--bg-surface);
+    border: solid 3px transparent;
+    transition: 0.3s ease-in-out;
+    outline: none;
+    padding: 2px;
+    line-height: 2.4rem;
+}
+
+.review-write-section .date-picker-box input:focus {
+    background-color: var(--bg-elevated);
+    border-color: var(--bg-surface);
+    box-shadow: 0 0 4px var(--chip-important-bg);
 }
 
 .review-write-section .rating-container .rating-box {
@@ -249,6 +395,28 @@ const {
     margin: 0 4px 4px 0;
     transition: ease 0.2s;
     cursor: pointer;
+}
+
+.change-work-modal .modal-container {
+    max-height: calc(100vh - 32px);
+}
+
+.change-work-modal .modal-container .body {
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+}
+
+.change-work-modal .modal-container .body input {
+    margin-top: 0;
+}
+
+.change-work-modal .works-list-container {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.change-work-modal .custom-work-section {
+    padding: 0 0 20px 0;
+    min-height: auto;
 }
 
 @media screen and (min-width: 520px) {
