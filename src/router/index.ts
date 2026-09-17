@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+
 import Home from "../views/Home.vue";
 import Login from "../views/auth/Login.vue";
 import OAuthCallback from "../views/auth/OAuthCallback.vue";
@@ -17,23 +18,28 @@ import ServiceTermsView from "../views/settings/ServiceTermsView.vue";
 import CustomWork from "../views/CustomWork.vue";
 import Discover from "../views/Discover.vue";
 import Settings from "../views/settings/Settings.vue";
+import { getMe } from "../api/auth.ts";
 
 const router = createRouter({
   history: createWebHistory(),
+
   routes: [
     {
       path: "/oauth/callback",
       name: "oauthCallback",
       component: OAuthCallback,
     },
+
     {
       path: "/login",
       name: "login",
       component: Login,
     },
+
     {
       path: "/",
       component: DefaultLayout,
+
       children: [
         {
           path: "",
@@ -46,6 +52,7 @@ const router = createRouter({
             },
           },
         },
+
         {
           path: "home",
           name: "homeLegacy",
@@ -57,6 +64,7 @@ const router = createRouter({
             },
           },
         },
+
         {
           path: "timeline",
           name: "timeline",
@@ -68,6 +76,7 @@ const router = createRouter({
             },
           },
         },
+
         {
           path: "search",
           name: "search",
@@ -79,6 +88,7 @@ const router = createRouter({
             },
           },
         },
+
         {
           path: "customWork",
           name: "customWork",
@@ -90,6 +100,7 @@ const router = createRouter({
             },
           },
         },
+
         {
           path: "/work/:mediaType/:workId",
           name: "workDetail",
@@ -101,6 +112,7 @@ const router = createRouter({
             },
           },
         },
+
         {
           path: "review/create",
           name: "reviewCreate",
@@ -112,6 +124,7 @@ const router = createRouter({
             },
           },
         },
+
         {
           path: "review/:reviewId",
           name: "reviewDetail",
@@ -123,6 +136,7 @@ const router = createRouter({
             },
           },
         },
+
         {
           path: "review/:reviewId/edit",
           name: "reviewEdit",
@@ -134,6 +148,7 @@ const router = createRouter({
             },
           },
         },
+
         {
           path: "discover",
           name: "discover",
@@ -145,6 +160,7 @@ const router = createRouter({
             },
           },
         },
+
         {
           path: "profile",
           name: "profile",
@@ -156,6 +172,7 @@ const router = createRouter({
             },
           },
         },
+
         {
           path: "watchlist",
           name: "watchlist",
@@ -167,6 +184,7 @@ const router = createRouter({
             },
           },
         },
+
         {
           path: "playlists",
           name: "playlists",
@@ -178,6 +196,7 @@ const router = createRouter({
             },
           },
         },
+
         {
           path: "playlist/detail",
           name: "playlistDetail",
@@ -189,6 +208,7 @@ const router = createRouter({
             },
           },
         },
+
         {
           path: "settings",
           name: "settings",
@@ -200,6 +220,7 @@ const router = createRouter({
             },
           },
         },
+
         {
           path: "terms/service",
           name: "serviceTerms",
@@ -211,6 +232,7 @@ const router = createRouter({
             },
           },
         },
+
         {
           path: "terms/privacy",
           name: "privbacyPolicy",
@@ -225,6 +247,26 @@ const router = createRouter({
       ],
     },
   ],
+});
+
+router.beforeEach(async (to) => {
+  const publicRoutes = ["home", "homeLegacy", "login", "oauthCallback"];
+
+  if (publicRoutes.includes(to.name as string)) {
+    return true;
+  }
+
+  try {
+    await getMe();
+    return true;
+  } catch {
+    return {
+      name: "login",
+      query: {
+        redirect: to.fullPath,
+      },
+    };
+  }
 });
 
 export default router;

@@ -1,5 +1,4 @@
 import axios from "axios";
-import router from "../router";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -23,7 +22,6 @@ api.interceptors.response.use(
         await api.post("/api/refresh");
         return api(originalRequest);
       } catch (refreshError) {
-        router.replace("/");
         return Promise.reject(refreshError);
       }
     }

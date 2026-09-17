@@ -1,118 +1,59 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { PhMagnifyingGlass, PhXCircle } from '@phosphor-icons/vue'
+import WorkSearch from '../components/WorkSearch.vue'
 import Loader from '../components/Loader.vue'
 import WorkCard from '../components/WorkCard.vue'
-import Pagination from "../components/Pagination.vue"
-import { api } from '../api/client'
-import {
-    addWatchlist,
-    deleteWatchlist,
-} from '../api/watchlist.ts'
+import Pagination from '../components/Pagination.vue'
+import { addWatchlist, deleteWatchlist } from '../api/watchlist.ts'
 
 const route = useRoute()
 const router = useRouter()
 
-// 검색 상태
 const query = ref('')
 const works = ref<any[]>([])
 const loading = ref(false)
 const error = ref('')
 
-// 페이지네이션 상태
 const currentPage = ref(1)
 const totalPages = ref(0)
 const totalCount = ref(0)
 
-// 검색어 타입 확인
-const isYoutubeLink = (value: string) => {
-    return value.includes('youtube.com') || value.includes('youtu.be')
+const handleSearch = (data: {
+    works: any[]
+    totalPages: number
+    totalCount: number
+}) => {
+    works.value = data.works
+    totalPages.value = data.totalPages
+    totalCount.value = data.totalCount
 }
 
-// 페이지 이동
-const handlePageChange = (page: number) => {
-    currentPage.value = page
-    handleSearch()
-}
+const handleLoading = (value: boolean) => {
+    loading.value = value
 
-// 검색
-const handleSearch = async () => {
-    if (!query.value.trim()) return
-
-    loading.value = true
-    error.value = ''
-    works.value = []
-    totalCount.value = 0
-
-    try {
-        let res
-
-        if (isYoutubeLink(query.value)) {
-            res = await api.get('/api/youtube', {
-                params: {
-                    url: query.value,
-                    page: currentPage.value,
-                },
-            })
-        } else {
-            res = await api.get('/api/tmdb/contents/search', {
-                params: {
-                    query: query.value.trim(),
-                    page: currentPage.value,
-                },
-            })
-        }
-
-        totalPages.value = res.data.data.total_pages
-        totalCount.value = res.data.data.total_results
-
-        const results = res.data.data.results
-
-        const worksWithWatchlist = await Promise.all(
-            results.map(async (work: any) => {
-                const watchlistRes = await api.get(
-                    `/api/watchlist/${work.mediaType}/${work.workId}`
-                )
-
-                return {
-                    ...work,
-                    isWatchlisted: watchlistRes.data.data.inWatchlist,
-                }
-            })
-        )
-
-        works.value = worksWithWatchlist
-    } catch (err) {
-        error.value = '검색 중 오류가 발생했습니다.'
-        console.error(err)
-    } finally {
-        loading.value = false
+    if (value) {
+        works.value = []
+        totalCount.value = 0
     }
 }
 
-// 새 검색 시작
-const handleSearchButton = () => {
-    currentPage.value = 1
-    handleSearch()
+const handleError = (message: string) => {
+    error.value = message
 }
 
-// 검색어 초기화
-const handleEmptyInput = () => {
-    query.value = ''
+const handlePageChange = (page: number) => {
+    currentPage.value = page
 }
 
-// 플레이리스트 이동
 const goToPlaylist = () => {
     router.push('/playlists')
 }
 
-// 커스텀 작품 이동
 const goToCustomWork = () => {
     router.push('/customWork')
 }
 
-// 관심 목록 토글
 const toggleWatchlistHandler = async (work: any) => {
     try {
         if (work.isWatchlisted) {
@@ -133,15 +74,11 @@ const toggleWatchlistHandler = async (work: any) => {
     }
 }
 
-// TODO: workDetail 페이지에서 다시 돌아오더라도 기존 검색 값 유지하여,
-// TMDB API 사용 횟수 줄이기
-
 onMounted(() => {
     const url = route.query.url as string
 
     if (url) {
         query.value = url
-        handleSearch()
     }
 })
 </script>
@@ -149,30 +86,13 @@ onMounted(() => {
 <template>
     <section class="search-section">
         <div class="wrap">
-            <div class="search-container relative">
-                <div class="input-box">
-                    <!-- TODO: mobile에서 입력값 삭제 버튼 있는지 확인 후, 없을 경우
-                     type을 text로 변경하고 x 버튼 추가하여 clear 기능 추가 -->
-                    <input class="work-search-input" v-model="query" type="search" @keyup.enter="handleSearch"
-                        placeholder='작품 제목 또는 유튜브 링크를 입력해주세요.' autofocus>
-                </div>
-                <div class="icon-box empty-input-btn" :class="{ active: query }">
-                    <button class="icon-btn" @click="handleEmptyInput">
-                        <PhXCircle :size="20" weight="fill" />
-                    </button>
-                </div>
-                <div class="icon-box search-btn">
-                    <button class="icon-btn" @click="handleSearch">
-                        <PhMagnifyingGlass :size="24" />
-                    </button>
-                </div>
-                <!-- TODO: 배너 디자인 필요, css로 진행할 것 -->
-                <div class="banner-box add-playlist" @click='goToPlaylist'>
-                    <p>유튜브 플레이리스트 쓰세요?</p>
-                    <p class="description">연동하면 클릭만으로도 작품을 검색 할 수 있어요!</p>
-                </div>
+            <WorkSearch v-model="query" v-model:current-page="currentPage" @search="handleSearch"
+                @loading="handleLoading" @error="handleError" />
+            <!-- TODO: 배너 디자인 필요, css로 진행할 것 -->
+            <div class="banner-box add-playlist" @click='goToPlaylist'>
+                <p>유튜브 플레이리스트 쓰세요?</p>
+                <p class="description">연동하면 클릭만으로도 작품을 검색 할 수 있어요!</p>
             </div>
-
             <Loader v-if="loading">작품을 찾고 있어요.</Loader>
             <p v-if="error">{{ error }}</p>
             <div class="search-result" v-if="!loading && totalCount > 0">
@@ -197,38 +117,6 @@ onMounted(() => {
 </template>
 
 <style>
-.search-section .input-box .work-search-input {
-    width: 100%;
-    box-sizing: border-box;
-    padding-right: 60px;
-}
-
-.search-section .search-container .empty-input-btn {
-    position: absolute;
-    right: 45px;
-    top: 10px;
-    z-index: 10;
-    color: var(--text-sub);
-    visibility: hidden;
-    opacity: 0;
-    transition: 0.3s ease-in-out;
-}
-
-.search-section .search-container .empty-input-btn.active {
-    visibility: visible;
-    opacity: 1;
-}
-
-.search-section .search-container .search-btn {
-    position: absolute;
-    right: 3px;
-    top: 3px;
-    width: 32px;
-    aspect-ratio: 1 / 1;
-    z-index: 99;
-    color: var(--text-sub);
-}
-
 .search-section .banner-box {
     text-align: center;
     margin-top: 16px;
