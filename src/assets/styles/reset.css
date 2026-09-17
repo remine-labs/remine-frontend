@@ -39,6 +39,19 @@ select {
   font: inherit;
 }
 
+input {
+  border: none;
+  background-color: transparent;
+  font-size: inherit;
+  outline: none;
+}
+
+input:focus {
+  outline: none;
+  border-color: inherit;
+  box-shadow: none;
+}
+
 button {
   display: inline-block;
   border: none;
