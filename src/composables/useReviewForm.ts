@@ -46,6 +46,23 @@ export function useReviewForm() {
     workSource: state?.workSource || "TMDB",
   });
 
+  const changeWork = (selectedWork: {
+    workId: number;
+    workTitle: string;
+    workPosterPath: string;
+    workReleaseDate: string;
+    mediaType: string;
+  }) => {
+    work.value = {
+      id: selectedWork.workId,
+      title: selectedWork.workTitle,
+      poster: selectedWork.workPosterPath,
+      workReleaseDate: selectedWork.workReleaseDate,
+      mediaType: selectedWork.mediaType,
+      workSource: "TMDB",
+    };
+  };
+
   // 날짜 로직을 위한 값 > 자세한 내용은 하단 로직으로
   const isStartToday = computed(() => {
     return startDate.value.toDateString() === today.toDateString();
@@ -290,6 +307,7 @@ export function useReviewForm() {
 
   return {
     work,
+    changeWork,
     isEditMode,
     startDate,
     endDate,

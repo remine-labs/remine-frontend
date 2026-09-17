@@ -127,13 +127,13 @@ onMounted(() => {
     cursor: pointer;
 }
 
-.search-section .total-count {
+.total-count {
     text-align: right;
     font-size: var(--font-size-sub);
     line-height: 4;
 }
 
-.search-section .custom-work {
+.custom-work {
     display: flex;
     justify-content: center;
     align-items: center;

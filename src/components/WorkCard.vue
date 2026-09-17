@@ -11,15 +11,22 @@ interface WorkCardProps {
     workReleaseDate?: string;
     mediaType?: string;
     isWatchlisted?: boolean;
+    selectable?: boolean;
 }
 
 const props = defineProps<WorkCardProps>();
 
 const emit = defineEmits<{
     (e: "toggle-watchlist"): void;
+    (e: "select"): void;
 }>();
 
-const goToWorkDetail = () => {
+const handleWorkClick = () => {
+    if (props.selectable) {
+        emit('select')
+        return
+    }
+
     router.push(`/work/${props.mediaType}/${props.workId}`)
 }
 </script>
@@ -32,12 +39,12 @@ const goToWorkDetail = () => {
             </span>
         </div>
 
-        <div class="img-box poster" @click='goToWorkDetail'>
+        <div class="img-box poster" @click='handleWorkClick'>
             <img :src="`https://image.tmdb.org/t/p/w200${workPosterPath}`" :alt="workTitle" />
         </div>
 
-        <div class="work-info-box relative">
-            <div class="work-title-box" @click='goToWorkDetail'>
+        <div class="work-info-box">
+            <div class="work-title-box" @click='handleWorkClick'>
                 <span class="work-name ellipsis-1">
                     {{ workTitle }}
                 </span>
@@ -45,8 +52,7 @@ const goToWorkDetail = () => {
                     ({{ workReleaseDate?.slice(0, 4) }})
                 </span>
             </div>
-
-            <div class="icon-box watchlist">
+            <div class="icon-box watchlist" :class="{ 'no-watchlist': props.selectable }">
                 <button class="heart" @click="emit('toggle-watchlist')">
                     <PhHeart :weight="props.isWatchlisted ? 'fill' : 'regular'" :size="24" />
                 </button>
@@ -101,14 +107,14 @@ const goToWorkDetail = () => {
     display: flex;
     gap: 3px;
     align-items: center;
-    padding: 12px 6px;
 }
 
 .work-box .work-title-box {
     display: flex;
+    flex: 1;
     align-items: center;
-    margin-right: 34px;
     gap: 4px;
+    padding: 12px 0px 12px 6px;
 }
 
 .work-box .work-title-box .work-name {
@@ -120,10 +126,12 @@ const goToWorkDetail = () => {
 }
 
 .work-box .work-info-box .watchlist {
-    position: absolute;
-    right: 0;
-    top: 0;
-    padding: 10px;
+    padding: 12px 6px;
+}
+
+.work-box .work-info-box .no-watchlist {
+    width: 0;
+    padding: 0 6px 0 0;
 }
 
 @media screen and (min-width: 520px) {
