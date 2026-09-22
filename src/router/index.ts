@@ -20,6 +20,16 @@ import Discover from "../views/Discover.vue";
 import Settings from "../views/settings/Settings.vue";
 import { getMe } from "../api/auth.ts";
 
+const publicRoutes = [
+  "home",
+  "homeLegacy",
+  "login",
+  "oauthCallback",
+  "settings",
+  "serviceTerms",
+  "privacyPolicy",
+];
+
 const router = createRouter({
   history: createWebHistory(),
 
@@ -235,7 +245,7 @@ const router = createRouter({
 
         {
           path: "terms/privacy",
-          name: "privbacyPolicy",
+          name: "privacyPolicy",
           component: PrivacyPolicyView,
           meta: {
             header: {
@@ -250,8 +260,6 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  const publicRoutes = ["home", "homeLegacy", "login", "oauthCallback"];
-
   if (publicRoutes.includes(to.name as string)) {
     return true;
   }
