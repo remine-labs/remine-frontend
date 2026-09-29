@@ -14,13 +14,13 @@ const loading = ref(true)
 onMounted(async () => {
     try {
         await getMe()
-        router.replace('/home')
+        router.replace('/')
     } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 401) {
             try {
                 await api.post('/api/refresh')
                 await getMe()
-                router.replace('/home')
+                router.replace('/')
             } catch {
                 // router.replace('/')
                 console.log("로그인 연장 실패", error)

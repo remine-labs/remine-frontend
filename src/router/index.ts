@@ -62,19 +62,6 @@ const router = createRouter({
             },
           },
         },
-
-        {
-          path: "home",
-          name: "homeLegacy",
-          component: Home,
-          meta: {
-            header: {
-              title: "ReMine",
-              showBack: false,
-            },
-          },
-        },
-
         {
           path: "timeline",
           name: "timeline",
