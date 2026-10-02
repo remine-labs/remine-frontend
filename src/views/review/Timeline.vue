@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../../api/client'
+import Pagination from '../../components/Pagination.vue'
 
 const router = useRouter()
 
@@ -27,7 +28,30 @@ interface Review {
     tags: Tag[]
 }
 
-const currentPage = ref(0)
+interface TimelinePage {
+    content: Review[]
+    currentPage: number
+    size: number
+    totalElements: number
+    totalPages: number
+    isLast: boolean
+}
+
+interface ApiResponse<T> {
+    data: T
+}
+
+const filters = [
+    { label: '최신 순', value: 'LATEST' },
+    { label: '오래된 순', value: 'OLDEST' },
+    { label: '높은 평점 순', value: 'HIGH_RATING' },
+    { label: '낮은 평점 순', value: 'LOW_RATING' },
+];
+
+const selectedFilter = ref('LATEST');
+
+const currentPage = ref(1)
+const totalPages = ref(0)
 const loading = ref(false)
 const timeline = ref<Review[]>([])
 
@@ -47,45 +71,48 @@ const goToReviewDetail = (reviewId: number) => {
     router.push(`/review/${reviewId}`)
 }
 
-
 const fetchTimeline = async (page: number) => {
     loading.value = true
+
     try {
-        const res = await api.get('/api/reviews/timeline', {
-            params: { page }
+        const res = await api.get<ApiResponse<TimelinePage>>('/api/reviews/timeline', {
+            params: {
+                page,
+                sortType: selectedFilter.value,
+            },
         })
 
-        timeline.value = res.data.data
+        timeline.value = res.data.data.content
         currentPage.value = page
+        totalPages.value = res.data.data.totalPages
     } catch (error) {
         console.error('timeline 조회 실패', error)
         timeline.value = []
+        totalPages.value = 0
     } finally {
         loading.value = false
     }
 }
 
+const changeFilter = (filter: string) => {
+    selectedFilter.value = filter
+    fetchTimeline(1)
+}
+
 onMounted(() => {
-    fetchTimeline(0)
+    fetchTimeline(1)
 })
 </script>
 
 <template>
     <section class="timeline-section">
         <div class="wrap">
-            <!-- TODO: filter 구현 -->
             <div class="filter-container">
-                <div class="filter-box sort-date">
-                    <button>최신 순</button>
-                    <button>오래된 순</button>
-                    <button>감상일 순</button>
-                </div>
-                <div class="filter-box sort-rating">
-                    <button>4점 이상</button>
-                    <button>3점 이상</button>
-                    <button>2점 이상</button>
-                    <button>1점 이상</button>
-                    <button>1점 미만</button>
+                <div class="filter-box">
+                    <button v-for="filter in filters" :key="filter.value" type="button"
+                        :class="{ active: selectedFilter === filter.value }" @click="changeFilter(filter.value)">
+                        {{ filter.label }}
+                    </button>
                 </div>
             </div>
             <div class="timeline-container">
@@ -122,16 +149,8 @@ onMounted(() => {
                     </div>
                 </div>
             </div>
-            <!-- TODO: pagination -->
-            <!-- <div class="pagination-container">
-                <button @click="fetchTimeline(currentPage - 1)" :disabled="currentPage === 0">
-                    이전
-                </button>
-
-                <button @click="fetchTimeline(currentPage + 1)">
-                    다음
-                </button>
-            </div> -->
+            <Pagination v-if="totalPages > 1" :current-page="currentPage" :total-pages="totalPages"
+                @page-change="fetchTimeline" />
         </div>
     </section>
 </template>
