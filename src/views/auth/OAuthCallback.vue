@@ -4,23 +4,31 @@ import Loader from '../../components/Loader.vue'
 import { useRouter } from 'vue-router'
 import { getMe } from '../../api/auth'
 import { api } from '../../api/client'
+import { getMyTerms } from '../../api/terms'
 import axios from 'axios'
 
 const router = useRouter()
 const loading = ref(true)
 
-// TODO: 약관 분기 처리
+const redirectAfterLogin = async () => {
+    const terms = await getMyTerms()
+    const hasRequiredTermsToAgree = terms.some(
+        (term) => term.required && !term.agreed
+    )
+
+    router.replace(hasRequiredTermsToAgree ? '/terms' : '/')
+}
 
 onMounted(async () => {
     try {
         await getMe()
-        router.replace('/')
+        await redirectAfterLogin()
     } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 401) {
             try {
                 await api.post('/api/refresh')
                 await getMe()
-                router.replace('/')
+                await redirectAfterLogin()
             } catch {
                 // router.replace('/')
                 console.log("로그인 연장 실패", error)
