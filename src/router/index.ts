@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/auth/Login.vue";
 import OAuthCallback from "../views/auth/OAuthCallback.vue";
+import Terms from "../views/auth/Terms.vue";
 import Search from "../views/Search.vue";
 import DefaultLayout from "../components/DefaultLayout.vue";
 import Timeline from "../views/review/Timeline.vue";
@@ -214,6 +215,18 @@ const router = createRouter({
             header: {
               title: "설정",
               showBack: true,
+            },
+          },
+        },
+
+        {
+          path: "terms",
+          name: "terms",
+          component: Terms,
+          meta: {
+            header: {
+              title: "약관 동의",
+              showBack: false,
             },
           },
         },
