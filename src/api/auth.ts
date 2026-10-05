@@ -6,6 +6,7 @@ export interface MeResponse {
   name: string;
   provider: string;
   profileUrl: string;
+  birthDateSet: boolean;
 }
 
 export const getMe = async (): Promise<MeResponse> => {
