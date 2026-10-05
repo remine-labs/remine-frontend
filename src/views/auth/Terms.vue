@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import Datepicker from "vue3-datepicker";
 import axios from "axios";
 import Loader from "../../components/Loader.vue";
+import { getMe } from "../../api/auth";
 import {
   agreeToTerms,
   completeSignup,
@@ -25,12 +26,14 @@ const requiredTermsAreAgreed = computed(() =>
   terms.value.every((term) => !term.required || term.agreed)
 );
 const termsForDisplay = computed(() =>
-  [...terms.value].sort((a, b) => {
-    if (a.termsType === b.termsType) return 0;
-    if (a.termsType === "SERVICE") return -1;
-    if (b.termsType === "SERVICE") return 1;
-    return 0;
-  })
+  terms.value
+    .filter((term) => !term.agreed)
+    .sort((a, b) => {
+      if (a.termsType === b.termsType) return 0;
+      if (a.termsType === "SERVICE") return -1;
+      if (b.termsType === "SERVICE") return 1;
+      return 0;
+    })
 );
 
 const getTermsTitle = (termsType: string): string => {
@@ -125,9 +128,11 @@ const submitAgreements = async () => {
 
 onMounted(async () => {
   try {
-    terms.value = await getMyTerms();
+    const [user, myTerms] = await Promise.all([getMe(), getMyTerms()]);
+    terms.value = myTerms;
+    isBirthDateVerified.value = user.birthDateSet;
   } catch {
-    loadError.value = "약관 정보를 불러오지 못했습니다. 페이지를 새로고침해주세요.";
+    loadError.value = "가입 정보를 불러오지 못했습니다. 페이지를 새로고침해주세요.";
   } finally {
     isLoadingTerms.value = false;
   }
@@ -137,18 +142,20 @@ onMounted(async () => {
 <template>
   <section class="signup-terms-section">
     <div class="wrap">
-      <h1>가입 절차</h1>
-      <p class="description">생년월일을 확인한 뒤 하단 약관에 동의해주세요.</p>
+      <h1>{{ isBirthDateVerified ? "약관 변경 사항" : "가입 절차" }}</h1>
+      <p class="description">
+        {{ isBirthDateVerified ? "필수 약관에 변경 사항이 있으니, 확인해 주세요." : "생년월일 확인 후 하단 약관에 동의해 주세요." }}
+      </p>
 
       <Loader v-if="isLoadingTerms">약관 정보를 불러오는 중입니다.</Loader>
       <p v-else-if="loadError" class="error-message" role="alert">
         {{ loadError }}
       </p>
       <template v-else>
-        <div class="birth-date-step">
+        <div v-if="!isBirthDateVerified" class="birth-date-step">
           <h2>생년월일 입력</h2>
           <div class="date-picker-box input-box">
-            <Datepicker v-model="birthDate" inputFormat="yyyy-MM-dd" placeholder="생년월일을 선택해주세요"
+            <Datepicker v-model="birthDate" inputFormat="yyyy-MM-dd" placeholder="생년월일을 선택해 주세요"
               :disabled="isBirthDateVerified" />
           </div>
           <div class="btn-box">
