@@ -1,145 +1,173 @@
-<script setup lang='ts'>
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { addPlaylist, getPlaylists } from '../../api/youtube';
-import type { Playlist } from '../../api/youtube';
-import { PhListPlus } from '@phosphor-icons/vue';
+<script setup lang="ts">
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import { addPlaylist, getPlaylists } from "../../api/youtube";
+import type { Playlist } from "../../api/youtube";
+import { PhListPlus } from "@phosphor-icons/vue";
 
 const router = useRouter();
 
-const playlistUrl = ref('');
+const playlistUrl = ref("");
 const isAddPlaylistModalOpen = ref(false);
 const playlists = ref<Playlist[]>([]);
 
 const goToWatchlist = () => {
-    router.push("/watchlist")
-}
+  router.push("/watchlist");
+};
 
 const goToPlaylistDetail = (playlist: Playlist) => {
-    router.push({
-        name: "playlistDetail",
-        query: {
-            url: playlist.playlistUrl,
-        },
-        state: {
-            playlistName: playlist.playlistName,
-            videoCount: playlist.videoCount
-        }
-    });
-}
+  router.push({
+    name: "playlistDetail",
+    query: {
+      url: playlist.playlistUrl,
+    },
+    state: {
+      playlistName: playlist.playlistName,
+      videoCount: playlist.videoCount,
+    },
+  });
+};
 
 const handleAddPlaylist = async () => {
-    try {
-        await addPlaylist(playlistUrl.value);
+  try {
+    await addPlaylist(playlistUrl.value);
 
-        window.location.reload();
-    } catch (error) {
-        console.error(error)
-    }
-}
-
+    window.location.reload();
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 onMounted(async () => {
-    try {
-        const res = await getPlaylists();
+  try {
+    const res = await getPlaylists();
 
-        playlists.value = res.data.data;
-    } catch (error) {
-        console.error(error)
-    }
-})
+    playlists.value = res.data.data;
+  } catch (error) {
+    console.error(error);
+  }
+});
 </script>
 
 <template>
-    <section class="playlists-section">
-        <div class="wrap">
-            <div class="tab-container">
-                <div class="saved-works-box" @click='goToWatchlist'>저장한 작품</div>
-                <div class="youtube-playlist-box active">재생 목록</div>
-            </div>
-            <div class="playlists-container">
-                <!-- TODO: playlist 연결된 값 없을 때, 연결해보라며 유도 -->
-                <div class="playlist-box relative" v-for="item in playlists" :key='item.playlistName'>
-                    <div class="img-box" @click='goToPlaylistDetail(item)'>
-                        <img :src="item.thumbnailUrl" :alt="item.playlistName">
-                    </div>
-                    <div class="info-box">
-                        <p class="playlist-name title" @click='goToPlaylistDetail(item)'>
-                            {{ item.playlistName }}
-                        </p>
-                        <!-- FIXME: 서버 연결 후, DB에서 가져오지 않을 때 개수 확인 필요
+  <main class="playlists">
+    <div class="wrap">
+      <div class="tab-container">
+        <div class="saved-works-box" @click="goToWatchlist">저장한 작품</div>
+        <div class="youtube-playlist-box active">재생 목록</div>
+      </div>
+      <div class="playlists-container">
+        <!-- TODO: playlist 연결된 값 없을 때, 연결해보라며 유도 -->
+        <div
+          class="playlist-box relative"
+          v-for="item in playlists"
+          :key="item.playlistName"
+        >
+          <div class="img-box" @click="goToPlaylistDetail(item)">
+            <img :src="item.thumbnailUrl" :alt="item.playlistName" />
+          </div>
+          <div class="info-box">
+            <p class="playlist-name title" @click="goToPlaylistDetail(item)">
+              {{ item.playlistName }}
+            </p>
+            <!-- FIXME: 서버 연결 후, DB에서 가져오지 않을 때 개수 확인 필요
                          1. videoCount가 58개에서 변경되었는가
                          2. privateVideo, deletedVideo는 제외된 값인가
                          3. 아닐 경우 video-count를 삭제하고 updatedAt으로 대체
                          4. 실제 영상 개수는 상세 페이지에서 확인 -->
-                        <p class="video-count">{{ item.videoCount }}개</p>
-                        <button class="move-to-total-video-list" @click='goToPlaylistDetail(item)'>전체 영상 보기</button>
-                    </div>
-                </div>
-            </div>
+            <p class="video-count">{{ item.videoCount }}개</p>
+            <button
+              class="move-to-total-video-list"
+              @click="goToPlaylistDetail(item)"
+            >
+              전체 영상 보기
+            </button>
+          </div>
         </div>
-        <div class="floating-box">
-            <div class="icon-box add-playlist">
-                <button @click="isAddPlaylistModalOpen = true">
-                    <PhListPlus :size='24' />
-                </button>
-            </div>
+      </div>
+    </div>
+    <div class="floating-box">
+      <div class="icon-box add-playlist">
+        <button @click="isAddPlaylistModalOpen = true">
+          <PhListPlus :size="24" />
+        </button>
+      </div>
+    </div>
+    <div
+      class="modal-bg add-playlist-modal"
+      :class="{ hidden: !isAddPlaylistModalOpen }"
+    >
+      <div class="modal-container">
+        <div class="header">
+          <p class="title">재생목록 추가</p>
         </div>
-        <div class="modal-bg add-playlist-modal" :class="{ hidden: !isAddPlaylistModalOpen }">
-            <div class="modal-container">
-                <div class="header">
-                    <p class="title">재생목록 추가</p>
-                </div>
-                <div class="body">
-                    <p class="description">플레이리스트 연동을 위해서는 공개 범위가 최소 <strong>'일부 허용'</strong>이어야 합니다.</p>
-                    <input type="text" placeholder='YouTube 플레이리스트 URL을 입력하세요' v-model='playlistUrl'>
-                </div>
-                <div class="footer">
-                    <div class="btn-box">
-                        <button class="close neutral-btn" @click="isAddPlaylistModalOpen = false">취소</button>
-                        <button class="add-playlist-btn active-btn" @click="handleAddPlaylist">추가</button>
-                    </div>
-                </div>
-            </div>
+        <div class="body">
+          <p class="description">
+            플레이리스트 연동을 위해서는 공개 범위가 최소
+            <strong>'일부 허용'</strong>이어야 합니다.
+          </p>
+          <input
+            type="text"
+            placeholder="YouTube 플레이리스트 URL을 입력하세요"
+            v-model="playlistUrl"
+          />
         </div>
-    </section>
+        <div class="footer">
+          <div class="btn-box">
+            <button
+              class="close neutral-btn"
+              @click="isAddPlaylistModalOpen = false"
+            >
+              취소
+            </button>
+            <button
+              class="add-playlist-btn active-btn"
+              @click="handleAddPlaylist"
+            >
+              추가
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
 </template>
 
 <style>
-.playlists-section .playlists-container {
-    margin-top: 16px;
+.playlists .playlists-container {
+  margin-top: 16px;
 }
 
-.playlists-section .playlist-box {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 8px;
+.playlists .playlist-box {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
-.playlists-section .playlist-box .img-box {
-    width: calc(50% - 4px);
-    border-radius: 8px;
-    overflow: hidden;
-    aspect-ratio: 16 / 9;
-    cursor: pointer;
+.playlists .playlist-box .img-box {
+  width: calc(50% - 4px);
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  cursor: pointer;
 }
 
-.playlists-section .playlist-box .info-box {
-    padding: 6px 0;
+.playlists .playlist-box .info-box {
+  padding: 6px 0;
 }
 
-.playlists-section .playlist-box .title {
-    cursor: pointer;
+.playlists .playlist-box .title {
+  cursor: pointer;
 }
 
-.playlists-section .move-to-total-video-list {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    z-index: inherit;
+.playlists .move-to-total-video-list {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: inherit;
 }
 
-.playlists-section .floating-box .add-playlist {
-    background-color: var(--bg-surface);
+.playlists .floating-box .add-playlist {
+  background-color: var(--bg-surface);
 }
 </style>

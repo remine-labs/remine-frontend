@@ -130,7 +130,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <section class="timeline-section">
+  <main class="timeline">
     <div class="wrap">
       <div ref="filterContainer" class="filter-container relative">
         <button
@@ -210,11 +210,11 @@ onBeforeUnmount(() => {
         @page-change="fetchTimeline"
       />
     </div>
-  </section>
+  </main>
 </template>
 
 <style>
-.timeline-section {
+.timeline {
   .filter-container {
     .selected-filter {
       display: flex;
@@ -227,7 +227,7 @@ onBeforeUnmount(() => {
   }
 }
 
-.timeline-section .timeline-box {
+.timeline .timeline-box {
   padding: 14px;
   margin-top: 20px;
   border-radius: 8px;
@@ -235,28 +235,28 @@ onBeforeUnmount(() => {
   box-shadow: var(--box-default);
 }
 
-.timeline-section .timeline-box .head-box {
+.timeline .timeline-box .head-box {
   display: flex;
   gap: 6px;
   align-items: center;
 }
 
-.timeline-section .timeline-box .head-box .img-box {
+.timeline .timeline-box .head-box .img-box {
   width: 45px;
   height: 45px;
   border-radius: 45px;
   overflow: hidden;
 }
 
-.timeline-section .head-box .img-box img {
+.timeline .head-box .img-box img {
   margin-top: -10%;
 }
 
-.timeline-section .head-box .created-date {
+.timeline .head-box .created-date {
   color: var(--text-sub);
 }
 
-.timeline-section .head-box .work-info-box {
+.timeline .head-box .work-info-box {
   flex-shrink: 0;
   width: calc(100% - 12px - 45px - 54px);
   display: flex;
@@ -264,13 +264,13 @@ onBeforeUnmount(() => {
   gap: 4px;
 }
 
-.timeline-section .head-box .work-info-box .work-title {
+.timeline .head-box .work-info-box .work-title {
   font-weight: 500;
   font-size: var(--font-size-body);
   max-width: calc(100% - 46px);
 }
 
-.timeline-section .timeline-box .review-text-box {
+.timeline .timeline-box .review-text-box {
   margin: 16px 0 12px;
   font-size: var(--font-size-long);
   color: var(--text-sub);

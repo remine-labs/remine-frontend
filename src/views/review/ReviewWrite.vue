@@ -1,443 +1,501 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import Datepicker from 'vue3-datepicker'
-import { PhNotePencil, PhStar } from '@phosphor-icons/vue'
-import { useReviewForm } from '../../composables/useReviewForm'
+import Datepicker from "vue3-datepicker";
+import { PhNotePencil, PhStar } from "@phosphor-icons/vue";
+import { useReviewForm } from "../../composables/useReviewForm";
 import WorkSearch from "../../components/WorkSearch.vue";
-import Loader from '../../components/Loader.vue'
-import WorkCard from '../../components/WorkCard.vue'
-import Pagination from '../../components/Pagination.vue'
+import Loader from "../../components/Loader.vue";
+import WorkCard from "../../components/WorkCard.vue";
+import Pagination from "../../components/Pagination.vue";
 import CustomWork from "../CustomWork.vue";
-import { addWatchlist, deleteWatchlist } from '../../api/watchlist.ts'
-
+import { addWatchlist, deleteWatchlist } from "../../api/watchlist.ts";
 
 const {
-    work,
-    changeWork,
-    isEditMode,
-    startDate,
-    endDate,
-    isWatching,
-    isTagModalOpen,
-    rating,
-    ratingBoxRef,
-    selectedCategories,
-    comment,
-    manualTags,
-    modalDescription,
-    getStarFill,
-    handleRatingClick,
-    submitReview,
-    submitWithManualTags,
-} = useReviewForm()
+  work,
+  changeWork,
+  isEditMode,
+  startDate,
+  endDate,
+  isWatching,
+  isTagModalOpen,
+  rating,
+  ratingBoxRef,
+  selectedCategories,
+  comment,
+  manualTags,
+  modalDescription,
+  getStarFill,
+  handleRatingClick,
+  submitReview,
+  submitWithManualTags,
+} = useReviewForm();
 
-const isChangeWorkModalOpen = ref(false)
-const isCustomWork = ref(false)
+const isChangeWorkModalOpen = ref(false);
+const isCustomWork = ref(false);
 
-const query = ref('')
-const works = ref<any[]>([])
-const loading = ref(false)
-const error = ref('')
+const query = ref("");
+const works = ref<any[]>([]);
+const loading = ref(false);
+const error = ref("");
 
-const currentPage = ref(1)
-const totalPages = ref(0)
-const totalCount = ref(0)
+const currentPage = ref(1);
+const totalPages = ref(0);
+const totalCount = ref(0);
 
 const openChangeWorkModal = () => {
-    isChangeWorkModalOpen.value = true
-    isCustomWork.value = false
-    query.value = ''
-    works.value = []
-    totalPages.value = 0
-    totalCount.value = 0
-    error.value = ''
-    currentPage.value = 1
-}
+  isChangeWorkModalOpen.value = true;
+  isCustomWork.value = false;
+  query.value = "";
+  works.value = [];
+  totalPages.value = 0;
+  totalCount.value = 0;
+  error.value = "";
+  currentPage.value = 1;
+};
 
 const handleSearch = (data: {
-    works: any[]
-    totalPages: number
-    totalCount: number
+  works: any[];
+  totalPages: number;
+  totalCount: number;
 }) => {
-    works.value = data.works
-    totalPages.value = data.totalPages
-    totalCount.value = data.totalCount
-}
+  works.value = data.works;
+  totalPages.value = data.totalPages;
+  totalCount.value = data.totalCount;
+};
 
 const handleWorkSelect = (selectedWork: any) => {
-    changeWork(selectedWork)
-    isChangeWorkModalOpen.value = false
-}
+  changeWork(selectedWork);
+  isChangeWorkModalOpen.value = false;
+};
 
 const handleCustomWorkRegistered = (selectedWork: any) => {
-    changeWork(selectedWork)
-    isChangeWorkModalOpen.value = false
-    isCustomWork.value = false
-}
+  changeWork(selectedWork);
+  isChangeWorkModalOpen.value = false;
+  isCustomWork.value = false;
+};
 
 const toggleWatchlistHandler = async (work: any) => {
-    try {
-        if (work.isWatchlisted) {
-            await deleteWatchlist(work.mediaType, work.workId)
-        } else {
-            await addWatchlist({
-                workId: work.workId,
-                mediaType: work.mediaType,
-                workTitle: work.workTitle,
-                workPosterPath: work.workPosterPath,
-                workReleaseDate: work.workReleaseDate,
-            })
-        }
-
-        work.isWatchlisted = !work.isWatchlisted
-    } catch (error) {
-        console.error(error)
+  try {
+    if (work.isWatchlisted) {
+      await deleteWatchlist(work.mediaType, work.workId);
+    } else {
+      await addWatchlist({
+        workId: work.workId,
+        mediaType: work.mediaType,
+        workTitle: work.workTitle,
+        workPosterPath: work.workPosterPath,
+        workReleaseDate: work.workReleaseDate,
+      });
     }
-}
+
+    work.isWatchlisted = !work.isWatchlisted;
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const handleLoading = (value: boolean) => {
-    loading.value = value
-}
+  loading.value = value;
+};
 
 const handleError = (message: string) => {
-    error.value = message
-}
+  error.value = message;
+};
 
 const handlePageChange = (page: number) => {
-    currentPage.value = page
-}
+  currentPage.value = page;
+};
 </script>
 
 <template>
-    <section class="review-write-section">
-        <div class="work-info-container relative" v-if="work.id">
-            <div class="img-box add-overlay">
-                <img :src="`https://image.tmdb.org/t/p/original${work.poster}`" :alt="work.title" />
+  <main class="review-write">
+    <div class="work-info-container relative" v-if="work.id">
+      <div class="img-box add-overlay">
+        <img
+          :src="`https://image.tmdb.org/t/p/original${work.poster}`"
+          :alt="work.title"
+        />
+      </div>
+      <div class="icon-box" @click="openChangeWorkModal">
+        <PhNotePencil :size="24" />
+      </div>
+    </div>
+    <div class="wrap">
+      <form @submit.prevent="submitReview">
+        <div class="input-container relative">
+          <div class="date-input-box">
+            <div class="head-box relative">
+              <p>감상일</p>
+              <div class="input-box">
+                <input type="checkbox" id="watching" v-model="isWatching" />
+                <label for="watching">감상중</label>
+              </div>
             </div>
-            <div class="icon-box" @click="openChangeWorkModal">
-                <PhNotePencil :size="24" />
+            <div class="body-box">
+              <div class="date-picker-box">
+                <Datepicker v-model="startDate" inputFormat="yy-MM-dd" />
+              </div>
+              <span> - </span>
+              <div class="date-picker-box">
+                <span v-if="isWatching">ING</span>
+                <Datepicker v-else v-model="endDate" inputFormat="yy-MM-dd" />
+              </div>
             </div>
+          </div>
+          <div class="rating-container">
+            <p>평점</p>
+            <div
+              class="rating-box"
+              ref="ratingBoxRef"
+              @click="handleRatingClick"
+            >
+              <div v-for="i in 5" :key="i" class="star-box relative">
+                <PhStar class="star-stroke" :size="24" />
+                <div class="star-fill" :style="{ width: getStarFill(i) }">
+                  <PhStar class="star-filled" weight="fill" :size="24" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="wrap">
-            <form @submit.prevent='submitReview'>
-                <div class="input-container relative">
-                    <div class="date-input-box">
-                        <div class="head-box relative">
-                            <p>감상일</p>
-                            <div class="input-box">
-                                <input type="checkbox" id="watching" v-model="isWatching">
-                                <label for="watching">감상중</label>
-                            </div>
-                        </div>
-                        <div class="body-box">
-                            <div class='date-picker-box'>
-                                <Datepicker v-model="startDate" inputFormat='yy-MM-dd' />
-                            </div>
-                            <span> - </span>
-                            <div class='date-picker-box'>
-                                <span v-if='isWatching'>ING</span>
-                                <Datepicker v-else v-model="endDate" inputFormat='yy-MM-dd' />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="rating-container">
-                        <p>평점</p>
-                        <div class="rating-box" ref="ratingBoxRef" @click="handleRatingClick">
-                            <div v-for="i in 5" :key="i" class="star-box relative">
-                                <PhStar class="star-stroke" :size="24" />
-                                <div class="star-fill" :style="{ width: getStarFill(i) }">
-                                    <PhStar class="star-filled" weight="fill" :size="24" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="review-write-container">
-                    <div class="input-box">
-                        <textarea v-model="comment" name="review-write" id="review-write"
-                            placeholder="자유롭게 감상을 남겨주세요."></textarea>
-                    </div>
-                </div>
-                <div class="btn-box">
-                    <button type="submit" id='post-review-btn' class='active-btn text-btn'>
-                        {{ isEditMode ? '수정하기' : '등록하기' }}
+        <div class="review-write-container">
+          <div class="input-box">
+            <textarea
+              v-model="comment"
+              name="review-write"
+              id="review-write"
+              placeholder="자유롭게 감상을 남겨주세요."
+            ></textarea>
+          </div>
+        </div>
+        <div class="btn-box">
+          <button
+            type="submit"
+            id="post-review-btn"
+            class="active-btn text-btn"
+          >
+            {{ isEditMode ? "수정하기" : "등록하기" }}
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="modal-bg manual-tags-modal" v-if="isTagModalOpen">
+      <div class="modal-container">
+        <div class="header">
+          <p class="title">작품을 평가해주세요.</p>
+        </div>
+        <div class="body">
+          <p>{{ modalDescription }} (중복 선택 가능)</p>
+          <div class="tags-container">
+            <div class="input-box" v-for="tag in manualTags" :key="tag.id">
+              <input
+                type="checkbox"
+                :id="tag.id"
+                :value="tag.id"
+                v-model="selectedCategories"
+              />
+              <label :for="tag.id">{{ tag.label }}</label>
+            </div>
+          </div>
+        </div>
+        <div class="footer">
+          <div class="btn-box">
+            <button
+              type="button"
+              class="close neutral-btn"
+              @click="isTagModalOpen = false"
+            >
+              돌아가기
+            </button>
+            <button
+              type="button"
+              class="active-btn post-manual-tags"
+              @click="submitWithManualTags"
+            >
+              저장하기
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-bg change-work-modal" v-if="isChangeWorkModalOpen">
+      <div class="modal-container">
+        <div class="header">
+          <p class="title">작품 변경</p>
+        </div>
+        <div class="body">
+          <CustomWork
+            v-if="isCustomWork"
+            :embedded="true"
+            @registered="handleCustomWorkRegistered"
+            @cancel="isCustomWork = false"
+          />
+          <template v-else>
+            <WorkSearch
+              v-model="query"
+              v-model:current-page="currentPage"
+              @search="handleSearch"
+              @loading="handleLoading"
+              @error="handleError"
+            />
+            <Loader v-if="loading">작품을 찾고 있어요.</Loader>
+            <p v-if="error">{{ error }}</p>
+            <div class="search-result" v-if="!loading && totalCount > 0">
+              <div class="total-count" :class="{ invisible: totalCount === 0 }">
+                총 {{ totalCount }}건의 결과
+              </div>
+              <div class="works-list-container">
+                <WorkCard
+                  v-for="work in works"
+                  :key="work.workId"
+                  :work-id="work.workId"
+                  :work-title="work.workTitle"
+                  :work-poster-path="work.workPosterPath"
+                  :work-release-date="work.workReleaseDate"
+                  :media-type="work.mediaType"
+                  :is-watchlisted="work.isWatchlisted"
+                  :selectable="true"
+                  @select="handleWorkSelect(work)"
+                />
+                <div class="custom-work">
+                  <p>찾으시는 작품이 없나요?</p>
+                  <div class="btn-box">
+                    <button
+                      type="button"
+                      class="active-btn"
+                      @click="isCustomWork = true"
+                    >
+                      작품 등록하기
                     </button>
+                  </div>
                 </div>
-            </form>
-        </div>
-        <div class="modal-bg manual-tags-modal" v-if="isTagModalOpen">
-            <div class="modal-container">
-                <div class="header">
-                    <p class="title">작품을 평가해주세요.</p>
-                </div>
-                <div class="body">
-                    <p>{{ modalDescription }} (중복 선택 가능)</p>
-                    <div class="tags-container">
-                        <div class="input-box" v-for="tag in manualTags" :key="tag.id">
-                            <input type="checkbox" :id="tag.id" :value="tag.id" v-model="selectedCategories">
-                            <label :for="tag.id">{{ tag.label }}</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="footer">
-                    <div class="btn-box">
-                        <button type="button" class="close neutral-btn" @click="isTagModalOpen = false">돌아가기</button>
-                        <button type="button" class="active-btn post-manual-tags" @click="submitWithManualTags">
-                            저장하기
-                        </button>
-                    </div>
-                </div>
+              </div>
+              <Pagination
+                v-if="totalPages > 1"
+                :current-page="currentPage"
+                :total-pages="totalPages"
+                @page-change="handlePageChange"
+              />
             </div>
+          </template>
         </div>
-        <div class="modal-bg change-work-modal" v-if="isChangeWorkModalOpen">
-            <div class="modal-container">
-                <div class="header">
-                    <p class="title">작품 변경</p>
-                </div>
-                <div class="body">
-                    <CustomWork v-if="isCustomWork" :embedded="true" @registered="handleCustomWorkRegistered"
-                        @cancel="isCustomWork = false" />
-                    <template v-else>
-                        <WorkSearch v-model="query" v-model:current-page="currentPage" @search="handleSearch"
-                            @loading="handleLoading" @error="handleError" />
-                        <Loader v-if="loading">작품을 찾고 있어요.</Loader>
-                        <p v-if="error">{{ error }}</p>
-                        <div class="search-result" v-if="!loading && totalCount > 0">
-                            <div class="total-count" :class="{ invisible: totalCount === 0 }">총 {{ totalCount }}건의 결과
-                            </div>
-                            <div class="works-list-container">
-                                <WorkCard v-for="work in works" :key="work.workId" :work-id="work.workId"
-                                    :work-title="work.workTitle" :work-poster-path="work.workPosterPath"
-                                    :work-release-date="work.workReleaseDate" :media-type="work.mediaType"
-                                    :is-watchlisted="work.isWatchlisted" :selectable="true"
-                                    @select="handleWorkSelect(work)" />
-                                <div class="custom-work">
-                                    <p>찾으시는 작품이 없나요?</p>
-                                    <div class="btn-box">
-                                        <button type="button" class="active-btn" @click="isCustomWork = true">
-                                            작품 등록하기
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <Pagination v-if="totalPages > 1" :current-page="currentPage" :total-pages="totalPages"
-                                @page-change="handlePageChange" />
-                        </div>
-                    </template>
-                </div>
-            </div>
-        </div>
-    </section>
+      </div>
+    </div>
+  </main>
 </template>
 
 <style>
-.review-write-section {
-    padding-top: var(--header-height);
+.review-write {
+  padding-top: var(--header-height);
 }
 
-.review-write-section .work-info-container {
-    width: 100%;
-    aspect-ratio: 3/2;
-    overflow: hidden;
+.review-write .work-info-container {
+  width: 100%;
+  aspect-ratio: 3/2;
+  overflow: hidden;
 }
 
-.review-write-section .work-info-container .img-box {
-    margin-top: -15%;
+.review-write .work-info-container .img-box {
+  margin-top: -15%;
 }
 
-.review-write-section .work-info-container .icon-box {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    color: #f6f4f0;
+.review-write .work-info-container .icon-box {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: #f6f4f0;
 }
 
-.review-write-section .input-container {
-    display: flex;
-    margin-top: -10%;
-    gap: 8px;
+.review-write .input-container {
+  display: flex;
+  margin-top: -10%;
+  gap: 8px;
 }
 
-.review-write-section .input-container>div {
-    width: calc(50% - 4px);
-    padding: 8px;
-    border-radius: 8px;
-    background-color: var(--bg-elevated);
-    box-shadow: var(--box-default);
-    text-align: center;
+.review-write .input-container > div {
+  width: calc(50% - 4px);
+  padding: 8px;
+  border-radius: 8px;
+  background-color: var(--bg-elevated);
+  box-shadow: var(--box-default);
+  text-align: center;
 }
 
-.review-write-section .input-container p {
-    font-weight: 500;
+.review-write .input-container p {
+  font-weight: 500;
 }
 
-.review-write-section .date-input-box .head-box .input-box {
-    position: absolute;
-    top: 0;
-    right: 0;
-    display: flex;
-    align-items: center;
-    color: var(--text-sub);
+.review-write .date-input-box .head-box .input-box {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  color: var(--text-sub);
 }
 
-.review-write-section .date-input-box .head-box p {
-    margin: 0 51px;
+.review-write .date-input-box .head-box p {
+  margin: 0 51px;
 }
 
-.review-write-section .date-input-box .body-box {
-    margin-top: 6px;
-    display: flex;
-    gap: 4px;
+.review-write .date-input-box .body-box {
+  margin-top: 6px;
+  display: flex;
+  gap: 4px;
 }
 
-.review-write-section .date-input-box .date-picker-box {
-    width: calc(50% - 5.5px);
-    font-size: var(--font-size-sub);
+.review-write .date-input-box .date-picker-box {
+  width: calc(50% - 5.5px);
+  font-size: var(--font-size-sub);
 }
 
-.review-write-section .date-picker-box span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.review-write .date-picker-box span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.review-write-section .date-picker-box input {
-    width: 100%;
-    text-align: center;
-    color: var(--text-main);
-    border-radius: 8px;
-    background-color: var(--bg-surface);
-    border: solid 3px transparent;
-    transition: 0.3s ease-in-out;
-    outline: none;
-    padding: 2px;
-    line-height: 2.4rem;
+.review-write .date-picker-box input {
+  width: 100%;
+  text-align: center;
+  color: var(--text-main);
+  border-radius: 8px;
+  background-color: var(--bg-surface);
+  border: solid 3px transparent;
+  transition: 0.3s ease-in-out;
+  outline: none;
+  padding: 2px;
+  line-height: 2.4rem;
 }
 
-.review-write-section .date-picker-box input:focus {
-    background-color: var(--bg-elevated);
-    border-color: var(--bg-surface);
-    box-shadow: 0 0 4px var(--chip-important-bg);
+.review-write .date-picker-box input:focus {
+  background-color: var(--bg-elevated);
+  border-color: var(--bg-surface);
+  box-shadow: 0 0 4px var(--chip-important-bg);
 }
 
-.review-write-section .rating-container .rating-box {
-    margin-top: 6px;
-    display: inline-block;
+.review-write .rating-container .rating-box {
+  margin-top: 6px;
+  display: inline-block;
 }
 
-.review-write-section .rating-box .star-box {
-    display: inline-block;
-    margin: 0 2px;
-    width: 24px;
-    height: 24px;
-    flex-shrink: 0;
+.review-write .rating-box .star-box {
+  display: inline-block;
+  margin: 0 2px;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
 }
 
-.review-write-section .rating-box .star-stroke,
-.review-write-section .rating-box .star-fill>svg {
-    display: block;
-    width: 24px;
-    height: 24px;
-    color: var(--chip-important-bg);
+.review-write .rating-box .star-stroke,
+.review-write .rating-box .star-fill > svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+  color: var(--chip-important-bg);
 }
 
-.review-write-section .rating-box .star-fill {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    white-space: nowrap;
+.review-write .rating-box .star-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.review-write-section .review-write-container {
-    margin-top: 2rem;
+.review-write .review-write-container {
+  margin-top: 2rem;
 }
 
-.review-write-section .review-write-container textarea {
-    width: 100%;
-    min-height: 250px;
-    resize: vertical;
-    margin-top: 1rem;
-    padding: 6px;
-    outline: none;
-    white-space: pre-wrap;
+.review-write .review-write-container textarea {
+  width: 100%;
+  min-height: 250px;
+  resize: vertical;
+  margin-top: 1rem;
+  padding: 6px;
+  outline: none;
+  white-space: pre-wrap;
 }
 
-.review-write-section .btn-box {
-    margin-top: 3rem;
-    text-align: right;
+.review-write .btn-box {
+  margin-top: 3rem;
+  text-align: right;
 }
 
 .manual-tags-modal .body p {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .manual-tags-modal .tags-container .input-box {
-    display: inline;
+  display: inline;
 }
 
 .manual-tags-modal .tags-container .input-box input {
-    display: none;
+  display: none;
 }
 
-.manual-tags-modal .tags-container .input-box input[type="checkbox"]:checked+label {
-    color: var(--text-inverse);
-    background-color: var(--btn-active-bg);
+.manual-tags-modal
+  .tags-container
+  .input-box
+  input[type="checkbox"]:checked
+  + label {
+  color: var(--text-inverse);
+  background-color: var(--btn-active-bg);
 }
 
 .manual-tags-modal .tags-container .input-box label {
-    background-color: var(--chip-default-bg);
-    white-space: nowrap;
-    padding: 2px 12px;
-    border-radius: 16px;
-    margin: 0 4px 4px 0;
-    transition: ease 0.2s;
-    cursor: pointer;
+  background-color: var(--chip-default-bg);
+  white-space: nowrap;
+  padding: 2px 12px;
+  border-radius: 16px;
+  margin: 0 4px 4px 0;
+  transition: ease 0.2s;
+  cursor: pointer;
 }
 
 .change-work-modal .modal-container {
-    max-height: calc(100vh - 32px);
+  max-height: calc(100vh - 32px);
 }
 
 .change-work-modal .modal-container .body {
-    max-height: calc(100vh - 100px);
-    overflow-y: auto;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
 }
 
 .change-work-modal .modal-container .body input {
-    margin-top: 0;
+  margin-top: 0;
 }
 
 .change-work-modal .works-list-container {
-    grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr);
 }
 
-.change-work-modal .custom-work-section {
-    padding: 0 0 20px 0;
-    min-height: auto;
+.change-work-modal .custom-work {
+  padding: 0 0 20px 0;
+  min-height: auto;
 }
 
 @media screen and (min-width: 520px) {
-    .review-write-section .date-input-box .head-box .input-box {
-        gap: 4px;
-    }
+  .review-write .date-input-box .head-box .input-box {
+    gap: 4px;
+  }
 }
 
 @media screen and (min-width: 600px) {
-    .review-write-section .work-info-container {
-        aspect-ratio: 9 / 5;
-    }
+  .review-write .work-info-container {
+    aspect-ratio: 9 / 5;
+  }
 
-    .review-write-section .input-container {
-        margin-top: -6%;
-    }
+  .review-write .input-container {
+    margin-top: -6%;
+  }
 }
 
 @media screen and (min-width: 640px) {
-    .review-write-section .work-info-container {
-        aspect-ratio: 11 / 5;
-    }
+  .review-write .work-info-container {
+    aspect-ratio: 11 / 5;
+  }
 }
 </style>
