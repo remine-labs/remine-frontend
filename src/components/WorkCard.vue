@@ -1,148 +1,157 @@
-<script setup lang='ts'>
-import { useRouter } from 'vue-router'
-import { PhHeart } from '@phosphor-icons/vue'
+<script setup lang="ts">
+import { useRouter } from "vue-router";
+import { PhHeart } from "@phosphor-icons/vue";
 
 const router = useRouter();
 
 interface WorkCardProps {
-    workId: number;
-    workPosterPath: string;
-    workTitle: string;
-    workReleaseDate?: string;
-    mediaType?: string;
-    isWatchlisted?: boolean;
-    selectable?: boolean;
+  workId: number;
+  workPosterPath: string;
+  workTitle: string;
+  workReleaseDate?: string;
+  mediaType?: string;
+  isWatchlisted?: boolean;
+  selectable?: boolean;
 }
 
 const props = defineProps<WorkCardProps>();
 
 const emit = defineEmits<{
-    (e: "toggle-watchlist"): void;
-    (e: "select"): void;
+  (e: "toggle-watchlist"): void;
+  (e: "select"): void;
 }>();
 
 const handleWorkClick = () => {
-    if (props.selectable) {
-        emit('select')
-        return
-    }
+  if (props.selectable) {
+    emit("select");
+    return;
+  }
 
-    router.push(`/work/${props.mediaType}/${props.workId}`)
-}
+  router.push(`/work/${props.mediaType}/${props.workId}`);
+};
 </script>
 
 <template>
-    <div class="work-box relative">
-        <div class="type-box">
-            <span class="media-type description chip" :class="mediaType">
-                {{ mediaType?.toUpperCase() }}
-            </span>
-        </div>
-
-        <div class="img-box poster" @click='handleWorkClick'>
-            <img :src="`https://image.tmdb.org/t/p/w200${workPosterPath}`" :alt="workTitle" />
-        </div>
-
-        <div class="work-info-box">
-            <div class="work-title-box" @click='handleWorkClick'>
-                <span class="work-name ellipsis-1">
-                    {{ workTitle }}
-                </span>
-                <span class="release-year number">
-                    ({{ workReleaseDate?.slice(0, 4) }})
-                </span>
-            </div>
-            <div class="icon-box watchlist" :class="{ 'no-watchlist': props.selectable }">
-                <button class="heart" @click="emit('toggle-watchlist')">
-                    <PhHeart :weight="props.isWatchlisted ? 'fill' : 'regular'" :size="24" />
-                </button>
-            </div>
-        </div>
+  <div class="work-box relative">
+    <div class="type-box">
+      <span class="media-type description chip" :class="mediaType">
+        {{ mediaType?.toUpperCase() }}
+      </span>
     </div>
+
+    <div class="img-box poster" @click="handleWorkClick">
+      <img
+        :src="`https://image.tmdb.org/t/p/w200${workPosterPath}`"
+        :alt="workTitle"
+      />
+    </div>
+
+    <div class="work-info-box">
+      <div class="work-title-box" @click="handleWorkClick">
+        <span class="work-name ellipsis-1">
+          {{ workTitle }}
+        </span>
+        <span class="release-year number">
+          ({{ workReleaseDate?.slice(0, 4) }})
+        </span>
+      </div>
+      <div
+        class="icon-box watchlist"
+        :class="{ 'no-watchlist': props.selectable }"
+      >
+        <button class="heart" @click="emit('toggle-watchlist')">
+          <PhHeart
+            :weight="props.isWatchlisted ? 'fill' : 'regular'"
+            :size="24"
+          />
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style>
 .works-list-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    align-items: stretch;
-    grid-auto-rows: 1fr;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  align-items: stretch;
+  grid-auto-rows: 1fr;
 }
 
 .work-box {
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: var(--bg-elevated);
-    cursor: pointer;
-    box-shadow: var(--box-default);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--bg-elevated);
+  cursor: pointer;
+  box-shadow: var(--box-default);
 }
 
 .work-box .type-box {
-    position: absolute;
-    top: 5px;
-    left: 5px;
+  position: absolute;
+  top: 5px;
+  left: 5px;
 }
 
 .work-box .type-box .movie {
-    background-color: var(--chip-important-bg);
-    color: #f6f4f0;
+  background-color: var(--chip-important-bg);
+  color: #f6f4f0;
 }
 
 .work-box .type-box .tv {
-    background-color: var(--btn-active-bg);
-    color: #f6f4f0;
+  background-color: var(--btn-active-bg);
+  color: #f6f4f0;
 }
 
 .work-box .img-box {
-    aspect-ratio: 2/3;
+  aspect-ratio: 2/3;
 }
 
 .work-box .img-box img {
-    height: 100%;
-    object-fit: cover;
+  height: 100%;
+  object-fit: cover;
 }
 
 .work-box .work-info-box {
-    display: flex;
-    gap: 3px;
-    align-items: center;
+  display: flex;
+  gap: 3px;
+  align-items: center;
 }
 
 .work-box .work-title-box {
-    display: flex;
-    flex: 1;
-    align-items: center;
-    gap: 4px;
-    padding: 12px 0px 12px 6px;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 0px 8px 6px;
 }
 
 .work-box .work-title-box .work-name {
-    max-width: calc(100% - 4rem);
+  max-width: calc(100% - 4rem);
 }
 
 .work-box .work-title-box .release-year {
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 .work-box .work-info-box .watchlist {
-    padding: 12px 6px;
+  padding: 8px 6px;
 }
 
 .work-box .work-info-box .no-watchlist {
-    width: 0;
-    padding: 0 6px 0 0;
+  width: 0;
+  padding: 0 6px 0 0;
 }
 
 @media screen and (min-width: 520px) {
-    .works-list-container {
-        grid-template-columns: repeat(3, 1fr);
-    }
+  .works-list-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media screen and (min-width: 690px) {
-    .works-list-container {
-        grid-template-columns: repeat(4, 1fr);
-    }
+  .works-list-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 </style>

@@ -1,5 +1,5 @@
 /* layout */
-section {
+main {
   padding-top: calc(var(--header-height) + 20px);
   padding-bottom: calc(var(--menu-height) + 40px);
   min-height: 100dvh;
@@ -308,23 +308,23 @@ textarea:focus {
 }
 
 /* datepicker */
-section div .v3dp__popout[data-v-65eb861b] {
+main div .v3dp__popout[data-v-65eb861b] {
   background-color: var(--bg-elevated);
   color: var(--text-main);
 }
 
-section div button.v3dp__heading__center[data-v-65eb861b]:hover,
-section div .v3dp__heading__button[data-v-65eb861b]:not(:disabled):hover,
-section div .v3dp__elements[data-v-65eb861b] button:not(:disabled):hover span {
+main div button.v3dp__heading__center[data-v-65eb861b]:hover,
+main div .v3dp__heading__button[data-v-65eb861b]:not(:disabled):hover,
+main div .v3dp__elements[data-v-65eb861b] button:not(:disabled):hover span {
   background-color: var(--bg-surface);
   color: var(--text-main);
 }
 
-section div .v3dp__elements[data-v-65eb861b] button:disabled {
+main div .v3dp__elements[data-v-65eb861b] button:disabled {
   color: var(--text-menu);
 }
 
-section div .v3dp__elements[data-v-65eb861b] button.selected span {
+main div .v3dp__elements[data-v-65eb861b] button.selected span {
   background-color: var(--btn-active-bg);
   color: var(--text-inverse);
 }
@@ -334,30 +334,30 @@ section div .v3dp__elements[data-v-65eb861b] button.selected span {
 }
 
 /* terms */
-.terms-section .wrap {
+.terms .wrap {
   padding: 0 30px;
 }
 
-.terms-section .terms-basic-container h2 {
+.terms .terms-basic-container h2 {
   text-align: center;
 }
 
-.terms-section .terms-basic-container .date-box {
+.terms .terms-basic-container .date-box {
   text-align: right;
   color: var(--text-sub);
 }
 
-.terms-section .terms-basic-container .content-box {
+.terms .terms-basic-container .content-box {
   margin-top: 20px;
 }
 
-.terms-section .articles-container article h3 {
+.terms .articles-container article h3 {
   font-size: var(--font-size-title);
   font-weight: 500;
   margin: 20px 0 8px;
 }
 
-.terms-section .articles-container .content-box {
+.terms .articles-container .content-box {
   margin-bottom: 8px;
 }
 

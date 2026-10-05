@@ -1,96 +1,97 @@
 <script setup lang="ts">
-
 const login = (url: string) => {
-    window.location.href = url
-}
+  window.location.href = url;
+};
 
 const loginProviders = [
-    {
-        id: 'google',
-        label: 'Google',
-        url: `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`
-    },
-    {
-        id: 'kakao',
-        label: 'Kakao',
-        url: `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/kakao`
-    }
-]
-
+  {
+    id: "google",
+    label: "Google",
+    url: `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`,
+  },
+  {
+    id: "kakao",
+    label: "Kakao",
+    url: `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/kakao`,
+  },
+];
 </script>
 
 <template>
-    <section class="login-section">
-        <div class="wrap">
-            <!-- TODO: 스플래시 화면 구성 -->
-            <div class="title-container">
-                <h1 class='logo'>ReMine</h1>
-                <p class="slogun-text">당신의 기록으로,</p>
-                <p class="slogun-text">OTT를 뛰어넘어</p>
-                <p class="slogun-text">당신만을 위한</p>
-                <p class="slogun-text">맞춤 추천 서비스</p>
-            </div>
-            <div class="login-container">
-                <div class="btn-box" :class="provider.id" v-for="provider in loginProviders" :key="provider.id">
-                    <button class="oauth-btn" @click="login(provider.url)">
-                        {{ provider.label }}로 로그인
-                    </button>
-                </div>
-            </div>
+  <main class="login">
+    <div class="wrap">
+      <!-- TODO: 스플래시 화면 구성 -->
+      <div class="title-container">
+        <h1 class="logo">ReMine</h1>
+        <p class="slogun-text">당신의 기록으로,</p>
+        <p class="slogun-text">OTT를 뛰어넘어</p>
+        <p class="slogun-text">당신만을 위한</p>
+        <p class="slogun-text">맞춤 추천 서비스</p>
+      </div>
+      <div class="login-container">
+        <div
+          class="btn-box"
+          :class="provider.id"
+          v-for="provider in loginProviders"
+          :key="provider.id"
+        >
+          <button class="oauth-btn" @click="login(provider.url)">
+            {{ provider.label }}로 로그인
+          </button>
         </div>
-    </section>
+      </div>
+    </div>
+  </main>
 </template>
-
 
 <style>
 /* google design guide */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,500;1,500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,500;1,500&display=swap");
 
-.login-section .title-container {
-    text-align: center;
+.login .title-container {
+  text-align: center;
 }
 
-.login-section .title-container .slogun-text {
-    font-size: var(--font-size-title);
-    font-weight: 500;
+.login .title-container .slogun-text {
+  font-size: var(--font-size-title);
+  font-weight: 500;
 }
 
-.login-section .title-container .logo {
-    margin: 2rem 0;
+.login .title-container .logo {
+  margin: 2rem 0;
 }
 
-.login-section .login-container {
-    width: 300px;
-    margin: 5rem auto 0;
+.login .login-container {
+  width: 300px;
+  margin: 5rem auto 0;
 }
 
-.login-section .login-container .btn-box {
-    width: 100%;
-    margin-bottom: 1rem;
-    text-align: center;
-    border: #747775 solid 1px;
-    border-radius: 8px;
+.login .login-container .btn-box {
+  width: 100%;
+  margin-bottom: 1rem;
+  text-align: center;
+  border: #747775 solid 1px;
+  border-radius: 8px;
 }
 
-
-.login-section .login-container .btn-box button {
-    width: 100%;
+.login .login-container .btn-box button {
+  width: 100%;
 }
 
-.login-section .btn-box.google {
-    background-color: #ffff;
-    color: rgba(0, 0, 0, .54);
+.login .btn-box.google {
+  background-color: #ffff;
+  color: rgba(0, 0, 0, 0.54);
 }
 
-.login-section .btn-box.kakao {
-    background-color: #fee500;
-    color: rgba(0, 0, 0, .85);
+.login .btn-box.kakao {
+  background-color: #fee500;
+  color: rgba(0, 0, 0, 0.85);
 }
 
 @media (prefers-color-scheme: dark) {
-    .login-section .login-container .btn-box.google {
-        background-color: #222;
-        border: #747775 solid 1px;
-    }
+  .login .login-container .btn-box.google {
+    background-color: #222;
+    border: #747775 solid 1px;
+  }
 }
 </style>

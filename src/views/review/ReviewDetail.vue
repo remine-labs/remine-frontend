@@ -1,744 +1,846 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { api } from '../../api/client'
-import { createTags, deleteReview, submitAiTagFeedback } from '../../api/review'
-import type { AiTagFeedbackPayload } from '../../api/review'
-import { PhCalendar, PhDotsThreeVertical, PhPencil, PhStar } from '@phosphor-icons/vue'
-import Tooltip from "../../components/Tooltip.vue"
+import { ref, onMounted, onUnmounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { api } from "../../api/client";
+import {
+  createTags,
+  deleteReview,
+  submitAiTagFeedback,
+} from "../../api/review";
+import type { AiTagFeedbackPayload } from "../../api/review";
+import {
+  PhCalendar,
+  PhDotsThreeVertical,
+  PhPencil,
+  PhStar,
+} from "@phosphor-icons/vue";
+import Tooltip from "../../components/Tooltip.vue";
 
-const route = useRoute()
-const router = useRouter()
-const reviewId = Number(route.params.reviewId)
+const route = useRoute();
+const router = useRouter();
+const reviewId = Number(route.params.reviewId);
 
 let pollTimer: ReturnType<typeof setTimeout> | null = null;
 
 interface Tag {
-    label: string;
-    category: string;
-    sentiment: 'POSITIVE' | 'NEGATIVE' | null;
+  label: string;
+  category: string;
+  sentiment: "POSITIVE" | "NEGATIVE" | null;
 }
 
 export type AiTagStatus =
-    | 'NONE'
-    | 'PENDING'
-    | 'PROCESSING'
-    | 'SUCCESS'
-    | 'FAILED'
+  | "NONE"
+  | "PENDING"
+  | "PROCESSING"
+  | "SUCCESS"
+  | "FAILED";
 
 export interface ReviewDetail {
-    reviewId: number
-    workId: number
-    workTitle: string
-    workPosterPath: string
-    workReleaseDate: string
-    mediaType: string
-    comment: string
-    rating: number
-    startDate: string
-    endDate: string | null
-    createdAt: string
-    updatedAt: string
-    aiTagStatus: AiTagStatus
-    aiTagFeedbackPending: boolean
-    tags: Tag[]
+  reviewId: number;
+  workId: number;
+  workTitle: string;
+  workPosterPath: string;
+  workReleaseDate: string;
+  mediaType: string;
+  comment: string;
+  rating: number;
+  startDate: string;
+  endDate: string | null;
+  createdAt: string;
+  updatedAt: string;
+  aiTagStatus: AiTagStatus;
+  aiTagFeedbackPending: boolean;
+  tags: Tag[];
 }
 
+const review = ref<ReviewDetail | null>(null);
+const isLoading = ref(true);
+const errorMessage = ref("");
+const isMenuOpen = ref(false);
 
-const review = ref<ReviewDetail | null>(null)
-const isLoading = ref(true)
-const errorMessage = ref('')
-const isMenuOpen = ref(false)
+const negativeReasons = ref<string[]>([]);
+const customNegativeReason = ref("");
+const feedbackRating = ref<number | null>(null);
 
-const negativeReasons = ref<string[]>([])
-const customNegativeReason = ref('')
-const feedbackRating = ref<number | null>(null)
+const isTagSurveyOpen = ref(false);
 
-const isTagSurveyOpen = ref(false)
-
-const surveyStep = ref(1)
-const positiveComment = ref('')
+const surveyStep = ref(1);
+const positiveComment = ref("");
 
 const openTagSurvey = () => {
-    isTagSurveyOpen.value = true
-}
+  isTagSurveyOpen.value = true;
+};
 
 const toggleMenu = () => {
-    isMenuOpen.value = !isMenuOpen.value
-}
+  isMenuOpen.value = !isMenuOpen.value;
+};
 
 const goToEdit = () => {
-    router.push(`/review/${route.params.reviewId}/edit`)
-}
+  router.push(`/review/${route.params.reviewId}/edit`);
+};
 
 const goToWorkDetail = () => {
-    router.push(`/work/${review.value?.mediaType}/${review.value?.workId}`)
-}
+  router.push(`/work/${review.value?.mediaType}/${review.value?.workId}`);
+};
 
-const getTagSentimentClass = (
-    sentiment: 'POSITIVE' | 'NEGATIVE' | null,
-) => {
-    switch (sentiment) {
-        case 'POSITIVE':
-            return 'positive';
-        case 'NEGATIVE':
-            return 'negative';
-        default:
-            return 'default';
-    }
+const getTagSentimentClass = (sentiment: "POSITIVE" | "NEGATIVE" | null) => {
+  switch (sentiment) {
+    case "POSITIVE":
+      return "positive";
+    case "NEGATIVE":
+      return "negative";
+    default:
+      return "default";
+  }
 };
 
 const formatDisplayDate = (date: string | Date | null) => {
-    if (!date) return 'ING'
+  if (!date) return "ING";
 
-    const d = new Date(date)
+  const d = new Date(date);
 
-    const yy = String(d.getFullYear()).slice(2)
-    const mm = String(d.getMonth() + 1).padStart(2, '0')
-    const dd = String(d.getDate()).padStart(2, '0')
+  const yy = String(d.getFullYear()).slice(2);
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
 
-    return `${yy}.${mm}.${dd}`
-}
+  return `${yy}.${mm}.${dd}`;
+};
 
 const pollReview = async () => {
-    try {
-        const reviewId = route.params.reviewId;
-        const res = await api.get(`/api/reviews/${reviewId}`);
+  try {
+    const reviewId = route.params.reviewId;
+    const res = await api.get(`/api/reviews/${reviewId}`);
 
-        const reviewData = res.data.data;
+    const reviewData = res.data.data;
 
-        review.value = reviewData;
+    review.value = reviewData;
 
-        if (
-            reviewData.aiTagStatus === 'PENDING' ||
-            reviewData.aiTagStatus === 'PROCESSING'
-        ) {
-            pollTimer = setTimeout(pollReview, 2000);
-        } else {
-            pollTimer = null;
-        }
-    } catch (err) {
-        console.error(err);
+    if (
+      reviewData.aiTagStatus === "PENDING" ||
+      reviewData.aiTagStatus === "PROCESSING"
+    ) {
+      pollTimer = setTimeout(pollReview, 2000);
+    } else {
+      pollTimer = null;
     }
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 const fetchReviewDetail = async () => {
-    try {
-        isLoading.value = true
-        errorMessage.value = ''
+  try {
+    isLoading.value = true;
+    errorMessage.value = "";
 
-        const reviewId = route.params.reviewId
-        const res = await api.get(`/api/reviews/${reviewId}`)
+    const reviewId = route.params.reviewId;
+    const res = await api.get(`/api/reviews/${reviewId}`);
 
-        const reviewData = res.data.data;
+    const reviewData = res.data.data;
 
-        review.value = reviewData;
+    review.value = reviewData;
 
-        if (
-            reviewData.aiTagStatus === 'PENDING' ||
-            reviewData.aiTagStatus === 'PROCESSING'
-        ) {
-            pollReview();
-        }
-
-        history.replaceState(
-            {
-                ...history.state,
-                headerTitle: res.data.data.workTitle
-            },
-            ''
-        )
-    } catch (err: any) {
-        if (err.response) {
-            errorMessage.value = `${err.response.status} - ${err.response.data?.message || '서버 오류'}`
-        } else if (err.request) {
-            errorMessage.value = '서버 응답 없음 (네트워크 문제)'
-        } else {
-            errorMessage.value = err.message
-        }
-
-        alert(`리뷰 조회 실패\n${errorMessage.value}`)
-    } finally {
-        isLoading.value = false
+    if (
+      reviewData.aiTagStatus === "PENDING" ||
+      reviewData.aiTagStatus === "PROCESSING"
+    ) {
+      pollReview();
     }
-}
+
+    history.replaceState(
+      {
+        ...history.state,
+        headerTitle: res.data.data.workTitle,
+      },
+      "",
+    );
+  } catch (err: any) {
+    if (err.response) {
+      errorMessage.value = `${err.response.status} - ${err.response.data?.message || "서버 오류"}`;
+    } else if (err.request) {
+      errorMessage.value = "서버 응답 없음 (네트워크 문제)";
+    } else {
+      errorMessage.value = err.message;
+    }
+
+    alert(`리뷰 조회 실패\n${errorMessage.value}`);
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 const handleRetryTags = async () => {
-    if (review.value?.reviewId === undefined) return;
+  if (review.value?.reviewId === undefined) return;
 
-    try {
-        await createTags(review.value.reviewId, {
-            tags: []
-        });
+  try {
+    await createTags(review.value.reviewId, {
+      tags: [],
+    });
 
-        await pollReview();
-    } catch (err) {
-        console.error(err);
-    }
+    await pollReview();
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 const handleSubmitFeedback = async () => {
-    if (feedbackRating.value === null) return
+  if (feedbackRating.value === null) return;
 
-    const rating = feedbackRating.value
+  const rating = feedbackRating.value;
 
-    try {
-        const payload: AiTagFeedbackPayload = {
-            rating,
-        }
+  try {
+    const payload: AiTagFeedbackPayload = {
+      rating,
+    };
 
-        if (rating >= 4) {
-            if (positiveComment.value.trim()) {
-                payload.positiveComment = positiveComment.value.trim()
-            }
-        } else {
-            payload.negativeReasons = negativeReasons.value
+    if (rating >= 4) {
+      if (positiveComment.value.trim()) {
+        payload.positiveComment = positiveComment.value.trim();
+      }
+    } else {
+      payload.negativeReasons = negativeReasons.value;
 
-            if (negativeReasons.value.includes('OTHER')) {
-                payload.customNegativeReason = customNegativeReason.value.trim()
-            }
-        }
-
-        await submitAiTagFeedback(reviewId, payload)
-        await pollReview()
-        isTagSurveyOpen.value = false
-    } catch (err) {
-        console.error(err)
+      if (negativeReasons.value.includes("OTHER")) {
+        payload.customNegativeReason = customNegativeReason.value.trim();
+      }
     }
-}
+
+    await submitAiTagFeedback(reviewId, payload);
+    await pollReview();
+    isTagSurveyOpen.value = false;
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 const handleDeleteReview = async () => {
-    const ok = confirm('리뷰를 삭제하시겠습니까?')
+  const ok = confirm("리뷰를 삭제하시겠습니까?");
 
-    if (!ok) return
+  if (!ok) return;
 
-    try {
-        await deleteReview(reviewId)
+  try {
+    await deleteReview(reviewId);
 
-        alert('리뷰가 삭제되었습니다.')
+    alert("리뷰가 삭제되었습니다.");
 
-        router.push({
-            name: 'timeline'
-        })
-    } catch (err: any) {
-        let errorMsg = '알 수 없는 오류'
+    router.push({
+      name: "timeline",
+    });
+  } catch (err: any) {
+    let errorMsg = "알 수 없는 오류";
 
-        if (err.response) {
-            const status = err.response.status
+    if (err.response) {
+      const status = err.response.status;
 
-            if (status === 403) {
-                errorMsg = '삭제할 리뷰를 다시 확인해주세요.'
-            } else if (status === 404) {
-                errorMsg = '로그인 정보를 확인해주세요.'
-            } else {
-                errorMsg = err.response.data?.message || '서버 오류'
-            }
-        } else if (err.request) {
-            errorMsg = '서버 응답 없음 (네트워크 문제)'
-        } else {
-            errorMsg = err.message
-        }
-
-        alert(`삭제 실패\n${errorMsg}`)
+      if (status === 403) {
+        errorMsg = "삭제할 리뷰를 다시 확인해주세요.";
+      } else if (status === 404) {
+        errorMsg = "로그인 정보를 확인해주세요.";
+      } else {
+        errorMsg = err.response.data?.message || "서버 오류";
+      }
+    } else if (err.request) {
+      errorMsg = "서버 응답 없음 (네트워크 문제)";
+    } else {
+      errorMsg = err.message;
     }
-}
+
+    alert(`삭제 실패\n${errorMsg}`);
+  }
+};
 
 onMounted(() => {
-    fetchReviewDetail()
-})
+  fetchReviewDetail();
+});
 
 onUnmounted(() => {
-    if (pollTimer) {
-        clearTimeout(pollTimer);
-        pollTimer = null;
-    }
+  if (pollTimer) {
+    clearTimeout(pollTimer);
+    pollTimer = null;
+  }
 });
 </script>
 
 <template>
-    <section class="review-detail-section">
-        <div v-if="isLoading">로딩 중...</div>
-        <div v-else-if="errorMessage">{{ errorMessage }}</div>
+  <main class="review-detail">
+    <div v-if="isLoading">로딩 중...</div>
+    <div v-else-if="errorMessage">{{ errorMessage }}</div>
 
-        <template v-else-if="review">
-            <div class="work-info-container relative">
-                <div class="img-box add-overlay">
-                    <img :src="`https://image.tmdb.org/t/p/original${review.workPosterPath}`" :alt="review.workTitle" />
-                </div>
-                <div class="icon-box" @click='toggleMenu'>
-                    <PhDotsThreeVertical :size='30'></PhDotsThreeVertical>
-                </div>
-                <div class="modal-menu-box" :class='{ active: isMenuOpen }'>
-                    <p @click='goToWorkDetail'>작품 상세보기</p>
-                    <p @click='goToEdit'>수정</p>
-                    <p @click='handleDeleteReview'>삭제</p>
-                </div>
+    <template v-else-if="review">
+      <div class="work-info-container relative">
+        <div class="img-box add-overlay">
+          <img
+            :src="`https://image.tmdb.org/t/p/original${review.workPosterPath}`"
+            :alt="review.workTitle"
+          />
+        </div>
+        <div class="icon-box" @click="toggleMenu">
+          <PhDotsThreeVertical :size="30"></PhDotsThreeVertical>
+        </div>
+        <div class="modal-menu-box" :class="{ active: isMenuOpen }">
+          <p @click="goToWorkDetail">작품 상세보기</p>
+          <p @click="goToEdit">수정</p>
+          <p @click="handleDeleteReview">삭제</p>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="meta-container relative">
+          <div class="rating-box">
+            <span class="icon">
+              <PhStar :size="24"></PhStar>
+            </span>
+            <div class="rated-point-box description">
+              {{ review.rating }}
+              <span class="rating-standard">/5</span>
             </div>
-            <div class="wrap">
-                <div class="meta-container relative">
-                    <div class="rating-box">
-                        <span class="icon">
-                            <PhStar :size='24'></PhStar>
-                        </span>
-                        <div class="rated-point-box description">
-                            {{ review.rating }}
-                            <span class="rating-standard">/5</span>
-                        </div>
-                    </div>
-                    <div class="watch-period-box">
-                        <span class="icon">
-                            <PhCalendar :size='24'></PhCalendar>
-                        </span>
-                        <div class="date-box description">
-                            <div class="start-date-box">
-                                {{ formatDisplayDate(review.startDate) }}
-                            </div>
-                            <span>~</span>
-                            <div class="end-date-box">
-                                {{ formatDisplayDate(review.endDate) }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="created-at-box">
-                        <span class="icon">
-                            <PhPencil :size="24"></PhPencil>
-                        </span>
-                        <p class="created-at description">{{ formatDisplayDate(review.createdAt) }}</p>
-                    </div>
-                </div>
-                <div class="comment-container">
-                    <div class="text-box" :class="{ 'state-null': !review.comment }">
-                        <template v-if="review.comment">
-                            {{ review.comment }}
-                        </template>
-                        <template v-else>
-                            <p>작성된 내용이 없어요.</p>
-                            <p>리뷰를 일정 길이 이상 작성하면,</p>
-                            <p>AI가 분석하여 태그를 만들어드려요.</p>
-                        </template>
-                    </div>
-                </div>
+          </div>
+          <div class="watch-period-box">
+            <span class="icon">
+              <PhCalendar :size="24"></PhCalendar>
+            </span>
+            <div class="date-box description">
+              <div class="start-date-box">
+                {{ formatDisplayDate(review.startDate) }}
+              </div>
+              <span>~</span>
+              <div class="end-date-box">
+                {{ formatDisplayDate(review.endDate) }}
+              </div>
+            </div>
+          </div>
+          <div class="created-at-box">
+            <span class="icon">
+              <PhPencil :size="24"></PhPencil>
+            </span>
+            <p class="created-at description">
+              {{ formatDisplayDate(review.createdAt) }}
+            </p>
+          </div>
+        </div>
+        <div class="comment-container">
+          <div class="text-box" :class="{ 'state-null': !review.comment }">
+            <template v-if="review.comment">
+              {{ review.comment }}
+            </template>
+            <template v-else>
+              <p>작성된 내용이 없어요.</p>
+              <p>리뷰를 일정 길이 이상 작성하면,</p>
+              <p>AI가 분석하여 태그를 만들어드려요.</p>
+            </template>
+          </div>
+        </div>
 
-                <div class="tags-container">
-                    <div class="head-box">
-                        <template v-if="review.aiTagStatus === 'NONE'">
-                            <div class="title-box">
-                                <h3>내가 선택한 태그</h3>
-                                <Tooltip type="info"
-                                    :text="['태그 생성이 어려운 경우, 태그를 직접 선택할 수 있습니다.', '- 리뷰가 짧아 분석이 어려운 경우', '- 태그 생성에 문제가 발생한 경우']" />
-                            </div>
-                        </template>
-                        <template v-else>
-                            <div class="title-box">
-                                <h3>AI 태그</h3>
-                                <Tooltip type="info" :text="[
-                                    '작성한 리뷰에서 추출한 키워드로, 작품 추천에 활용됩니다.',
-                                    '리뷰 수정 시, 태그가 변경될 수 있습니다.'
-                                ]" />
-                            </div>
-                            <!-- TODO: AI 태그 만족도 조사 modal
+        <div class="tags-container">
+          <div class="head-box">
+            <template v-if="review.aiTagStatus === 'NONE'">
+              <div class="title-box">
+                <h3>내가 선택한 태그</h3>
+                <Tooltip
+                  type="info"
+                  :text="[
+                    '태그 생성이 어려운 경우, 태그를 직접 선택할 수 있습니다.',
+                    '- 리뷰가 짧아 분석이 어려운 경우',
+                    '- 태그 생성에 문제가 발생한 경우',
+                  ]"
+                />
+              </div>
+            </template>
+            <template v-else>
+              <div class="title-box">
+                <h3>AI 태그</h3>
+                <Tooltip
+                  type="info"
+                  :text="[
+                    '작성한 리뷰에서 추출한 키워드로, 작품 추천에 활용됩니다.',
+                    '리뷰 수정 시, 태그가 변경될 수 있습니다.',
+                  ]"
+                />
+              </div>
+              <!-- TODO: AI 태그 만족도 조사 modal
                              태그 생성된 시점 이후 1회만 노출 -->
-                            <div v-if="review.aiTagFeedbackPending" class="satisfaction-rate-box">
-                                <button @click="openTagSurvey">
-                                    AI 태그 만족도 평가
-                                </button>
-                            </div>
-                        </template>
-                    </div>
-                    <div class="retry">
-                        <template v-if="review.aiTagStatus === 'FAILED'">
-                            <p>AI 태그 생성에 실패했습니다.</p>
-                            <div class="btn-box">
-                                <button class='active-btn' @click="handleRetryTags">재시도</button>
-                            </div>
-                        </template>
-                    </div>
-                    <div class="tags-box chips">
-                        <template v-if="review.aiTagStatus === 'PENDING' || review.aiTagStatus === 'PROCESSING'">
-                            <span class="skeleton"></span>
-                            <span class="skeleton"></span>
-                            <span class="skeleton"></span>
-                            <span class="skeleton"></span>
-                        </template>
-                        <template v-else-if="review.tags?.length">
-                            <span v-for="tag in review.tags" :key="tag.label" class="tag-item chip default"
-                                :class="getTagSentimentClass(tag.sentiment)">
-                                {{ tag.label }}
-                            </span>
-                        </template>
-                    </div>
+              <div
+                v-if="review.aiTagFeedbackPending"
+                class="satisfaction-rate-box"
+              >
+                <button @click="openTagSurvey">AI 태그 만족도 평가</button>
+              </div>
+            </template>
+          </div>
+          <div class="retry">
+            <template v-if="review.aiTagStatus === 'FAILED'">
+              <p>AI 태그 생성에 실패했습니다.</p>
+              <div class="btn-box">
+                <button class="active-btn" @click="handleRetryTags">
+                  재시도
+                </button>
+              </div>
+            </template>
+          </div>
+          <div class="tags-box chips">
+            <template
+              v-if="
+                review.aiTagStatus === 'PENDING' ||
+                review.aiTagStatus === 'PROCESSING'
+              "
+            >
+              <span class="skeleton"></span>
+              <span class="skeleton"></span>
+              <span class="skeleton"></span>
+              <span class="skeleton"></span>
+            </template>
+            <template v-else-if="review.tags?.length">
+              <span
+                v-for="tag in review.tags"
+                :key="tag.label"
+                class="tag-item chip default"
+                :class="getTagSentimentClass(tag.sentiment)"
+              >
+                {{ tag.label }}
+              </span>
+            </template>
+          </div>
+        </div>
+      </div>
+      <div class="modal-bg ai-tag-survey-modal" v-if="isTagSurveyOpen">
+        <div class="modal-container">
+          <div class="header">
+            <p class="title">AI 태그 만족도 조사</p>
+          </div>
+          <div class="body">
+            <template v-if="surveyStep === 1">
+              <p>현재 리뷰에 생성된 AI 태그를 얼마나 만족하시나요?</p>
+
+              <div class="rating-box">
+                <div class="input-box">
+                  <input
+                    type="radio"
+                    id="rating-1"
+                    :value="1"
+                    v-model="feedbackRating"
+                  />
+                  <label for="rating-1">1</label>
                 </div>
-            </div>
-            <div class="modal-bg ai-tag-survey-modal" v-if="isTagSurveyOpen">
-                <div class="modal-container">
-                    <div class="header">
-                        <p class="title">AI 태그 만족도 조사</p>
-                    </div>
-                    <div class="body">
-                        <template v-if="surveyStep === 1">
-                            <p>현재 리뷰에 생성된 AI 태그를 얼마나 만족하시나요?</p>
 
-                            <div class="rating-box">
-                                <div class="input-box">
-                                    <input type="radio" id="rating-1" :value="1" v-model="feedbackRating">
-                                    <label for="rating-1">1</label>
-                                </div>
-
-                                <div class="input-box">
-                                    <input type="radio" id="rating-2" :value="2" v-model="feedbackRating">
-                                    <label for="rating-2">2</label>
-                                </div>
-
-                                <div class="input-box">
-                                    <input type="radio" id="rating-3" :value="3" v-model="feedbackRating">
-                                    <label for="rating-3">3</label>
-                                </div>
-
-                                <div class="input-box">
-                                    <input type="radio" id="rating-4" :value="4" v-model="feedbackRating">
-                                    <label for="rating-4">4</label>
-                                </div>
-
-                                <div class="input-box">
-                                    <input type="radio" id="rating-5" :value="5" v-model="feedbackRating">
-                                    <label for="rating-5">5</label>
-                                </div>
-                            </div>
-
-                            <div class="btn-box">
-                                <button :class="feedbackRating === null ? 'disabled' : 'active-btn'"
-                                    :disabled="feedbackRating === null" @click="surveyStep = 2">
-                                    다음
-                                </button>
-                            </div>
-                        </template>
-                        <template v-else-if="surveyStep === 2 && feedbackRating !== null && feedbackRating >= 4">
-                            <div class="score-4-plus">
-                                <p>어떤 점이 마음에 드셨나요? (선택)</p>
-
-                                <input type="text" v-model="positiveComment" placeholder="자유롭게 작성해주세요.">
-
-                                <div class="btn-box">
-                                    <button class="neutral-btn" @click="surveyStep = 1">
-                                        이전
-                                    </button>
-
-                                    <button class="active-btn" @click="handleSubmitFeedback">
-                                        제출
-                                    </button>
-                                </div>
-                            </div>
-                        </template>
-                        <template v-else-if="surveyStep === 2 && feedbackRating !== null && feedbackRating <= 3">
-                            <div class="score-3-minus">
-                                <p>어떤 점이 아쉬우셨나요? (복수 선택 가능)</p>
-
-                                <div class="feedback-reason">
-                                    <div class="input-box">
-                                        <input type="checkbox" id="LOW_ACCURACY" value="LOW_ACCURACY"
-                                            v-model="negativeReasons">
-                                        <label for="LOW_ACCURACY">정확도 낮음</label>
-                                    </div>
-
-                                    <div class="input-box">
-                                        <input type="checkbox" id="SENTIMENT_ERROR" value="SENTIMENT_ERROR"
-                                            v-model="negativeReasons">
-                                        <label for="SENTIMENT_ERROR">긍부정 분석 오류</label>
-                                    </div>
-
-                                    <div class="input-box">
-                                        <input type="checkbox" id="IRRELEVANT_TAG" value="IRRELEVANT_TAG"
-                                            v-model="negativeReasons">
-                                        <label for="IRRELEVANT_TAG">관련 없는 태그 생성</label>
-                                    </div>
-
-                                    <div class="input-box">
-                                        <input type="checkbox" id="TYPO" value="TYPO" v-model="negativeReasons">
-                                        <label for="TYPO">오탈자</label>
-                                    </div>
-
-                                    <div class="input-box">
-                                        <input type="checkbox" id="OTHER" value="OTHER" v-model="negativeReasons">
-                                        <label for="OTHER">기타</label>
-                                    </div>
-
-                                    <input v-if="negativeReasons.includes('OTHER')" v-model="customNegativeReason"
-                                        type="text" placeholder="사유를 입력해주세요.">
-                                </div>
-
-                                <div class="btn-box">
-                                    <button class="neutral-btn" @click="surveyStep = 1">
-                                        이전
-                                    </button>
-
-                                    <button :class="negativeReasons.length === 0 ||
-                                        (negativeReasons.includes('OTHER') && !customNegativeReason.trim())
-                                        ? 'disabled'
-                                        : 'active-btn'
-                                        " :disabled="negativeReasons.length === 0 ||
-                                            (negativeReasons.includes('OTHER') && !customNegativeReason.trim())
-                                            " @click="handleSubmitFeedback">
-                                        제출
-                                    </button>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
+                <div class="input-box">
+                  <input
+                    type="radio"
+                    id="rating-2"
+                    :value="2"
+                    v-model="feedbackRating"
+                  />
+                  <label for="rating-2">2</label>
                 </div>
-            </div>
-        </template>
-    </section>
+
+                <div class="input-box">
+                  <input
+                    type="radio"
+                    id="rating-3"
+                    :value="3"
+                    v-model="feedbackRating"
+                  />
+                  <label for="rating-3">3</label>
+                </div>
+
+                <div class="input-box">
+                  <input
+                    type="radio"
+                    id="rating-4"
+                    :value="4"
+                    v-model="feedbackRating"
+                  />
+                  <label for="rating-4">4</label>
+                </div>
+
+                <div class="input-box">
+                  <input
+                    type="radio"
+                    id="rating-5"
+                    :value="5"
+                    v-model="feedbackRating"
+                  />
+                  <label for="rating-5">5</label>
+                </div>
+              </div>
+
+              <div class="btn-box">
+                <button
+                  :class="feedbackRating === null ? 'disabled' : 'active-btn'"
+                  :disabled="feedbackRating === null"
+                  @click="surveyStep = 2"
+                >
+                  다음
+                </button>
+              </div>
+            </template>
+            <template
+              v-else-if="
+                surveyStep === 2 &&
+                feedbackRating !== null &&
+                feedbackRating >= 4
+              "
+            >
+              <div class="score-4-plus">
+                <p>어떤 점이 마음에 드셨나요? (선택)</p>
+
+                <input
+                  type="text"
+                  v-model="positiveComment"
+                  placeholder="자유롭게 작성해주세요."
+                />
+
+                <div class="btn-box">
+                  <button class="neutral-btn" @click="surveyStep = 1">
+                    이전
+                  </button>
+
+                  <button class="active-btn" @click="handleSubmitFeedback">
+                    제출
+                  </button>
+                </div>
+              </div>
+            </template>
+            <template
+              v-else-if="
+                surveyStep === 2 &&
+                feedbackRating !== null &&
+                feedbackRating <= 3
+              "
+            >
+              <div class="score-3-minus">
+                <p>어떤 점이 아쉬우셨나요? (복수 선택 가능)</p>
+
+                <div class="feedback-reason">
+                  <div class="input-box">
+                    <input
+                      type="checkbox"
+                      id="LOW_ACCURACY"
+                      value="LOW_ACCURACY"
+                      v-model="negativeReasons"
+                    />
+                    <label for="LOW_ACCURACY">정확도 낮음</label>
+                  </div>
+
+                  <div class="input-box">
+                    <input
+                      type="checkbox"
+                      id="SENTIMENT_ERROR"
+                      value="SENTIMENT_ERROR"
+                      v-model="negativeReasons"
+                    />
+                    <label for="SENTIMENT_ERROR">긍부정 분석 오류</label>
+                  </div>
+
+                  <div class="input-box">
+                    <input
+                      type="checkbox"
+                      id="IRRELEVANT_TAG"
+                      value="IRRELEVANT_TAG"
+                      v-model="negativeReasons"
+                    />
+                    <label for="IRRELEVANT_TAG">관련 없는 태그 생성</label>
+                  </div>
+
+                  <div class="input-box">
+                    <input
+                      type="checkbox"
+                      id="TYPO"
+                      value="TYPO"
+                      v-model="negativeReasons"
+                    />
+                    <label for="TYPO">오탈자</label>
+                  </div>
+
+                  <div class="input-box">
+                    <input
+                      type="checkbox"
+                      id="OTHER"
+                      value="OTHER"
+                      v-model="negativeReasons"
+                    />
+                    <label for="OTHER">기타</label>
+                  </div>
+
+                  <input
+                    v-if="negativeReasons.includes('OTHER')"
+                    v-model="customNegativeReason"
+                    type="text"
+                    placeholder="사유를 입력해주세요."
+                  />
+                </div>
+
+                <div class="btn-box">
+                  <button class="neutral-btn" @click="surveyStep = 1">
+                    이전
+                  </button>
+
+                  <button
+                    :class="
+                      negativeReasons.length === 0 ||
+                      (negativeReasons.includes('OTHER') &&
+                        !customNegativeReason.trim())
+                        ? 'disabled'
+                        : 'active-btn'
+                    "
+                    :disabled="
+                      negativeReasons.length === 0 ||
+                      (negativeReasons.includes('OTHER') &&
+                        !customNegativeReason.trim())
+                    "
+                    @click="handleSubmitFeedback"
+                  >
+                    제출
+                  </button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </template>
+  </main>
 </template>
 
 <style>
-.review-detail-section {
-    padding-top: var(--header-height);
-    padding-bottom: 160px;
+.review-detail {
+  padding-top: var(--header-height);
+  padding-bottom: 160px;
 }
 
-.review-detail-section .work-info-container {
-    aspect-ratio: 1/1;
-    overflow: hidden;
+.review-detail .work-info-container {
+  aspect-ratio: 1/1;
+  overflow: hidden;
 }
 
-.review-detail-section .work-info-container .img-box {
-    margin-top: -5%;
+.review-detail .work-info-container .img-box {
+  margin-top: -5%;
 }
 
-.review-detail-section .work-info-container .icon-box {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    color: #f6f4f0;
-    z-index: 10;
-    cursor: pointer;
+.review-detail .work-info-container .icon-box {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #f6f4f0;
+  z-index: 10;
+  cursor: pointer;
 }
 
-.review-detail-section .work-info-container .modal-menu-box {
-    position: absolute;
-    top: 46px;
-    right: 16px;
-    background-color: var(--bg-elevated);
-    padding: 10px;
-    border-radius: 8px;
-    transition: opacity 0.2s ease;
-    opacity: 0;
-    pointer-events: none;
+.review-detail .work-info-container .modal-menu-box {
+  position: absolute;
+  top: 46px;
+  right: 16px;
+  background-color: var(--bg-elevated);
+  padding: 10px;
+  border-radius: 8px;
+  transition: opacity 0.2s ease;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.review-detail-section .work-info-container .modal-menu-box.active {
-    opacity: 1;
-    pointer-events: auto;
+.review-detail .work-info-container .modal-menu-box.active {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-.review-detail-section .work-info-container .modal-menu-box p {
-    margin-bottom: 4px;
-    cursor: pointer;
+.review-detail .work-info-container .modal-menu-box p {
+  margin-bottom: 4px;
+  cursor: pointer;
 }
 
-.review-detail-section .work-info-container .modal-menu-box p:last-child {
-    color: var(--error);
-    margin-bottom: 0;
+.review-detail .work-info-container .modal-menu-box p:last-child {
+  color: var(--error);
+  margin-bottom: 0;
 }
 
-.review-detail-section .meta-container {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    gap: 8px;
-    text-align: center;
-    margin-top: -30px;
+.review-detail .meta-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 8px;
+  text-align: center;
+  margin-top: -30px;
 }
 
-.review-detail-section .meta-container>div {
-    border-radius: 8px;
-    background-color: var(--bg-elevated);
-    box-shadow: var(--box-default);
-    padding: 8px;
+.review-detail .meta-container > div {
+  border-radius: 8px;
+  background-color: var(--bg-elevated);
+  box-shadow: var(--box-default);
+  padding: 8px;
 }
 
-.review-detail-section .meta-container .icon {
-    display: inline-block;
-    color: var(--text-icon);
-    margin-bottom: 2px;
+.review-detail .meta-container .icon {
+  display: inline-block;
+  color: var(--text-icon);
+  margin-bottom: 2px;
 }
 
-.review-detail-section .watch-period-box .date-box {
-    display: flex;
-    gap: 2px;
-    justify-content: center;
+.review-detail .watch-period-box .date-box {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
 }
 
-.review-detail-section .rating-box .rating-standard {
-    color: var(--text-sub);
+.review-detail .rating-box .rating-standard {
+  color: var(--text-sub);
 }
 
-.review-detail-section .comment-container {
-    margin-top: 30px;
+.review-detail .comment-container {
+  margin-top: 30px;
 }
 
-.review-detail-section .comment-container .text-box {
-    font-size: var(--font-size-long);
-    color: var(--text-sub);
-    text-align: justify;
-    white-space: pre-wrap;
-    border-radius: 8px;
-    background-color: var(--bg-surface);
-    padding: 12px;
-    box-shadow: var(--box-default)
+.review-detail .comment-container .text-box {
+  font-size: var(--font-size-long);
+  color: var(--text-sub);
+  text-align: justify;
+  white-space: pre-wrap;
+  border-radius: 8px;
+  background-color: var(--bg-surface);
+  padding: 12px;
+  box-shadow: var(--box-default);
 }
 
-
-.review-detail-section .comment-container .state-null {
-    text-align: center;
-    padding: 40px 0;
+.review-detail .comment-container .state-null {
+  text-align: center;
+  padding: 40px 0;
 }
 
-.review-detail-section .tags-container {
-    margin-top: 40px;
+.review-detail .tags-container {
+  margin-top: 40px;
 }
 
-.review-detail-section .tags-container .head-box {
-    display: flex;
-    justify-content: space-between;
+.review-detail .tags-container .head-box {
+  display: flex;
+  justify-content: space-between;
 }
 
-.review-detail-section .tags-container .head-box .title-box {
-    display: flex;
-    gap: 6px;
-    align-items: center;
+.review-detail .tags-container .head-box .title-box {
+  display: flex;
+  gap: 6px;
+  align-items: center;
 }
 
-.review-detail-section .tooltip .tooltip-content {
-    max-width: 320px;
+.review-detail .tooltip .tooltip-content {
+  max-width: 320px;
 }
 
-.review-detail-section .tags-container .retry {
-    text-align: center;
+.review-detail .tags-container .retry {
+  text-align: center;
 }
 
-.review-detail-section .tags-container .retry .btn-box {
-    margin-top: 10px;
+.review-detail .tags-container .retry .btn-box {
+  margin-top: 10px;
 }
 
-.review-detail-section .tags-box {
-    margin-top: 12px;
+.review-detail .tags-box {
+  margin-top: 12px;
 }
 
-.review-detail-section .tags-box .skeleton {
-    width: 60px;
-    height: 22px;
-    border-radius: 5px;
-    margin-right: 2px;
-    background: linear-gradient(120deg,
-            #d6d6d6 25%,
-            #e5e5e5 50%,
-            #d6d6d6 75%);
-    background-size: 250% 100%;
-    animation: skeleton-shimmer 4s infinite linear;
+.review-detail .tags-box .skeleton {
+  width: 60px;
+  height: 22px;
+  border-radius: 5px;
+  margin-right: 2px;
+  background: linear-gradient(120deg, #d6d6d6 25%, #e5e5e5 50%, #d6d6d6 75%);
+  background-size: 250% 100%;
+  animation: skeleton-shimmer 4s infinite linear;
 }
 
-.review-detail-section .tags-box .tag-item.positive:before,
-.review-detail-section .tags-box .tag-item.negative:before {
-    display: inline-block;
-    margin-right: 4px;
+.review-detail .tags-box .tag-item.positive:before,
+.review-detail .tags-box .tag-item.negative:before {
+  display: inline-block;
+  margin-right: 4px;
 }
 
-.review-detail-section .tags-box .tag-item.positive:before {
-    content: '▲';
-    color: var(--success);
+.review-detail .tags-box .tag-item.positive:before {
+  content: "▲";
+  color: var(--success);
 }
 
-.review-detail-section .tags-box .tag-item.negative:before {
-    content: '▼';
-    color: var(--error);
+.review-detail .tags-box .tag-item.negative:before {
+  content: "▼";
+  color: var(--error);
 }
 
-
-
-.review-detail-section .tags-container .head-box p button {
-    margin-left: 8px;
+.review-detail .tags-container .head-box p button {
+  margin-left: 8px;
 }
 
 .ai-tag-survey-modal .rating-box {
-    display: flex;
-    gap: 20px;
-    margin-top: 20px;
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
 }
 
 .ai-tag-survey-modal .input-box {
-    display: flex;
-    gap: 4px;
-    align-items: center;
+  display: flex;
+  gap: 4px;
+  align-items: center;
 }
 
 .modal-bg.ai-tag-survey-modal .input-box input {
-    margin-top: 0;
+  margin-top: 0;
 }
 
 .ai-tag-survey-modal .btn-box {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-    justify-content: right;
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: right;
 }
 
 .ai-tag-survey-modal .feedback-reason {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 16px;
-    margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-top: 20px;
 }
 
 .ai-tag-survey-modal .feedback-reason .input-box {
-    display: inline-flex;
-    flex: 0 0 auto;
-    width: auto;
-    align-items: center;
-    gap: 4px;
-    white-space: nowrap;
+  display: inline-flex;
+  flex: 0 0 auto;
+  width: auto;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
 }
 
 .ai-tag-survey-modal .feedback-reason .input-box input {
-    flex: 0 0 auto;
-    width: auto;
-    margin: 0;
+  flex: 0 0 auto;
+  width: auto;
+  margin: 0;
 }
 
 .ai-tag-survey-modal .feedback-reason .input-box label {
-    white-space: nowrap;
+  white-space: nowrap;
 }
 
 .ai-tag-survey-modal .disabled {
-    background-color: #a4a9b5;
-    color: var(--text-menu);
-    cursor: not-allowed;
+  background-color: #a4a9b5;
+  color: var(--text-menu);
+  cursor: not-allowed;
 }
-
 
 @keyframes skeleton-shimmer {
-    0% {
-        background-position: 200% 0;
-    }
+  0% {
+    background-position: 200% 0;
+  }
 
-    100% {
-        background-position: -200% 0;
-    }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
-
 @media screen and (min-width: 520px) {
-    .review-detail-section .work-info-container {
-        aspect-ratio: 3 / 2;
-    }
+  .review-detail .work-info-container {
+    aspect-ratio: 3 / 2;
+  }
 
-    .review-detail-section .work-info-container .img-box {
-        margin-top: -10%;
-    }
+  .review-detail .work-info-container .img-box {
+    margin-top: -10%;
+  }
 }
 
 @media screen and (min-width: 640px) {
-    .review-detail-section .work-info-container {
-        aspect-ratio: 5 / 3;
-    }
+  .review-detail .work-info-container {
+    aspect-ratio: 5 / 3;
+  }
 }
 </style>
