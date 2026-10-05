@@ -5,6 +5,8 @@ import { getMe, type MeResponse } from "../api/auth";
 import { api } from "../api/client";
 import { PhPencil, PhStar } from "@phosphor-icons/vue";
 import WorkCard from "../components/WorkCard.vue";
+import Loader from "../components/Loader.vue";
+import { addWatchlist, deleteWatchlist } from "../api/watchlist";
 
 const router = useRouter();
 
@@ -24,11 +26,13 @@ interface TrendingWork {
   workTitle: string;
   workPosterPath: string;
   workReleaseDate: string;
-  mediaType: string;
+  mediaType: "movie" | "tv";
+  isWatchlisted: boolean;
 }
 
 const trendingWorks = ref<TrendingWork[]>([]);
 
+const isLoadingHome = ref(true);
 const loading = ref(false);
 const timeline = ref<Review[]>([]);
 
@@ -90,15 +94,42 @@ const goToReviewDetail = (reviewId: number) => {
   router.push(`/review/${reviewId}`);
 };
 
-const fetchUser = async () => {
+const loadHome = async () => {
   try {
     user.value = await getMe();
     console.log("user:", user.value);
-
-    fetchTimeline();
   } catch (error) {
     console.log("getMe 실패:", error);
     user.value = null;
+  }
+
+  try {
+    await Promise.all([
+      user.value ? fetchTimeline() : Promise.resolve(),
+      fetchTrending(activeTab.value),
+    ]);
+  } finally {
+    isLoadingHome.value = false;
+  }
+};
+
+const toggleWatchlistHandler = async (work: TrendingWork) => {
+  try {
+    if (work.isWatchlisted) {
+      await deleteWatchlist(work.mediaType, work.workId);
+    } else {
+      await addWatchlist({
+        workId: work.workId,
+        mediaType: work.mediaType,
+        workTitle: work.workTitle,
+        workPosterPath: work.workPosterPath,
+        workReleaseDate: work.workReleaseDate,
+      });
+    }
+
+    work.isWatchlisted = !work.isWatchlisted;
+  } catch (error) {
+    console.error("관심 작품 변경 실패", error);
   }
 };
 
@@ -125,7 +156,30 @@ const fetchTimeline = async () => {
 const fetchTrending = async (mediaType: "movie" | "tv") => {
   try {
     const res = await api.get(`/api/tmdb/contents/trending/${mediaType}`);
-    trendingWorks.value = res.data.data.results;
+    const works: TrendingWork[] = res.data.data.results.map(
+      (work: Omit<TrendingWork, "isWatchlisted">) => ({
+        ...work,
+        isWatchlisted: false,
+      }),
+    );
+
+    if (user.value) {
+      const worksWithWatchlistStatus = await Promise.all(
+        works.map(async (work) => {
+          const watchlistRes = await api.get(
+            `/api/watchlist/${work.mediaType}/${work.workId}`,
+          );
+
+          return {
+            ...work,
+            isWatchlisted: watchlistRes.data.data.inWatchlist,
+          };
+        }),
+      );
+      trendingWorks.value = worksWithWatchlistStatus;
+    } else {
+      trendingWorks.value = works;
+    }
   } catch (error) {
     console.error("인기작 조회 실패", error);
     trendingWorks.value = [];
@@ -133,17 +187,16 @@ const fetchTrending = async (mediaType: "movie" | "tv") => {
 };
 
 onMounted(() => {
-  fetchUser();
-  fetchTrending("movie");
+  loadHome();
 });
 </script>
 
 <template>
-  <main class="home">
+  <Loader v-if="isLoadingHome">화면을 구성중입니다.</Loader>
+  <main v-else class="home">
     <div class="wrap">
-      <div class="personalized-container">
+      <section class="personalized">
         <h3 class="title">최근에 어떤 리뷰를 썼을까요?✏</h3>
-
         <!-- 로그인 상태 -->
         <div v-if="user" class="frame">
           <div
@@ -155,7 +208,7 @@ onMounted(() => {
             @mouseleave="handleMouseUp"
           >
             <div
-              v-for="item in timeline.slice(0, 3)"
+              v-for="item in timeline.slice(0, 5)"
               :key="item.reviewId"
               class="review-card relative"
               @click="goToReviewDetail(item.reviewId)"
@@ -181,7 +234,6 @@ onMounted(() => {
             </div>
           </div>
         </div>
-
         <!-- 비로그인 상태 -->
         <div v-else class="login-prompt">
           <p>
@@ -189,62 +241,75 @@ onMounted(() => {
           </p>
           <p>AI가 태그를 생성해드립니다.</p>
         </div>
-      </div>
+      </section>
       <!-- TODO: ReMine 추천작 -->
-      <div v-if="user" class="remine-recommend-container">
-        <h3 class="title">리뷰를 분석해봤어요 👀</h3>
-        <p class="description">내가 남긴 리뷰에서 취향을 찾아봤어요.</p>
-      </div>
+      <section class="recommend">
+        <div v-if="user" class="remine-recommend-container">
+          <h3 class="title">리뷰를 분석해봤어요 👀</h3>
+          <p class="description">내가 남긴 리뷰에서 취향을 찾아봤어요.</p>
+        </div>
+      </section>
       <!-- TODO: TMDB 인기작 + 장르로 가져올 수 있는지 -->
-      <div class="tmdb-trending-container">
-        <h3 class="title">아직 뭘 볼지 고민이라면? 📽</h3>
-        <p class="description">요즘 사람들이 많이 본 작품을 모아왔어요.</p>
-        <div class="tabs">
-          <button
-            class="tab"
-            :class="{ active: activeTab === 'movie' }"
-            @click="
-              activeTab = 'movie';
-              fetchTrending('movie');
-            "
-          >
-            영화
-          </button>
-          <button
-            class="tab"
-            :class="{ active: activeTab === 'tv' }"
-            @click="
-              activeTab = 'tv';
-              fetchTrending('tv');
-            "
-          >
-            TV
-          </button>
+      <section class="trending">
+        <div class="tmdb-trending-container">
+          <h3 class="title">아직 뭘 볼지 고민이라면? 📽</h3>
+          <p class="description">요즘 사람들이 많이 본 작품을 모아왔어요.</p>
+          <div class="tabs">
+            <button
+              class="tab"
+              :class="{ active: activeTab === 'movie' }"
+              @click="
+                activeTab = 'movie';
+                fetchTrending('movie');
+              "
+            >
+              영화
+            </button>
+            <button
+              class="tab"
+              :class="{ active: activeTab === 'tv' }"
+              @click="
+                activeTab = 'tv';
+                fetchTrending('tv');
+              "
+            >
+              TV
+            </button>
+          </div>
+          <div class="works-list-container">
+            <WorkCard
+              v-for="work in trendingWorks.slice(0, 8)"
+              :key="work.workId"
+              :work-id="work.workId"
+              :work-title="work.workTitle"
+              :work-poster-path="work.workPosterPath"
+              :work-release-date="work.workReleaseDate"
+              :media-type="work.mediaType"
+              :is-watchlisted="work.isWatchlisted"
+              @toggle-watchlist="toggleWatchlistHandler(work)"
+            />
+          </div>
         </div>
-        <div class="works-list-container">
-          <WorkCard
-            v-for="work in trendingWorks.slice(0, 6)"
-            :key="work.workId"
-            :work-id="work.workId"
-            :work-poster-path="work.workPosterPath"
-            :work-title="work.workTitle"
-            :work-release-date="work.workReleaseDate"
-            :media-type="work.mediaType"
-          />
-        </div>
-      </div>
+      </section>
       <!-- TODO: YouTube Playlists -->
-      <h3 class="title">궁금했던 그 작품, 바로 찾아보세요 🔍</h3>
-      <p class="description">
-        유튜브 플레이리스트 속 작품도 손쉽게 찾아드려요.
-      </p>
+      <!-- <section class="playlists">
+        <h3 class="title">궁금했던 그 작품, 바로 찾아보세요 🔍</h3>
+        <p class="description">
+          유튜브 플레이리스트 속 작품도 손쉽게 찾아드려요.
+        </p>
+      </section> -->
     </div>
   </main>
 </template>
 
 <style>
-.home .frame {
-  margin-bottom: 30px;
+.home {
+  section {
+    margin-bottom: 24px;
+    h3 {
+      font-size: var(--font-size-section);
+    }
+  }
 }
 
 .home .recent-reviews-container {
@@ -261,7 +326,7 @@ onMounted(() => {
 }
 
 .home .recent-reviews-container .review-card {
-  width: 40%;
+  width: 27%;
   max-width: 230px;
   flex-shrink: 0;
   overflow: hidden;
