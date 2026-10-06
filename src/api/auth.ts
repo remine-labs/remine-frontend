@@ -7,6 +7,8 @@ export interface MeResponse {
   provider: string;
   profileUrl: string;
   birthDateSet: boolean;
+  reviewCount: number;
+  watchlistCount: number;
 }
 
 export const getMe = async (): Promise<MeResponse> => {
