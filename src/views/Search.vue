@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { nextTick, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import WorkSearch from "../components/WorkSearch.vue";
 import Loader from "../components/Loader.vue";
@@ -14,6 +14,7 @@ const query = ref("");
 const works = ref<any[]>([]);
 const loading = ref(false);
 const error = ref("");
+const workSearchRef = ref<InstanceType<typeof WorkSearch> | null>(null);
 
 const currentPage = ref(1);
 const totalPages = ref(0);
@@ -74,11 +75,13 @@ const toggleWatchlistHandler = async (work: any) => {
   }
 };
 
-onMounted(() => {
-  const url = route.query.url as string;
+onMounted(async () => {
+  const url = route.query.url;
 
-  if (url) {
+  if (typeof url === "string" && url) {
     query.value = url;
+    await nextTick();
+    await workSearchRef.value?.handleSearch();
   }
 });
 </script>
@@ -87,6 +90,7 @@ onMounted(() => {
   <main class="search">
     <div class="wrap">
       <WorkSearch
+        ref="workSearchRef"
         v-model="query"
         v-model:current-page="currentPage"
         @search="handleSearch"
