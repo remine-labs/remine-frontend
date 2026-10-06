@@ -4,6 +4,7 @@ import { deletePlaylist, getPlaylistDetail } from "../../api/youtube";
 import type { PlaylistDetail } from "../../api/youtube";
 import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+import Pagination from "../../components/Pagination.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -12,7 +13,9 @@ const playlistUrl = route.query.url as string;
 const playlistName = history.state.playlistName;
 
 const isDeletePlaylistModalOpen = ref(false);
-const videoCount = computed(() => visiblePlaylistDetail.value.length);
+const currentPage = ref(1);
+const totalPages = ref(0);
+const totalElements = ref(0);
 
 const goToWatchlist = () => {
   router.push("/watchlist");
@@ -52,14 +55,19 @@ const handleDeletePlaylist = async () => {
   }
 };
 
-onMounted(async () => {
+const fetchPlaylistDetail = async (pageNumber = currentPage.value) => {
   try {
-    const res = await getPlaylistDetail(playlistUrl);
-    playlistDetail.value = res.data.data;
+    const res = await getPlaylistDetail(playlistUrl, pageNumber);
+    playlistDetail.value = res.data.data.content;
+    currentPage.value = pageNumber;
+    totalPages.value = res.data.data.totalPages;
+    totalElements.value = res.data.data.totalElements;
   } catch (error) {
     console.error(error);
   }
-});
+};
+
+onMounted(() => fetchPlaylistDetail());
 </script>
 
 <template>
@@ -78,7 +86,7 @@ onMounted(async () => {
         >
           삭제하기
         </button>
-        <p class="playlist-info">{{ playlistName }} · {{ videoCount }} 개</p>
+        <p class="playlist-info">{{ playlistName }} · {{ totalElements }} 개</p>
       </div>
       <p class="desciption">영상을 선택하면, 작품 정보를 알려드립니다.</p>
       <div class="playlist-item-container">
@@ -96,6 +104,12 @@ onMounted(async () => {
           </p>
         </div>
       </div>
+      <Pagination
+        v-if="totalPages > 1"
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @page-change="fetchPlaylistDetail"
+      />
     </div>
     <div
       class="modal-bg delete-playlist-modal"

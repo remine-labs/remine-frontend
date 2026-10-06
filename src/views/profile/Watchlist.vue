@@ -8,17 +8,20 @@ import {
   addWatchlist,
 } from "../../api/watchlist.ts";
 import type { Watchlist } from "../../api/watchlist.ts";
+import Pagination from "../../components/Pagination.vue";
 
 const router = useRouter();
 const watchlist = ref<Watchlist[]>([]);
 const isMovieChecked = ref(true);
 const isTvChecked = ref(true);
+const currentPage = ref(1);
+const totalPages = ref(0);
 
 const goToPlaylists = () => {
   router.push("/playlists");
 };
 
-const fetchWatchlist = async () => {
+const fetchWatchlist = async (page = currentPage.value) => {
   try {
     let params = {};
     if (isMovieChecked.value && !isTvChecked.value) {
@@ -27,11 +30,13 @@ const fetchWatchlist = async () => {
       params = { mediaType: "tv" };
     }
 
-    const res = await getWatchlist(params);
+    const res = await getWatchlist({ ...params, page });
     watchlist.value = res.data.data.content.map((work: Watchlist) => ({
       ...work,
       isWatchlisted: true,
     }));
+    currentPage.value = page;
+    totalPages.value = res.data.data.totalPages;
   } catch (error) {
     console.error(error);
   }
@@ -58,7 +63,7 @@ const toggleWatchlistHandler = async (work: any) => {
 };
 
 watch([isMovieChecked, isTvChecked], () => {
-  fetchWatchlist();
+  fetchWatchlist(1);
 });
 
 onMounted(fetchWatchlist);
@@ -97,6 +102,12 @@ onMounted(fetchWatchlist);
           @toggle-watchlist="toggleWatchlistHandler(work)"
         />
       </div>
+      <Pagination
+        v-if="totalPages > 1"
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @page-change="fetchWatchlist"
+      />
     </div>
   </main>
 </template>

@@ -3,7 +3,7 @@ import { api } from "./client";
 interface WatchlistParams {
   mediaType?: "movie" | "tv";
   page?: number;
-  size?: 20;
+  size?: number;
 }
 
 export type Watchlist = {
@@ -29,7 +29,7 @@ export const addWatchlist = (body: AddWatchlistRequest) => {
 
 export const getWatchlist = ({
   mediaType,
-  page = 0,
+  page = 1,
   size = 20,
 }: WatchlistParams = {}) => {
   return api.get("/api/watchlist", {
