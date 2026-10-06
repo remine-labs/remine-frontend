@@ -10,10 +10,12 @@ import dayjs from "dayjs";
 const router = useRouter();
 
 interface HistoryItem {
-  reviewId: number;
   workTitle: string;
   workPosterPath: string;
-  startDate: string;
+}
+
+interface ApiResponse<T> {
+  data: T;
 }
 
 const user = ref<MeResponse | null>(null);
@@ -29,10 +31,10 @@ const daysInMonth = computed(() => currentMonth.value.daysInMonth());
 
 const firstDay = computed(() => currentMonth.value.startOf("month").day());
 
-const historyList = ref<HistoryItem[]>([]);
-const historyMap = ref<Record<number, HistoryItem[]>>({});
+const calendarMap = ref<Record<string, HistoryItem[]>>({});
 
-const calendarMap = computed(() => historyMap.value);
+const calendarDate = (day: number) =>
+  currentMonth.value.date(day).format("YYYY-MM-DD");
 
 const goToWatchlist = () => {
   router.push("/watchlist");
@@ -42,36 +44,28 @@ const changeMonth = (step: number) => {
   pickedDate.value = dayjs(pickedDate.value).add(step, "month").toDate();
 };
 
-const getHistory = async () => {
+const getCalendar = async () => {
   try {
-    const res = await api.get("/api/users/history", {
-      params: {
-        year: year.value,
-        month: month.value,
+    const res = await api.get<ApiResponse<Record<string, HistoryItem[]>>>(
+      "/api/users/calendar",
+      {
+        params: {
+          year: year.value,
+          month: month.value,
+        },
       },
-    });
+    );
 
-    historyList.value = res.data.data;
-    historyMap.value = {};
-
-    for (const item of historyList.value) {
-      const day = Number(item.startDate.slice(-2));
-
-      if (!historyMap.value[day]) {
-        historyMap.value[day] = [];
-      }
-
-      historyMap.value[day].push(item);
-    }
+    calendarMap.value = res.data.data;
   } catch (error) {
-    console.error("history 조회 실패", error);
+    console.error("calendar 조회 실패", error);
   }
 };
 
 watch(
   pickedDate,
   () => {
-    getHistory();
+    getCalendar();
   },
   { immediate: true },
 );
@@ -98,12 +92,12 @@ onMounted(async () => {
       <div class="collection-container">
         <div class="created-review-box">
           작성한 리뷰
-          <p class="count-num">NNN개</p>
+          <p class="count-num">{{ user?.reviewCount }}개</p>
         </div>
 
         <div class="watchlist-box" @click="goToWatchlist">
           관심 작품
-          <p class="count-num">NNN개</p>
+          <p class="count-num">{{ user?.watchlistCount }}개</p>
         </div>
       </div>
 
@@ -145,13 +139,13 @@ onMounted(async () => {
           <div class="date-box" v-for="n in daysInMonth" :key="n">
             <span class="date">{{ n }}</span>
 
-            <div class="poster-box img-box" v-if="calendarMap[n]">
+            <div class="poster-box img-box" v-if="calendarMap[calendarDate(n)]">
               <img
                 :src="
                   'https://image.tmdb.org/t/p/w200' +
-                  calendarMap[n]?.[0]?.workPosterPath
+                  calendarMap[calendarDate(n)]?.[0]?.workPosterPath
                 "
-                :alt="calendarMap[n]?.[0]?.workTitle"
+                :alt="calendarMap[calendarDate(n)]?.[0]?.workTitle"
               />
             </div>
           </div>
