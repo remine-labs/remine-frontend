@@ -25,10 +25,11 @@ export const getPlaylists = () => {
   return api.get("/api/youtube/playlist");
 };
 
-export const getPlaylistDetail = (playlistUrl: string) => {
+export const getPlaylistDetail = (playlistUrl: string, pageNumber = 1) => {
   return api.get("/api/youtube/playlistin", {
     params: {
       url: playlistUrl,
+      pageNumber,
     },
   });
 };
