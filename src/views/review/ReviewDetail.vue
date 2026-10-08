@@ -13,6 +13,7 @@ import {
   PhDotsThreeVertical,
   PhPencil,
   PhStar,
+  PhX,
 } from "@phosphor-icons/vue";
 import Tooltip from "../../components/Tooltip.vue";
 import { useHeaderTitle } from "../../composables/useHeaderTitle";
@@ -401,6 +402,14 @@ onUnmounted(() => {
         <div class="modal-container">
           <div class="header">
             <p class="title">AI 태그 만족도 조사</p>
+            <button
+              type="button"
+              class="close-btn"
+              aria-label="닫기"
+              @click="isTagSurveyOpen = false"
+            >
+              <PhX :size="20" aria-hidden="true" />
+            </button>
           </div>
           <div class="body">
             <template v-if="surveyStep === 1">

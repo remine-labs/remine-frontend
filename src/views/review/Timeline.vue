@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import { PhCaretDown } from "@phosphor-icons/vue";
 import { api } from "../../api/client";
 import Pagination from "../../components/Pagination.vue";
+import Loader from "../../components/Loader.vue";
 
 const router = useRouter();
 
@@ -134,7 +135,8 @@ onBeforeUnmount(() => {
 
 <template>
   <main class="timeline">
-    <div class="wrap">
+    <Loader v-if="loading">목록을 구성하고 있습니다.</Loader>
+    <div v-else class="wrap">
       <div ref="filterContainer" class="filter-container relative">
         <button
           type="button"

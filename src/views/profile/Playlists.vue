@@ -3,7 +3,7 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { addPlaylist, getPlaylists } from "../../api/youtube";
 import type { Playlist } from "../../api/youtube";
-import { PhListPlus } from "@phosphor-icons/vue";
+import { PhListPlus, PhX } from "@phosphor-icons/vue";
 
 const router = useRouter();
 
@@ -62,6 +62,7 @@ onMounted(async () => {
           class="playlist-box relative"
           v-for="item in playlists"
           :key="item.playlistName"
+          @click="goToPlaylistDetail(item)"
         >
           <div class="img-box" @click="goToPlaylistDetail(item)">
             <img :src="item.thumbnailUrl" :alt="item.playlistName" />
@@ -76,12 +77,7 @@ onMounted(async () => {
                          3. 아닐 경우 video-count를 삭제하고 updatedAt으로 대체
                          4. 실제 영상 개수는 상세 페이지에서 확인 -->
             <p class="video-count">{{ item.videoCount }}개</p>
-            <button
-              class="move-to-total-video-list"
-              @click="goToPlaylistDetail(item)"
-            >
-              전체 영상 보기
-            </button>
+            <button class="move-to-total-video-list">전체 영상 보기</button>
           </div>
         </div>
       </div>
@@ -100,6 +96,14 @@ onMounted(async () => {
       <div class="modal-container">
         <div class="header">
           <p class="title">재생목록 추가</p>
+          <button
+            type="button"
+            class="close-btn"
+            aria-label="닫기"
+            @click="isAddPlaylistModalOpen = false"
+          >
+            <PhX :size="20" aria-hidden="true" />
+          </button>
         </div>
         <div class="body">
           <p class="description">
@@ -142,6 +146,7 @@ onMounted(async () => {
   display: flex;
   gap: 8px;
   margin-bottom: 8px;
+  cursor: pointer;
 }
 
 .playlists .playlist-box .img-box {
@@ -149,15 +154,10 @@ onMounted(async () => {
   border-radius: 8px;
   overflow: hidden;
   aspect-ratio: 16 / 9;
-  cursor: pointer;
 }
 
 .playlists .playlist-box .info-box {
   padding: 6px 0;
-}
-
-.playlists .playlist-box .title {
-  cursor: pointer;
 }
 
 .playlists .move-to-total-video-list {

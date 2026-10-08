@@ -5,6 +5,7 @@ import type { PlaylistDetail } from "../../api/youtube";
 import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import Pagination from "../../components/Pagination.vue";
+import { PhX } from "@phosphor-icons/vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -118,6 +119,14 @@ onMounted(() => fetchPlaylistDetail());
       <div class="modal-container">
         <div class="header">
           <p class="title">플레이리스트 연동 해제하기</p>
+          <button
+            type="button"
+            class="close-btn"
+            aria-label="닫기"
+            @click="isDeletePlaylistModalOpen = false"
+          >
+            <PhX :size="20" aria-hidden="true" />
+          </button>
         </div>
         <div class="body">
           <p>해당 플레이리스트 연동을 해제하시겠습니까?</p>
