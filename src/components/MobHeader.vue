@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { PhCaretLeft, PhGear } from "@phosphor-icons/vue";
+import { useHeaderTitle } from "../composables/useHeaderTitle";
 
 const route = useRoute();
 const router = useRouter();
+const { headerTitle, setHeaderTitle } = useHeaderTitle();
 
 // TODO: 추후 vue-router RouteMeta를 확장하는 방식 고려
 type HeaderMeta = {
@@ -15,10 +17,16 @@ type HeaderMeta = {
 
 const header = computed<HeaderMeta>(() => route.meta.header as HeaderMeta);
 
+watch(
+  () => route.fullPath,
+  () => setHeaderTitle(null),
+  { immediate: true },
+);
+
 const title = computed(() => {
   // 동적 타이틀이 필요한 페이지
   if (header.value?.titleType === "dynamic") {
-    return history.state.headerTitle ?? "ReMine";
+    return headerTitle.value ?? header.value.title ?? "";
   }
 
   // 기본 정적 타이틀
@@ -26,6 +34,7 @@ const title = computed(() => {
 });
 
 const showBack = computed(() => header.value?.showBack);
+const isHome = computed(() => route.name === "home");
 
 const goToSettings = () => {
   router.push(`/settings`);
@@ -42,9 +51,7 @@ const goToSettings = () => {
               <PhCaretLeft :size="32" />
             </button>
           </div>
-          <!-- TODO: 페이지 이동 시, 페이지에 따라 header 값 변경으로 잡아두었으나, 현재 구조로는 딜레이 발생
-                     추후 리팩토링을 통해 첫 렌더 전에 상태가 준비되도록 변경 예정 -->
-          <h1 class="logo">{{ title }}</h1>
+          <h1 :class="isHome ? 'logo' : 'page-title'">{{ title }}</h1>
         </div>
         <div class="icon-box" @click="goToSettings">
           <button class="icon settings">

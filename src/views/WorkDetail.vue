@@ -5,9 +5,11 @@ import { useRoute, useRouter } from "vue-router";
 import { PhHeart, PhPenNib } from "@phosphor-icons/vue";
 import { addWatchlist, deleteWatchlist } from "../api/watchlist";
 import { getMyReviewByWork } from "../api/review";
+import { useHeaderTitle } from "../composables/useHeaderTitle";
 
 const route = useRoute();
 const router = useRouter();
+const { setHeaderTitle } = useHeaderTitle();
 
 const mediaType = route.params.mediaType as string;
 const workId = route.params.workId as string;
@@ -287,8 +289,10 @@ const getWorkDetail = async () => {
     loading.value = true;
 
     const res = await api.get(`/api/tmdb/contents/${mediaType}/${workId}`);
+    const workData: WorkDetail = res.data.data;
 
-    work.value = res.data.data;
+    work.value = workData;
+    setHeaderTitle(workData.workTitle);
 
     const watchlistRes = await api.get(`/api/watchlist/${mediaType}/${workId}`);
 
@@ -459,7 +463,12 @@ onMounted(() => {
           <template v-if="myReview">
             <div
               class="review-summary"
-              @click="router.push(`/review/${myReview.reviewId}`)"
+              @click="
+                router.push({
+                  path: `/review/${myReview.reviewId}`,
+                  state: { headerTitle: work?.workTitle },
+                })
+              "
             >
               <div class="date">
                 <span class="label">감상 기간: </span>
