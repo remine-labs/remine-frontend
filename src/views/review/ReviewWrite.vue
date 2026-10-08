@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import Datepicker from "vue3-datepicker";
-import { PhNotePencil, PhStar } from "@phosphor-icons/vue";
+import { PhNotePencil, PhStar, PhX } from "@phosphor-icons/vue";
 import { useReviewForm } from "../../composables/useReviewForm";
 import WorkSearch from "../../components/WorkSearch.vue";
 import Loader from "../../components/Loader.vue";
@@ -183,6 +183,14 @@ const handlePageChange = (page: number) => {
       <div class="modal-container">
         <div class="header">
           <p class="title">작품을 평가해주세요.</p>
+          <button
+            type="button"
+            class="close-btn"
+            aria-label="닫기"
+            @click="isTagModalOpen = false"
+          >
+            <PhX :size="20" aria-hidden="true" />
+          </button>
         </div>
         <div class="body">
           <p>{{ modalDescription }} (중복 선택 가능)</p>
@@ -222,6 +230,14 @@ const handlePageChange = (page: number) => {
       <div class="modal-container">
         <div class="header">
           <p class="title">작품 변경</p>
+          <button
+            type="button"
+            class="close-btn"
+            aria-label="닫기"
+            @click="isChangeWorkModalOpen = false"
+          >
+            <PhX :size="20" aria-hidden="true" />
+          </button>
         </div>
         <div class="body">
           <CustomWork
