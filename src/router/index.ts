@@ -69,7 +69,7 @@ const router = createRouter({
           component: Timeline,
           meta: {
             header: {
-              title: "ReMine",
+              title: "타임라인",
               showBack: false,
             },
           },
@@ -81,7 +81,7 @@ const router = createRouter({
           component: Search,
           meta: {
             header: {
-              title: "ReMine",
+              title: "작품 검색",
               showBack: false,
             },
           },
@@ -105,6 +105,7 @@ const router = createRouter({
           component: WorkDetail,
           meta: {
             header: {
+              title: "작품 상세",
               titleType: "dynamic",
               showBack: true,
             },
@@ -117,6 +118,7 @@ const router = createRouter({
           component: ReviewWrite,
           meta: {
             header: {
+              title: "리뷰 작성",
               titleType: "dynamic",
               showBack: true,
             },
@@ -141,7 +143,7 @@ const router = createRouter({
           component: ReviewWrite,
           meta: {
             header: {
-              titleType: "dynamic",
+              title: "리뷰 수정",
               showBack: true,
             },
           },
@@ -165,7 +167,7 @@ const router = createRouter({
           component: Profile,
           meta: {
             header: {
-              title: "Profile",
+              title: "프로필",
               showBack: false,
             },
           },
@@ -177,7 +179,7 @@ const router = createRouter({
           component: Watchlist,
           meta: {
             header: {
-              title: "Watchlist",
+              title: "관심 작품",
               showBack: false,
             },
           },
@@ -189,7 +191,7 @@ const router = createRouter({
           component: Playlists,
           meta: {
             header: {
-              title: "Playlists",
+              title: "재생 목록",
               showBack: false,
             },
           },
@@ -201,7 +203,7 @@ const router = createRouter({
           component: Playlist,
           meta: {
             header: {
-              title: "Playlist",
+              title: "재생 목록 상세",
               showBack: true,
             },
           },

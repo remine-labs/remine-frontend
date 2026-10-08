@@ -90,8 +90,11 @@ const formatRelativeDate = (date: string | Date | null) => {
   return `${diff}일 전`;
 };
 
-const goToReviewDetail = (reviewId: number) => {
-  router.push(`/review/${reviewId}`);
+const goToReviewDetail = (reviewId: number, workTitle: string) => {
+  router.push({
+    path: `/review/${reviewId}`,
+    state: { headerTitle: workTitle },
+  });
 };
 
 const loadHome = async () => {
@@ -211,7 +214,7 @@ onMounted(() => {
               v-for="item in timeline.slice(0, 5)"
               :key="item.reviewId"
               class="review-card relative"
-              @click="goToReviewDetail(item.reviewId)"
+              @click="goToReviewDetail(item.reviewId, item.workTitle)"
             >
               <div class="img-box">
                 <img

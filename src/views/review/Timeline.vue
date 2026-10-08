@@ -70,8 +70,11 @@ const formatDisplayDate = (date: string | Date | null) => {
   return `${yy}.${mm}.${dd}`;
 };
 
-const goToReviewDetail = (reviewId: number) => {
-  router.push(`/review/${reviewId}`);
+const goToReviewDetail = (reviewId: number, workTitle: string) => {
+  router.push({
+    path: `/review/${reviewId}`,
+    state: { headerTitle: workTitle },
+  });
 };
 
 const fetchTimeline = async (page: number) => {
@@ -163,7 +166,7 @@ onBeforeUnmount(() => {
           class="timeline-box"
           v-for="item in timeline"
           :key="item.reviewId"
-          @click="goToReviewDetail(item.reviewId)"
+          @click="goToReviewDetail(item.reviewId, item.workTitle)"
         >
           <div class="head-box">
             <div class="img-box">

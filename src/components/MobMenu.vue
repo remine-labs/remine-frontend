@@ -6,9 +6,43 @@ import {
   PhUser,
   PhMagnifyingGlass,
 } from "@phosphor-icons/vue";
-import { useRouter } from "vue-router";
+import { computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
+const route = useRoute();
 const router = useRouter();
+
+const activeMenu = computed(() => {
+  switch (route.name) {
+    case "home":
+    case "homeLegacy":
+    case "login":
+    case "oauthCallback":
+    case "terms":
+      return "home";
+    case "timeline":
+    case "reviewCreate":
+    case "reviewDetail":
+    case "reviewEdit":
+    case "customWork":
+      return "timeline";
+    case "discover":
+      return "discover";
+    case "profile":
+    case "watchlist":
+    case "playlists":
+    case "playlistDetail":
+    case "settings":
+    case "serviceTerms":
+    case "privacyPolicy":
+      return "profile";
+    case "search":
+    case "workDetail":
+      return "search";
+    default:
+      return null;
+  }
+});
 
 const goToHome = () => {
   router.push("/");
@@ -29,43 +63,77 @@ const goToProfile = () => {
 
 <template>
   <nav>
-    <div class="nav">
+    <section class="nav">
       <div class="wrap">
         <div class="icon-container">
-          <div class="icon-box home" @click="goToHome">
+          <div
+            class="icon-box home"
+            :class="{ active: activeMenu === 'home' }"
+            @click="goToHome"
+          >
             <button>
-              <PhHouseLine :size="24"></PhHouseLine>
+              <PhHouseLine
+                :size="24"
+                :weight="activeMenu === 'home' ? 'fill' : 'regular'"
+              ></PhHouseLine>
               <span>HOME</span>
             </button>
           </div>
-          <div class="icon-box search" @click="goToSearch">
+          <div
+            class="icon-box search"
+            :class="{ active: activeMenu === 'search' }"
+            @click="goToSearch"
+          >
             <button>
-              <PhMagnifyingGlass :size="24"></PhMagnifyingGlass>
+              <PhMagnifyingGlass
+                :size="24"
+                :weight="activeMenu === 'search' ? 'fill' : 'regular'"
+              ></PhMagnifyingGlass>
               <span>SEARCH</span>
             </button>
           </div>
           <div class="fab-box relative">
-            <div class="icon-box discover">
+            <div
+              class="icon-box discover"
+              :class="{ active: activeMenu === 'discover' }"
+            >
               <button>
-                <PhSparkle :size="24"></PhSparkle>
+                <PhSparkle
+                  :size="24"
+                  :weight="activeMenu === 'discover' ? 'fill' : 'regular'"
+                ></PhSparkle>
               </button>
             </div>
           </div>
-          <div class="icon-box timeline" @click="goToTimeline">
+          <div
+            class="icon-box timeline"
+            :class="{ active: activeMenu === 'timeline' }"
+            @click="goToTimeline"
+          >
             <button>
-              <PhBook :size="24"></PhBook>
+              <PhBook
+                :size="24"
+                :weight="activeMenu === 'timeline' ? 'fill' : 'regular'"
+              ></PhBook>
               <span>REVIEWS</span>
             </button>
           </div>
-          <div class="icon-box profile" @click="goToProfile">
+          <div
+            class="icon-box profile"
+            :class="{ active: activeMenu === 'profile' }"
+            @click="goToProfile"
+          >
             <button>
-              <PhUser :size="24"></PhUser>
+              <PhUser
+                :size="24"
+                :weight="activeMenu === 'profile' ? 'fill' : 'regular'"
+              ></PhUser>
               <span>PROFILE</span>
             </button>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   </nav>
 </template>
 
@@ -81,63 +149,69 @@ nav {
   z-index: 999;
   overflow: hidden;
   padding-top: 34px;
-}
 
-.nav {
-  height: var(--menu-height);
-  color: var(--btn-active-bg);
-}
+  .nav {
+    height: var(--menu-height);
+    color: var(--btn-active-bg);
 
-nav .wrap {
-  height: inherit;
-  background: var(--bg-elevated);
-  border-radius: 16px 16px 0 0;
-  box-shadow: 0px 2px 6px #0000001e;
-}
+    .wrap {
+      height: inherit;
+      background: var(--bg-elevated);
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0px 2px 6px #0000001e;
 
-nav .wrap .icon-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  height: inherit;
-  padding: 10px 20px;
-}
+      .icon-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: inherit;
+        padding: 10px 20px;
 
-nav .wrap .icon-container .icon-box button {
-  flex-direction: column;
-}
+        > div {
+          flex: 1;
+        }
 
-nav .wrap .icon-container > .icon-box button svg {
-  color: var(--text-icon);
-}
+        .icon-box {
+          &.active svg,
+          &.active span {
+            color: var(--btn-active-bg);
+          }
+          button {
+            flex-direction: column;
+            svg {
+              color: var(--text-icon);
+            }
+            span {
+              font-size: 12px;
+              line-height: 1.6;
+              color: var(--text-menu);
+            }
+          }
+        }
 
-nav .wrap .icon-container span {
-  /* MEMO: 메뉴 하단의 텍스트는 디자인의 보조적인 역할로, 아이콘이 메인 버튼
-    디바이스별 디자인 통일을 위해 font-size를 rem대신 px로 고정 */
-  font-size: 12px;
-  line-height: 1.6;
-  color: var(--text-menu);
-}
+        .fab-box {
+          .icon-box {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 60px;
+            aspect-ratio: 1/1;
+            overflow: hidden;
+            background-color: var(--btn-active-bg);
+            border-radius: 50%;
+            box-shadow: 0px 0px 4px #1f305928;
+            z-index: 99;
 
-nav .wrap .icon-container > div {
-  flex: 1;
-}
-
-nav .wrap .icon-container .fab-box .icon-box {
-  position: absolute;
-  top: -60px;
-  left: 50%;
-  transform: translateX(-50%);
-  min-width: 60px;
-  aspect-ratio: 1/1;
-  overflow: hidden;
-  background-color: var(--btn-active-bg);
-  border-radius: 50%;
-  box-shadow: 0px 0px 4px #1f305928;
-  z-index: 99;
-}
-
-nav .wrap .fab-box .icon-box button {
-  color: var(--text-inverse);
+            button {
+              svg {
+                color: var(--text-inverse);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 </style>

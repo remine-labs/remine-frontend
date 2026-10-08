@@ -15,9 +15,11 @@ import {
   PhStar,
 } from "@phosphor-icons/vue";
 import Tooltip from "../../components/Tooltip.vue";
+import { useHeaderTitle } from "../../composables/useHeaderTitle";
 
 const route = useRoute();
 const router = useRouter();
+const { setHeaderTitle } = useHeaderTitle();
 const reviewId = Number(route.params.reviewId);
 
 let pollTimer: ReturnType<typeof setTimeout> | null = null;
@@ -114,6 +116,7 @@ const pollReview = async () => {
     const reviewData = res.data.data;
 
     review.value = reviewData;
+    setHeaderTitle(reviewData.workTitle);
 
     if (
       reviewData.aiTagStatus === "PENDING" ||
@@ -146,14 +149,6 @@ const fetchReviewDetail = async () => {
     ) {
       pollReview();
     }
-
-    history.replaceState(
-      {
-        ...history.state,
-        headerTitle: res.data.data.workTitle,
-      },
-      "",
-    );
   } catch (err: any) {
     if (err.response) {
       errorMessage.value = `${err.response.status} - ${err.response.data?.message || "서버 오류"}`;
@@ -250,6 +245,7 @@ const handleDeleteReview = async () => {
 };
 
 onMounted(() => {
+  setHeaderTitle(history.state.headerTitle ?? null);
   fetchReviewDetail();
 });
 
