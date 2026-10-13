@@ -156,21 +156,4 @@ onMounted(async () => {
   font-size: var(--font-size-sub);
   line-height: 4;
 }
-
-.custom-work {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 16px;
-  border-radius: 8px;
-  overflow: hidden;
-  cursor: pointer;
-  padding: 8px;
-  text-align: center;
-  word-break: keep-all;
-  background-color: var(--bg-surface);
-  box-shadow: var(--box-default);
-  height: 100%;
-}
 </style>
