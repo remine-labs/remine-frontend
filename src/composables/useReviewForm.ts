@@ -52,6 +52,7 @@ export function useReviewForm() {
     workPosterPath: string;
     workReleaseDate: string;
     mediaType: string;
+    workSource?: "TMDB" | "CUSTOM";
   }) => {
     work.value = {
       id: selectedWork.workId,
@@ -59,7 +60,7 @@ export function useReviewForm() {
       poster: selectedWork.workPosterPath,
       workReleaseDate: selectedWork.workReleaseDate,
       mediaType: selectedWork.mediaType,
-      workSource: "TMDB",
+      workSource: selectedWork.workSource || "TMDB",
     };
   };
 

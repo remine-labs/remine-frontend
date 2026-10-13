@@ -143,6 +143,23 @@ const handleWorkClick = () => {
   padding: 0 6px 0 0;
 }
 
+.works-list-container .custom-work {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 8px;
+  text-align: center;
+  word-break: keep-all;
+  background-color: var(--bg-surface);
+  box-shadow: var(--box-default);
+  height: 100%;
+}
+
 @media screen and (min-width: 520px) {
   .works-list-container {
     grid-template-columns: repeat(3, 1fr);

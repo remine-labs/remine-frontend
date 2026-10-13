@@ -31,7 +31,8 @@ const {
 } = useReviewForm();
 
 const isChangeWorkModalOpen = ref(false);
-const isCustomWork = ref(false);
+const activeWorkTab = ref<"registered" | "search">("search");
+const hasSearched = ref(false);
 
 const query = ref("");
 const works = ref<any[]>([]);
@@ -44,9 +45,11 @@ const totalCount = ref(0);
 
 const openChangeWorkModal = () => {
   isChangeWorkModalOpen.value = true;
-  isCustomWork.value = false;
+  activeWorkTab.value =
+    work.value.workSource === "CUSTOM" ? "registered" : "search";
   query.value = "";
   works.value = [];
+  hasSearched.value = false;
   totalPages.value = 0;
   totalCount.value = 0;
   error.value = "";
@@ -61,6 +64,7 @@ const handleSearch = (data: {
   works.value = data.works;
   totalPages.value = data.totalPages;
   totalCount.value = data.totalCount;
+  hasSearched.value = true;
 };
 
 const handleWorkSelect = (selectedWork: any) => {
@@ -71,7 +75,6 @@ const handleWorkSelect = (selectedWork: any) => {
 const handleCustomWorkRegistered = (selectedWork: any) => {
   changeWork(selectedWork);
   isChangeWorkModalOpen.value = false;
-  isCustomWork.value = false;
 };
 
 const toggleWatchlistHandler = async (work: any) => {
@@ -96,6 +99,11 @@ const toggleWatchlistHandler = async (work: any) => {
 
 const handleLoading = (value: boolean) => {
   loading.value = value;
+  if (value) {
+    works.value = [];
+    hasSearched.value = false;
+    totalCount.value = 0;
+  }
 };
 
 const handleError = (message: string) => {
@@ -112,6 +120,7 @@ const handlePageChange = (page: number) => {
     <div class="work-info-container relative" v-if="work.id">
       <div class="img-box add-overlay">
         <img
+          v-if="work.poster"
           :src="`https://image.tmdb.org/t/p/original${work.poster}`"
           :alt="work.title"
         />
@@ -240,11 +249,33 @@ const handlePageChange = (page: number) => {
           </button>
         </div>
         <div class="body">
+          <div class="change-work-tabs" role="tablist">
+            <button
+              type="button"
+              role="tab"
+              :aria-selected="activeWorkTab === 'registered'"
+              :class="{ active: activeWorkTab === 'registered' }"
+              @click="activeWorkTab = 'registered'"
+            >
+              {{ work.workSource === "CUSTOM" ? "등록한 작품" : "작품 등록" }}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              :aria-selected="activeWorkTab === 'search'"
+              :class="{ active: activeWorkTab === 'search' }"
+              @click="activeWorkTab = 'search'"
+            >
+              작품 검색
+            </button>
+          </div>
           <CustomWork
-            v-if="isCustomWork"
+            v-if="activeWorkTab === 'registered'"
+            class="modal-custom-work"
             :embedded="true"
+            :work-id="work.workSource === 'CUSTOM' ? work.id : undefined"
             @registered="handleCustomWorkRegistered"
-            @cancel="isCustomWork = false"
+            @cancel="isChangeWorkModalOpen = false"
           />
           <template v-else>
             <WorkSearch
@@ -256,7 +287,7 @@ const handlePageChange = (page: number) => {
             />
             <Loader v-if="loading">작품을 찾고 있어요.</Loader>
             <p v-if="error">{{ error }}</p>
-            <div class="search-result" v-if="!loading && totalCount > 0">
+            <div class="search-result" v-if="!loading && hasSearched">
               <div class="total-count" :class="{ invisible: totalCount === 0 }">
                 총 {{ totalCount }}건의 결과
               </div>
@@ -279,7 +310,7 @@ const handlePageChange = (page: number) => {
                     <button
                       type="button"
                       class="active-btn"
-                      @click="isCustomWork = true"
+                      @click="activeWorkTab = 'registered'"
                     >
                       작품 등록하기
                     </button>
@@ -484,13 +515,39 @@ const handlePageChange = (page: number) => {
   margin-top: 0;
 }
 
-.change-work-modal .works-list-container {
-  grid-template-columns: repeat(3, 1fr);
+.change-work-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
-.change-work-modal .custom-work {
-  padding: 0 0 20px 0;
-  min-height: auto;
+.change-work-tabs button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+}
+
+.change-work-tabs button.active {
+  background-color: var(--btn-active-bg);
+  color: var(--text-inverse);
+}
+
+.change-work-modal {
+  .modal-custom-work {
+    padding: 0;
+    min-height: auto;
+  }
+}
+
+.change-work-modal .works-list-container {
+  grid-template-columns: repeat(3, 1fr);
+
+  .custom-work {
+    padding: 0 0 20px 0;
+    min-height: auto;
+  }
 }
 
 @media screen and (min-width: 520px) {
