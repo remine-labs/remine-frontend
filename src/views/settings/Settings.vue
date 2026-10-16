@@ -65,6 +65,18 @@ const goToPrivacyPolicy = () => {
           </div>
         </div>
       </div>
+      <!-- TODO: 추후 디자인 및 문장 수정 예정 -->
+      <div class="source-attribution-container">
+        <p class="group-name">정보</p>
+        <div class="menu-box">
+          <div class="menu">
+            <p>TMDB</p>
+          </div>
+          <div class="menu">
+            <p>Just Watch</p>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
 </template>

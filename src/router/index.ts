@@ -155,7 +155,7 @@ const router = createRouter({
           component: Discover,
           meta: {
             header: {
-              title: "discover",
+              title: "작품 추천",
               showBack: false,
             },
           },

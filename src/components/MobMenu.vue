@@ -59,6 +59,10 @@ const goToTimeline = () => {
 const goToProfile = () => {
   router.push("/profile");
 };
+
+const goToDiscover = () => {
+  router.push("/discover");
+};
 </script>
 
 <template>
@@ -92,7 +96,7 @@ const goToProfile = () => {
               <span>SEARCH</span>
             </button>
           </div>
-          <div class="fab-box relative">
+          <div class="fab-box relative" @click="goToDiscover">
             <div
               class="icon-box discover"
               :class="{ active: activeMenu === 'discover' }"
