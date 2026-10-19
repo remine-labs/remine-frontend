@@ -23,6 +23,10 @@ const goToServiceTerms = () => {
 const goToPrivacyPolicy = () => {
   router.push("/terms/privacy");
 };
+
+const goToInquiry = () => {
+  router.push("/inquiry");
+};
 </script>
 
 <template>
@@ -35,8 +39,11 @@ const goToPrivacyPolicy = () => {
             <p>공지사항</p>
             <PhCaretRight :size="24" />
           </div>
-          <div class="menu">
-            <p>고객센터 > faq + form</p>
+          <!-- TODO: 임의 goToInquiry 처리.
+           추후에는 CustomerService.vue 추가하여 해당 페이지로 이동.
+           FAQ를 구성하고 하단에 별도로 '문의하기' 버튼을 통하여 inquiry로 진입 -->
+          <div class="menu" @click="goToInquiry">
+            <p>고객센터</p>
             <PhCaretRight :size="24" />
           </div>
         </div>
@@ -62,6 +69,18 @@ const goToPrivacyPolicy = () => {
           </div>
           <div class="menu">
             <p>계정삭제</p>
+          </div>
+        </div>
+      </div>
+      <!-- TODO: 추후 디자인 및 문장 수정 예정 -->
+      <div class="source-attribution-container">
+        <p class="group-name">정보</p>
+        <div class="menu-box">
+          <div class="menu">
+            <p>TMDB</p>
+          </div>
+          <div class="menu">
+            <p>Just Watch</p>
           </div>
         </div>
       </div>

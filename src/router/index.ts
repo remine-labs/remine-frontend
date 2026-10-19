@@ -19,6 +19,7 @@ import ServiceTermsView from "../views/settings/ServiceTermsView.vue";
 import CustomWork from "../views/CustomWork.vue";
 import Discover from "../views/Discover.vue";
 import Settings from "../views/settings/Settings.vue";
+import InquiryBoard from "../views/settings/InquiryBoard.vue";
 import { getMe } from "../api/auth.ts";
 
 const publicRoutes = [
@@ -27,6 +28,7 @@ const publicRoutes = [
   "login",
   "oauthCallback",
   "settings",
+  "inquiry",
   "serviceTerms",
   "privacyPolicy",
 ];
@@ -155,7 +157,7 @@ const router = createRouter({
           component: Discover,
           meta: {
             header: {
-              title: "discover",
+              title: "작품 추천",
               showBack: false,
             },
           },
@@ -216,6 +218,17 @@ const router = createRouter({
           meta: {
             header: {
               title: "설정",
+              showBack: true,
+            },
+          },
+        },
+        {
+          path: "inquiry",
+          name: "inquiry",
+          component: InquiryBoard,
+          meta: {
+            header: {
+              title: "고객센터",
               showBack: true,
             },
           },

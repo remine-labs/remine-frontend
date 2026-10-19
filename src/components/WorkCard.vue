@@ -12,9 +12,13 @@ interface WorkCardProps {
   mediaType?: string;
   isWatchlisted?: boolean;
   selectable?: boolean;
+  showWatchlist?: boolean;
+  watchlistDisabled?: boolean;
 }
 
-const props = defineProps<WorkCardProps>();
+const props = withDefaults(defineProps<WorkCardProps>(), {
+  showWatchlist: true,
+});
 
 const emit = defineEmits<{
   (e: "toggle-watchlist"): void;
@@ -56,10 +60,15 @@ const handleWorkClick = () => {
         </span>
       </div>
       <div
+        v-if="props.showWatchlist"
         class="icon-box watchlist"
         :class="{ 'no-watchlist': props.selectable }"
       >
-        <button class="heart" @click="emit('toggle-watchlist')">
+        <button
+          class="heart"
+          :disabled="props.watchlistDisabled"
+          @click="emit('toggle-watchlist')"
+        >
           <PhHeart
             :weight="props.isWatchlisted ? 'fill' : 'regular'"
             :size="24"
