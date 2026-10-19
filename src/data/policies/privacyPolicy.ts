@@ -3,8 +3,8 @@ export const privacyPolicy = {
   termsType: "PRIVACY",
   metadata: {
     createdAt: "2026-06-01",
-    updatedAt: "2026-06-01",
-    effectiveDate: "2026-06-01",
+    updatedAt: "2026-10-19",
+    effectiveDate: "2026-10-20",
   },
   content: [
     "ReMine(이하 “회사”)는 「개인정보 보호법」 등 관계 법령에 따라 이용자의 개인정보를 보호하고 권익을 보호하기 위하여 다음과 같이 개인정보 처리방침을 수립·공개합니다.",
@@ -24,7 +24,9 @@ export const privacyPolicy = {
                 type: "paragraph",
                 level: 2,
                 ordered: false,
-                content: ["필수항목: 이메일, 프로필, YouTube 데이터 조회 권한"],
+                content: [
+                  "필수항목: 이메일, 프로필, 생년월일, YouTube 데이터 조회 권한",
+                ],
               },
             ],
           },

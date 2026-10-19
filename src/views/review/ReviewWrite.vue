@@ -130,7 +130,7 @@ const handlePageChange = (page: number) => {
       </div>
     </div>
     <div class="wrap">
-      <form @submit.prevent="submitReview">
+      <form @submit.prevent="submitReview()">
         <div class="input-container relative">
           <div class="date-input-box">
             <div class="head-box relative">
@@ -220,9 +220,9 @@ const handlePageChange = (page: number) => {
             <button
               type="button"
               class="close neutral-btn"
-              @click="isTagModalOpen = false"
+              @click="submitReview(true)"
             >
-              돌아가기
+              태그 없이 리뷰 저장
             </button>
             <button
               type="button"
