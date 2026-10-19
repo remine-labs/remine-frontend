@@ -41,6 +41,12 @@ export const getWatchlist = ({
   });
 };
 
+export const getWatchlistStatus = (mediaType: string, workId: number) => {
+  return api.get<{ data: { inWatchlist: boolean } }>(
+    `/api/watchlist/${mediaType}/${workId}`,
+  );
+};
+
 export const deleteWatchlist = (mediaType: string, workId: number) => {
   return api.delete(`/api/watchlist/${mediaType}/${workId}`);
 };
