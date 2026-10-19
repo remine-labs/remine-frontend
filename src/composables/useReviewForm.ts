@@ -215,7 +215,7 @@ export function useReviewForm() {
     rating.value = Math.min(5, Math.max(0, value));
   };
 
-  const submitReview = async () => {
+  const submitReview = async (skipTagPrompt = false) => {
     const basePayload = createReviewPayload();
     // MEMO: startDate, endDate 변경 로직 미작동으로 추가한 부분
     console.log("startDate:", startDate.value);
@@ -224,7 +224,7 @@ export function useReviewForm() {
 
     const count = basePayload.comment.replace(/\s/g, "").length;
 
-    if (count < 20) {
+    if (count < 20 && !skipTagPrompt) {
       isTagModalOpen.value = true;
       return;
     }
@@ -256,6 +256,7 @@ export function useReviewForm() {
         alert("저장되었습니다. 리뷰 페이지로 이동합니다.");
       }
 
+      isTagModalOpen.value = false;
       router.push({
         name: "reviewDetail",
         params: { reviewId: targetReviewId },
