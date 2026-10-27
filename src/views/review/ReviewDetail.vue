@@ -123,7 +123,7 @@ const pollReview = async () => {
       reviewData.aiTagStatus === "PENDING" ||
       reviewData.aiTagStatus === "PROCESSING"
     ) {
-      pollTimer = setTimeout(pollReview, 2000);
+      pollTimer = setTimeout(pollReview, 4000);
     } else {
       pollTimer = null;
     }
