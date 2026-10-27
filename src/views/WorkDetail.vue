@@ -6,6 +6,7 @@ import { PhHeart, PhPenNib } from "@phosphor-icons/vue";
 import { addWatchlist, deleteWatchlist } from "../api/watchlist";
 import { getMyReviewByWork } from "../api/review";
 import { useHeaderTitle } from "../composables/useHeaderTitle";
+import ImagePlaceholder from "../components/ImagePlaceholder.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -78,6 +79,11 @@ const reviews = ref<Review[]>([]);
 
 const loading = ref(false);
 const error = ref("");
+const imageFallbacks = ref<Record<string, boolean>>({});
+
+const handleImagePlaceholderChange = (key: string, isPlaceholder: boolean) => {
+  imageFallbacks.value[key] = isPlaceholder;
+};
 
 const isWatchlisted = ref(false);
 
@@ -330,19 +336,45 @@ onMounted(() => {
 <template>
   <main class="work-detail">
     <div class="work-bg-box relative">
-      <div class="img-box add-overlay">
-        <img
-          :src="`https://image.tmdb.org/t/p/original${work?.workPosterPath}`"
-          :alt="work?.workTitle"
+      <div
+        class="img-box add-overlay"
+        :class="{
+          holder: imageFallbacks['work-background'] ?? !work?.workPosterPath,
+        }"
+      >
+        <ImagePlaceholder
+          fit="cover"
+          :src="
+            work?.workPosterPath
+              ? `https://image.tmdb.org/t/p/original${work.workPosterPath}`
+              : ''
+          "
+          :alt="work?.workTitle ?? ''"
+          @placeholder-change="
+            handleImagePlaceholderChange('work-background', $event)
+          "
         />
       </div>
     </div>
     <div class="wrap">
       <div class="work-info-container relative">
-        <div class="img-box poster">
-          <img
-            :src="`https://image.tmdb.org/t/p/w200${work?.workPosterPath}`"
-            :alt="work?.workTitle"
+        <div
+          class="img-box poster"
+          :class="{
+            holder: imageFallbacks['work-poster'] ?? !work?.workPosterPath,
+          }"
+        >
+          <ImagePlaceholder
+            fit="cover"
+            :src="
+              work?.workPosterPath
+                ? `https://image.tmdb.org/t/p/w200${work.workPosterPath}`
+                : ''
+            "
+            :alt="work?.workTitle ?? ''"
+            @placeholder-change="
+              handleImagePlaceholderChange('work-poster', $event)
+            "
           />
         </div>
         <div class="work-info-box">
@@ -390,14 +422,26 @@ onMounted(() => {
         <div class="actor-list-box">
           <div
             class="actor-box"
-            v-for="actor in work?.actors"
+            v-for="(actor, index) in work?.actors"
             :key="actor.name"
           >
-            <div class="img-box">
-              <img
-                v-if="actor.profilePath"
-                :src="`https://image.tmdb.org/t/p/w200${actor.profilePath}`"
+            <div
+              class="img-box"
+              :class="{
+                holder: imageFallbacks[`actor-${index}`] ?? !actor.profilePath,
+              }"
+            >
+              <ImagePlaceholder
+                fit="cover"
+                :src="
+                  actor.profilePath
+                    ? `https://image.tmdb.org/t/p/w200${actor.profilePath}`
+                    : ''
+                "
                 :alt="actor.name"
+                @placeholder-change="
+                  handleImagePlaceholderChange(`actor-${index}`, $event)
+                "
               />
             </div>
             <span class="actor-name description ellipsis-2">
@@ -430,11 +474,26 @@ onMounted(() => {
                 rel="noopener noreferrer"
                 class="ott"
               >
-                <img
-                  :src="getProviderImage(provider)"
-                  :alt="getProviderInfo(provider)?.name"
-                  class="ott-icon"
-                />
+                <div
+                  class="img-box ott-icon"
+                  :class="{
+                    holder:
+                      imageFallbacks[`provider-${provider}`] ??
+                      !getProviderImage(provider),
+                  }"
+                >
+                  <ImagePlaceholder
+                    fit="cover"
+                    :src="getProviderImage(provider)"
+                    :alt="getProviderInfo(provider)?.name ?? provider"
+                    @placeholder-change="
+                      handleImagePlaceholderChange(
+                        `provider-${provider}`,
+                        $event,
+                      )
+                    "
+                  />
+                </div>
               </a>
               <div v-else class="no-data-ott">
                 {{ provider }}
@@ -587,7 +646,7 @@ onMounted(() => {
   font-weight: 600;
 }
 
-.work-detail .work-meta-box .age-rating.age-ALL {
+.work-detail .work-meta-box .age-rating.age-All {
   background-color: #3fa856;
   color: var(--text-static-wh);
 }
@@ -723,6 +782,15 @@ onMounted(() => {
   word-break: break-all;
   text-align: center;
   overflow: hidden;
+}
+
+.work-detail .provider-box .ott-box .ott .img-box {
+  width: 100%;
+  height: 100%;
+}
+
+.work-detail .provider-box .ott-box .ott .img-box img {
+  object-fit: cover;
 }
 
 .work-detail .provider-box .description {

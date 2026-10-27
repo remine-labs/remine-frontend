@@ -6,6 +6,7 @@ import { api } from "../api/client";
 import { PhPencil, PhStar } from "@phosphor-icons/vue";
 import WorkCard from "../components/WorkCard.vue";
 import Loader from "../components/Loader.vue";
+import ImagePlaceholder from "../components/ImagePlaceholder.vue";
 import { addWatchlist, deleteWatchlist } from "../api/watchlist";
 
 const router = useRouter();
@@ -35,6 +36,14 @@ const trendingWorks = ref<TrendingWork[]>([]);
 const isLoadingHome = ref(true);
 const loading = ref(false);
 const timeline = ref<Review[]>([]);
+const placeholderReviews = ref<Record<number, boolean>>({});
+
+const handleTimelinePlaceholderChange = (
+  reviewId: number,
+  isPlaceholder: boolean,
+) => {
+  placeholderReviews.value[reviewId] = isPlaceholder;
+};
 
 const user = ref<MeResponse | null>(null);
 
@@ -142,7 +151,7 @@ const fetchTimeline = async () => {
     const res = await api.get("/api/reviews/timeline", {
       params: {
         page: 1,
-        size: 3,
+        size: 5,
         sortType: "LATEST",
       },
     });
@@ -159,12 +168,12 @@ const fetchTimeline = async () => {
 const fetchTrending = async (mediaType: "movie" | "tv") => {
   try {
     const res = await api.get(`/api/tmdb/contents/trending/${mediaType}`);
-    const works: TrendingWork[] = res.data.data.results.map(
-      (work: Omit<TrendingWork, "isWatchlisted">) => ({
+    const works: TrendingWork[] = res.data.data.results
+      .slice(0, 8)
+      .map((work: Omit<TrendingWork, "isWatchlisted">) => ({
         ...work,
         isWatchlisted: false,
-      }),
-    );
+      }));
 
     if (user.value) {
       const worksWithWatchlistStatus = await Promise.all(
@@ -216,10 +225,24 @@ onMounted(() => {
               class="review-card relative"
               @click="goToReviewDetail(item.reviewId, item.workTitle)"
             >
-              <div class="img-box">
-                <img
-                  :src="`https://image.tmdb.org/t/p/w200${item.workPosterPath}`"
-                  :alt="`${item.workTitle} 포스터`"
+              <div
+                class="img-box"
+                :class="{
+                  holder:
+                    placeholderReviews[item.reviewId] ??
+                    !item.workPosterPath,
+                }"
+              >
+                <ImagePlaceholder
+                  :src="
+                    item.workPosterPath
+                      ? `https://image.tmdb.org/t/p/w200${item.workPosterPath}`
+                      : ''
+                  "
+                  :alt="item.workTitle"
+                  @placeholder-change="
+                    handleTimelinePlaceholderChange(item.reviewId, $event)
+                  "
                 />
               </div>
 
@@ -249,7 +272,7 @@ onMounted(() => {
       <section class="recommend">
         <div v-if="user" class="remine-recommend-container">
           <h3 class="title">리뷰를 분석해봤어요 👀</h3>
-          <p class="description">내가 남긴 리뷰에서 취향을 찾아봤어요.</p>
+          <p class="description">작성하신 리뷰에서 취향을 찾아봤어요.</p>
         </div>
       </section>
       <!-- TODO: TMDB 인기작 + 장르로 가져올 수 있는지 -->

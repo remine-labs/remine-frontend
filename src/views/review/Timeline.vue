@@ -5,6 +5,7 @@ import { PhCaretDown } from "@phosphor-icons/vue";
 import { api } from "../../api/client";
 import Pagination from "../../components/Pagination.vue";
 import Loader from "../../components/Loader.vue";
+import ImagePlaceholder from "../../components/ImagePlaceholder.vue";
 
 const router = useRouter();
 
@@ -58,6 +59,14 @@ const currentPage = ref(1);
 const totalPages = ref(0);
 const loading = ref(false);
 const timeline = ref<Review[]>([]);
+const placeholderReviews = ref<Record<number, boolean>>({});
+
+const handleTimelinePlaceholderChange = (
+  reviewId: number,
+  isPlaceholder: boolean,
+) => {
+  placeholderReviews.value[reviewId] = isPlaceholder;
+};
 
 const formatDisplayDate = (date: string | Date | null) => {
   if (!date) return "";
@@ -171,10 +180,23 @@ onBeforeUnmount(() => {
           @click="goToReviewDetail(item.reviewId, item.workTitle)"
         >
           <div class="head-box">
-            <div class="img-box">
-              <img
-                :src="`https://image.tmdb.org/t/p/w200${item.workPosterPath}`"
+            <div
+              class="img-box"
+              :class="{
+                holder:
+                  placeholderReviews[item.reviewId] ?? !item.workPosterPath,
+              }"
+            >
+              <ImagePlaceholder
+                :src="
+                  item.workPosterPath
+                    ? `https://image.tmdb.org/t/p/w200${item.workPosterPath}`
+                    : ''
+                "
                 :alt="item.workTitle"
+                @placeholder-change="
+                  handleTimelinePlaceholderChange(item.reviewId, $event)
+                "
               />
             </div>
 
@@ -253,7 +275,7 @@ onBeforeUnmount(() => {
   overflow: hidden;
 }
 
-.timeline .head-box .img-box img {
+.timeline .head-box .img-box img:not(.is-placeholder) {
   margin-top: -10%;
 }
 

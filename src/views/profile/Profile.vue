@@ -6,6 +6,7 @@ import { api } from "../../api/client";
 import { useRouter } from "vue-router";
 import { PhCaretLeft, PhCaretRight } from "@phosphor-icons/vue";
 import dayjs from "dayjs";
+import ImagePlaceholder from "../../components/ImagePlaceholder.vue";
 
 const router = useRouter();
 
@@ -32,6 +33,15 @@ const daysInMonth = computed(() => currentMonth.value.daysInMonth());
 const firstDay = computed(() => currentMonth.value.startOf("month").day());
 
 const calendarMap = ref<Record<string, HistoryItem[]>>({});
+const placeholderImages = ref<Record<string, boolean>>({});
+const isProfilePlaceholder = ref(true);
+
+const handleCalendarPlaceholderChange = (
+  key: string,
+  isPlaceholder: boolean,
+) => {
+  placeholderImages.value[key] = isPlaceholder;
+};
 
 const calendarDate = (day: number) =>
   currentMonth.value.date(day).format("YYYY-MM-DD");
@@ -57,6 +67,7 @@ const getCalendar = async () => {
     );
 
     calendarMap.value = res.data.data;
+    placeholderImages.value = {};
   } catch (error) {
     console.error("calendar 조회 실패", error);
   }
@@ -83,9 +94,15 @@ onMounted(async () => {
   <main class="profile">
     <div class="wrap">
       <div class="user-container" v-if="user">
-        <div class="img-box profile-img">
-          <img :src="user.profileUrl" :alt="`${user.name}의 프로필 이미지`" />
-          <!-- TODO: 이미지 값이 null 일 때 대체 이미지 필요 -->
+        <div
+          class="img-box profile-img"
+          :class="{ holder: isProfilePlaceholder }"
+        >
+          <ImagePlaceholder
+            :src="user.profileUrl || ''"
+            :alt="`${user.name}의 프로필 이미지`"
+            @placeholder-change="isProfilePlaceholder = $event"
+          />
         </div>
         <p class="username title">{{ user.name }}</p>
       </div>
@@ -139,13 +156,25 @@ onMounted(async () => {
           <div class="date-box" v-for="n in daysInMonth" :key="n">
             <span class="date">{{ n }}</span>
 
-            <div class="poster-box img-box" v-if="calendarMap[calendarDate(n)]">
-              <img
+            <div
+              class="poster-box img-box"
+              v-if="calendarMap[calendarDate(n)]"
+              :class="{
+                holder:
+                  placeholderImages[calendarDate(n)] ??
+                  !calendarMap[calendarDate(n)]?.[0]?.workPosterPath,
+              }"
+            >
+              <ImagePlaceholder
                 :src="
-                  'https://image.tmdb.org/t/p/w200' +
                   calendarMap[calendarDate(n)]?.[0]?.workPosterPath
+                    ? `https://image.tmdb.org/t/p/w200${calendarMap[calendarDate(n)]?.[0]?.workPosterPath}`
+                    : ''
                 "
-                :alt="calendarMap[calendarDate(n)]?.[0]?.workTitle"
+                :alt="calendarMap[calendarDate(n)]?.[0]?.workTitle ?? ''"
+                @placeholder-change="
+                  handleCalendarPlaceholderChange(calendarDate(n), $event)
+                "
               />
             </div>
           </div>

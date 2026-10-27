@@ -300,6 +300,10 @@ textarea:focus {
   color: var(--heart);
 }
 
+.img-box {
+  background-color: #a7a7a74f;
+}
+
 .img-box.add-overlay:after {
   content: "";
   position: absolute;
