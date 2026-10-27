@@ -8,6 +8,7 @@ import Loader from "../../components/Loader.vue";
 import WorkCard from "../../components/WorkCard.vue";
 import Pagination from "../../components/Pagination.vue";
 import CustomWork from "../CustomWork.vue";
+import ImagePlaceholder from "../../components/ImagePlaceholder.vue";
 import { addWatchlist, deleteWatchlist } from "../../api/watchlist.ts";
 
 const {
@@ -31,6 +32,7 @@ const {
 } = useReviewForm();
 
 const isChangeWorkModalOpen = ref(false);
+const isPosterPlaceholder = ref(true);
 const activeWorkTab = ref<"registered" | "search">("search");
 const hasSearched = ref(false);
 
@@ -118,11 +120,15 @@ const handlePageChange = (page: number) => {
 <template>
   <main class="review-write">
     <div class="work-info-container relative" v-if="work.id">
-      <div class="img-box add-overlay">
-        <img
-          v-if="work.poster"
-          :src="`https://image.tmdb.org/t/p/original${work.poster}`"
+      <div class="img-box add-overlay" :class="{ holder: isPosterPlaceholder }">
+        <ImagePlaceholder
+          :src="
+            work.poster
+              ? `https://image.tmdb.org/t/p/original${work.poster}`
+              : ''
+          "
           :alt="work.title"
+          @placeholder-change="isPosterPlaceholder = $event"
         />
       </div>
       <div class="icon-box" @click="openChangeWorkModal">
@@ -344,6 +350,10 @@ const handlePageChange = (page: number) => {
 
 .review-write .work-info-container .img-box {
   margin-top: -15%;
+
+  &.holder {
+    margin-top: -45%;
+  }
 }
 
 .review-write .work-info-container .icon-box {
@@ -564,11 +574,23 @@ const handlePageChange = (page: number) => {
   .review-write .input-container {
     margin-top: -6%;
   }
+
+  .review-write .work-info-container .img-box {
+    &.holder {
+      margin-top: -47%;
+    }
+  }
 }
 
 @media screen and (min-width: 640px) {
   .review-write .work-info-container {
     aspect-ratio: 11 / 5;
+  }
+
+  .review-write .work-info-container .img-box {
+    &.holder {
+      margin-top: -54%;
+    }
   }
 }
 </style>

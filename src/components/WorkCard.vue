@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import { PhHeart } from "@phosphor-icons/vue";
+import { ref } from "vue";
+import ImagePlaceholder from "./ImagePlaceholder.vue";
 
 const router = useRouter();
 
@@ -19,6 +21,7 @@ interface WorkCardProps {
 const props = withDefaults(defineProps<WorkCardProps>(), {
   showWatchlist: true,
 });
+const isPosterPlaceholder = ref(!props.workPosterPath);
 
 const emit = defineEmits<{
   (e: "toggle-watchlist"): void;
@@ -43,10 +46,19 @@ const handleWorkClick = () => {
       </span>
     </div>
 
-    <div class="img-box poster" @click="handleWorkClick">
-      <img
-        :src="`https://image.tmdb.org/t/p/w200${workPosterPath}`"
+    <div
+      class="img-box poster"
+      :class="{ holder: isPosterPlaceholder }"
+      @click="handleWorkClick"
+    >
+      <ImagePlaceholder
+        :src="
+          workPosterPath
+            ? `https://image.tmdb.org/t/p/w200${workPosterPath}`
+            : ''
+        "
         :alt="workTitle"
+        @placeholder-change="isPosterPlaceholder = $event"
       />
     </div>
 

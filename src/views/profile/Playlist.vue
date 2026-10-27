@@ -6,6 +6,7 @@ import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import Pagination from "../../components/Pagination.vue";
 import { PhX } from "@phosphor-icons/vue";
+import ImagePlaceholder from "../../components/ImagePlaceholder.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -36,6 +37,12 @@ const goToSearch = (videoUrl: string) => {
 };
 
 const playlistDetail = ref<PlaylistDetail[]>([]);
+const placeholderImages = ref<Record<string, boolean>>({});
+
+const handlePlaceholderChange = (videoUrl: string, isPlaceholder: boolean) => {
+  placeholderImages.value[videoUrl] = isPlaceholder;
+};
+
 const visiblePlaylistDetail = computed(() =>
   playlistDetail.value.filter(
     (item) =>
@@ -97,8 +104,20 @@ onMounted(() => fetchPlaylistDetail());
           :key="item.videoName"
           @click="goToSearch(item.videoUrl)"
         >
-          <div class="img-box">
-            <img :src="item.thumbnailUrl" :alt="item.videoName" />
+          <div
+            class="img-box"
+            :class="{
+              holder:
+                placeholderImages[item.videoUrl] ?? !item.thumbnailUrl,
+            }"
+          >
+            <ImagePlaceholder
+              :src="item.thumbnailUrl || ''"
+              :alt="item.videoName"
+              @placeholder-change="
+                handlePlaceholderChange(item.videoUrl, $event)
+              "
+            />
           </div>
           <p class="video-name ellipsis-2">
             {{ item.videoName }}

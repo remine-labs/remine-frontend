@@ -4,12 +4,21 @@ import { useRouter } from "vue-router";
 import { addPlaylist, getPlaylists } from "../../api/youtube";
 import type { Playlist } from "../../api/youtube";
 import { PhListPlus, PhX } from "@phosphor-icons/vue";
+import ImagePlaceholder from "../../components/ImagePlaceholder.vue";
 
 const router = useRouter();
 
 const playlistUrl = ref("");
 const isAddPlaylistModalOpen = ref(false);
 const playlists = ref<Playlist[]>([]);
+const placeholderImages = ref<Record<string, boolean>>({});
+
+const handlePlaceholderChange = (
+  playlistUrl: string,
+  isPlaceholder: boolean,
+) => {
+  placeholderImages.value[playlistUrl] = isPlaceholder;
+};
 
 const goToWatchlist = () => {
   router.push("/watchlist");
@@ -64,8 +73,21 @@ onMounted(async () => {
           :key="item.playlistName"
           @click="goToPlaylistDetail(item)"
         >
-          <div class="img-box" @click="goToPlaylistDetail(item)">
-            <img :src="item.thumbnailUrl" :alt="item.playlistName" />
+          <div
+            class="img-box"
+            :class="{
+              holder:
+                placeholderImages[item.playlistUrl] ?? !item.thumbnailUrl,
+            }"
+            @click="goToPlaylistDetail(item)"
+          >
+            <ImagePlaceholder
+              :src="item.thumbnailUrl || ''"
+              :alt="item.playlistName"
+              @placeholder-change="
+                handlePlaceholderChange(item.playlistUrl, $event)
+              "
+            />
           </div>
           <div class="info-box">
             <p class="playlist-name title" @click="goToPlaylistDetail(item)">

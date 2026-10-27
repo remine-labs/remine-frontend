@@ -16,6 +16,7 @@ import {
   PhX,
 } from "@phosphor-icons/vue";
 import Tooltip from "../../components/Tooltip.vue";
+import ImagePlaceholder from "../../components/ImagePlaceholder.vue";
 import { useHeaderTitle } from "../../composables/useHeaderTitle";
 
 const route = useRoute();
@@ -60,6 +61,7 @@ const review = ref<ReviewDetail | null>(null);
 const isLoading = ref(true);
 const errorMessage = ref("");
 const isMenuOpen = ref(false);
+const isPosterPlaceholder = ref(true);
 
 const negativeReasons = ref<string[]>([]);
 const customNegativeReason = ref("");
@@ -123,7 +125,7 @@ const pollReview = async () => {
       reviewData.aiTagStatus === "PENDING" ||
       reviewData.aiTagStatus === "PROCESSING"
     ) {
-      pollTimer = setTimeout(pollReview, 2000);
+      pollTimer = setTimeout(pollReview, 4000);
     } else {
       pollTimer = null;
     }
@@ -265,16 +267,25 @@ onUnmounted(() => {
 
     <template v-else-if="review">
       <div class="work-info-container relative">
-        <div class="img-box add-overlay">
-          <img
-            :src="`https://image.tmdb.org/t/p/original${review.workPosterPath}`"
+        <div
+          class="img-box add-overlay"
+          :class="{ holder: isPosterPlaceholder }"
+        >
+          <ImagePlaceholder
+            :src="
+              review.workPosterPath
+                ? `https://image.tmdb.org/t/p/original${review.workPosterPath}`
+                : ''
+            "
             :alt="review.workTitle"
+            @placeholder-change="isPosterPlaceholder = $event"
           />
         </div>
         <div class="icon-box" @click="toggleMenu">
           <PhDotsThreeVertical :size="30"></PhDotsThreeVertical>
         </div>
         <div class="modal-menu-box" :class="{ active: isMenuOpen }">
+          <!-- TODO: workSource가 CUSTOM일 때 작품 상세보기 렌더링 안 하기 -->
           <p @click="goToWorkDetail">작품 상세보기</p>
           <p @click="goToEdit">수정</p>
           <p @click="handleDeleteReview">삭제</p>
@@ -618,6 +629,10 @@ onUnmounted(() => {
 
 .review-detail .work-info-container .img-box {
   margin-top: -5%;
+
+  &.holder {
+    margin-top: -25%;
+  }
 }
 
 .review-detail .work-info-container .icon-box {
@@ -840,6 +855,10 @@ onUnmounted(() => {
 
   .review-detail .work-info-container .img-box {
     margin-top: -10%;
+
+    &.holder {
+      margin-top: -45%;
+    }
   }
 }
 
