@@ -36,7 +36,7 @@ interface TrendingWork {
 }
 
 interface TrendingApiWork extends Omit<TrendingWork, "isWatchlisted"> {
-  isWatchlist: boolean;
+  inWatchlist: boolean;
 }
 
 const trendingWorks = ref<TrendingWork[]>([]);
@@ -184,7 +184,7 @@ const fetchTrending = async (mediaType: "movie" | "tv") => {
         ...work,
         isWatchlisted:
           getWatchlistOverride(work.mediaType, work.workId) ??
-          work.isWatchlist,
+          work.inWatchlist,
       }));
   } catch (error) {
     console.error("인기작 조회 실패", error);

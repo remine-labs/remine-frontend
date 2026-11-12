@@ -54,7 +54,7 @@ const handleSearch = async () => {
             ...work,
             isWatchlisted:
                 getWatchlistOverride(work.mediaType, work.workId) ??
-                work.isWatchlist ??
+                work.inWatchlist ??
                 false,
         }))
 
