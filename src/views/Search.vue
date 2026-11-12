@@ -6,6 +6,7 @@ import Loader from "../components/Loader.vue";
 import WorkCard from "../components/WorkCard.vue";
 import Pagination from "../components/Pagination.vue";
 import { addWatchlist, deleteWatchlist } from "../api/watchlist.ts";
+import { setWatchlistOverride } from "../composables/useWatchlistState";
 
 const route = useRoute();
 const router = useRouter();
@@ -57,6 +58,7 @@ const goToCustomWork = () => {
 
 const toggleWatchlistHandler = async (work: any) => {
   try {
+    const isWatchlisted = !work.isWatchlisted;
     if (work.isWatchlisted) {
       await deleteWatchlist(work.mediaType, work.workId);
     } else {
@@ -69,7 +71,8 @@ const toggleWatchlistHandler = async (work: any) => {
       });
     }
 
-    work.isWatchlisted = !work.isWatchlisted;
+    work.isWatchlisted = isWatchlisted;
+    setWatchlistOverride(work.mediaType, work.workId, isWatchlisted);
   } catch (error) {
     console.error(error);
   }

@@ -2,6 +2,7 @@
 import { PhMagnifyingGlass, PhXCircle } from '@phosphor-icons/vue'
 import { ref, watch } from 'vue'
 import { api } from '../api/client'
+import { getWatchlistOverride } from '../composables/useWatchlistState'
 
 const query = defineModel<string>({ required: true })
 const currentPage = defineModel<number>('currentPage', { default: 1 })
@@ -49,18 +50,13 @@ const handleSearch = async () => {
 
         const data = res.data.data
 
-        const worksWithWatchlist = await Promise.all(
-            data.results.map(async (work: any) => {
-                const watchlistRes = await api.get(
-                    `/api/watchlist/${work.mediaType}/${work.workId}`
-                )
-
-                return {
-                    ...work,
-                    isWatchlisted: watchlistRes.data.data.inWatchlist,
-                }
-            })
-        )
+        const worksWithWatchlist = data.results.map((work: any) => ({
+            ...work,
+            isWatchlisted:
+                getWatchlistOverride(work.mediaType, work.workId) ??
+                work.isWatchlist ??
+                false,
+        }))
 
         emit('search', {
             works: worksWithWatchlist,
