@@ -142,13 +142,14 @@ const handleWorkClick = () => {
 .work-box .work-title-box {
   display: flex;
   flex: 1;
+  min-width: 0;
   align-items: center;
   gap: 4px;
   padding: 8px 0px 8px 6px;
 }
 
 .work-box .work-title-box .work-name {
-  max-width: calc(100% - 4rem);
+  min-width: 0;
 }
 
 .work-box .work-title-box .release-year {
@@ -156,10 +157,14 @@ const handleWorkClick = () => {
 }
 
 .work-box .work-info-box .watchlist {
+  box-sizing: border-box;
+  flex: 0 0 36px;
+  width: 36px;
   padding: 8px 6px;
 }
 
 .work-box .work-info-box .no-watchlist {
+  flex: 0 0 0;
   width: 0;
   padding: 0 6px 0 0;
 }
