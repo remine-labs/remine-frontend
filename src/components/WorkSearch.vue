@@ -71,6 +71,17 @@ const handleSearch = async () => {
     }
 }
 
+const searchFromFirstPage = () => {
+    if (!query.value.trim()) return
+
+    if (currentPage.value !== 1) {
+        currentPage.value = 1
+        return
+    }
+
+    handleSearch()
+}
+
 const handlePageChange = (page: number) => {
     currentPage.value = page
 }
@@ -82,20 +93,20 @@ watch(currentPage, () => {
 })
 
 defineExpose({
-    handleSearch,
+    handleSearch: searchFromFirstPage,
 })
 </script>
 
 <template>
     <div class="search-container input-text">
         <input v-model="query" class="work-search-input" type="search" placeholder="작품 제목 또는 유튜브 링크를 입력해주세요."
-            @keyup.enter="handleSearch" />
+            @keyup.enter="searchFromFirstPage" />
 
         <button v-if="query" class="icon-btn empty-input-btn" type="button" @click="query = ''">
             <PhXCircle :size="20" weight="fill" />
         </button>
 
-        <button class="icon-btn search-btn" type="button" @click="handleSearch">
+        <button class="icon-btn search-btn" type="button" @click="searchFromFirstPage">
             <PhMagnifyingGlass :size="24" />
         </button>
     </div>
