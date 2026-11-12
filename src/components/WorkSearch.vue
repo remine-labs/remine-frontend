@@ -2,6 +2,7 @@
 import { PhMagnifyingGlass, PhXCircle } from '@phosphor-icons/vue'
 import { ref, watch } from 'vue'
 import { api } from '../api/client'
+import { getWatchlistOverride } from '../composables/useWatchlistState'
 
 const query = defineModel<string>({ required: true })
 const currentPage = defineModel<number>('currentPage', { default: 1 })
@@ -49,18 +50,13 @@ const handleSearch = async () => {
 
         const data = res.data.data
 
-        const worksWithWatchlist = await Promise.all(
-            data.results.map(async (work: any) => {
-                const watchlistRes = await api.get(
-                    `/api/watchlist/${work.mediaType}/${work.workId}`
-                )
-
-                return {
-                    ...work,
-                    isWatchlisted: watchlistRes.data.data.inWatchlist,
-                }
-            })
-        )
+        const worksWithWatchlist = data.results.map((work: any) => ({
+            ...work,
+            isWatchlisted:
+                getWatchlistOverride(work.mediaType, work.workId) ??
+                work.inWatchlist ??
+                false,
+        }))
 
         emit('search', {
             works: worksWithWatchlist,
@@ -75,6 +71,17 @@ const handleSearch = async () => {
     }
 }
 
+const searchFromFirstPage = () => {
+    if (!query.value.trim()) return
+
+    if (currentPage.value !== 1) {
+        currentPage.value = 1
+        return
+    }
+
+    handleSearch()
+}
+
 const handlePageChange = (page: number) => {
     currentPage.value = page
 }
@@ -86,20 +93,20 @@ watch(currentPage, () => {
 })
 
 defineExpose({
-    handleSearch,
+    handleSearch: searchFromFirstPage,
 })
 </script>
 
 <template>
     <div class="search-container input-text">
         <input v-model="query" class="work-search-input" type="search" placeholder="작품 제목 또는 유튜브 링크를 입력해주세요."
-            @keyup.enter="handleSearch" />
+            @keyup.enter="searchFromFirstPage" />
 
         <button v-if="query" class="icon-btn empty-input-btn" type="button" @click="query = ''">
             <PhXCircle :size="20" weight="fill" />
         </button>
 
-        <button class="icon-btn search-btn" type="button" @click="handleSearch">
+        <button class="icon-btn search-btn" type="button" @click="searchFromFirstPage">
             <PhMagnifyingGlass :size="24" />
         </button>
     </div>

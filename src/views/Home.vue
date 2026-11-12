@@ -8,6 +8,10 @@ import WorkCard from "../components/WorkCard.vue";
 import Loader from "../components/Loader.vue";
 import ImagePlaceholder from "../components/ImagePlaceholder.vue";
 import { addWatchlist, deleteWatchlist } from "../api/watchlist";
+import {
+  getWatchlistOverride,
+  setWatchlistOverride,
+} from "../composables/useWatchlistState";
 
 const router = useRouter();
 
@@ -29,6 +33,10 @@ interface TrendingWork {
   workReleaseDate: string;
   mediaType: "movie" | "tv";
   isWatchlisted: boolean;
+}
+
+interface TrendingApiWork extends Omit<TrendingWork, "isWatchlisted"> {
+  inWatchlist: boolean;
 }
 
 const trendingWorks = ref<TrendingWork[]>([]);
@@ -127,6 +135,7 @@ const loadHome = async () => {
 
 const toggleWatchlistHandler = async (work: TrendingWork) => {
   try {
+    const isWatchlisted = !work.isWatchlisted;
     if (work.isWatchlisted) {
       await deleteWatchlist(work.mediaType, work.workId);
     } else {
@@ -139,7 +148,8 @@ const toggleWatchlistHandler = async (work: TrendingWork) => {
       });
     }
 
-    work.isWatchlisted = !work.isWatchlisted;
+    work.isWatchlisted = isWatchlisted;
+    setWatchlistOverride(work.mediaType, work.workId, isWatchlisted);
   } catch (error) {
     console.error("관심 작품 변경 실패", error);
   }
@@ -168,30 +178,14 @@ const fetchTimeline = async () => {
 const fetchTrending = async (mediaType: "movie" | "tv") => {
   try {
     const res = await api.get(`/api/tmdb/contents/trending/${mediaType}`);
-    const works: TrendingWork[] = res.data.data.results
+    trendingWorks.value = res.data.data.results
       .slice(0, 8)
-      .map((work: Omit<TrendingWork, "isWatchlisted">) => ({
+      .map((work: TrendingApiWork) => ({
         ...work,
-        isWatchlisted: false,
+        isWatchlisted:
+          getWatchlistOverride(work.mediaType, work.workId) ??
+          work.inWatchlist,
       }));
-
-    if (user.value) {
-      const worksWithWatchlistStatus = await Promise.all(
-        works.map(async (work) => {
-          const watchlistRes = await api.get(
-            `/api/watchlist/${work.mediaType}/${work.workId}`,
-          );
-
-          return {
-            ...work,
-            isWatchlisted: watchlistRes.data.data.inWatchlist,
-          };
-        }),
-      );
-      trendingWorks.value = worksWithWatchlistStatus;
-    } else {
-      trendingWorks.value = works;
-    }
   } catch (error) {
     console.error("인기작 조회 실패", error);
     trendingWorks.value = [];
