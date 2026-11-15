@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import Datepicker from "vue3-datepicker";
-import { computed, onMounted, ref, watch } from "vue";
-import { getMe, type MeResponse } from "../../api/auth";
+import { computed, ref, watch } from "vue";
+import type { MeResponse } from "../../api/auth";
 import { api } from "../../api/client";
 import { useRouter } from "vue-router";
 import { PhCaretLeft, PhCaretRight } from "@phosphor-icons/vue";
 import dayjs from "dayjs";
 import ImagePlaceholder from "../../components/ImagePlaceholder.vue";
+import { getCurrentUser } from "../../composables/useAuthState";
 
 const router = useRouter();
 
@@ -19,7 +20,7 @@ interface ApiResponse<T> {
   data: T;
 }
 
-const user = ref<MeResponse | null>(null);
+const user = ref<MeResponse | null>(getCurrentUser());
 
 const pickedDate = ref(new Date());
 
@@ -81,13 +82,6 @@ watch(
   { immediate: true },
 );
 
-onMounted(async () => {
-  try {
-    user.value = await getMe();
-  } catch (err) {
-    console.error(err);
-  }
-});
 </script>
 
 <template>

@@ -4,9 +4,9 @@ import { useRouter } from "vue-router";
 import Datepicker from "vue3-datepicker";
 import axios from "axios";
 import Loader from "../../components/Loader.vue";
-import { getMe } from "../../api/auth";
 import { agreeToTerms, completeSignup, getMyTerms } from "../../api/terms";
 import type { TermsItem } from "../../api/terms";
+import { getCurrentUser } from "../../composables/useAuthState";
 
 const router = useRouter();
 const birthDate = ref<Date | undefined>(undefined);
@@ -130,7 +130,12 @@ const submitAgreements = async () => {
 
 onMounted(async () => {
   try {
-    const [user, myTerms] = await Promise.all([getMe(), getMyTerms()]);
+    const user = getCurrentUser();
+    if (!user) {
+      throw new Error("인증된 사용자 정보가 없습니다.");
+    }
+
+    const myTerms = await getMyTerms();
     terms.value = myTerms;
     isBirthDateVerified.value = user.birthDateSet;
   } catch {
