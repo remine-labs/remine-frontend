@@ -21,6 +21,7 @@ import Discover from "../views/Discover.vue";
 import Settings from "../views/settings/Settings.vue";
 import InquiryBoard from "../views/settings/InquiryBoard.vue";
 import { getMe } from "../api/auth.ts";
+import { getCurrentUser } from "../composables/useAuthState";
 
 const publicRoutes = [
   "home",
@@ -276,6 +277,10 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   if (publicRoutes.includes(to.name as string)) {
+    return true;
+  }
+
+  if (getCurrentUser()) {
     return true;
   }
 

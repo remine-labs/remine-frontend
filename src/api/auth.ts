@@ -1,4 +1,8 @@
 import { api } from "./client";
+import {
+  clearCurrentUser,
+  setCurrentUser,
+} from "../composables/useAuthState";
 
 export interface MeResponse {
   id: number;
@@ -12,10 +16,13 @@ export interface MeResponse {
 }
 
 export const getMe = async (): Promise<MeResponse> => {
-  const res = await api.get("/api/users/me");
-  return res.data.data;
+  const res = await api.get<{ data: MeResponse }>("/api/users/me");
+  const user = res.data.data;
+  setCurrentUser(user);
+  return user;
 };
 
 export const logout = async (): Promise<void> => {
   await api.post("/api/logout");
+  clearCurrentUser();
 };
