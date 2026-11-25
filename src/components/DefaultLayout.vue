@@ -6,7 +6,7 @@ import MobMenu from "./MobMenu.vue";
 <template>
     <MobHeader />
     <div>
-        <RouterView />
+        <RouterView :key="$route.name === 'reviewDetail' ? String($route.params.reviewId) : undefined" />
     </div>
     <MobMenu />
 </template>
