@@ -27,6 +27,10 @@ const goToPrivacyPolicy = () => {
 const goToInquiry = () => {
   router.push("/inquiry");
 };
+
+const goToAccountDeletion = () => {
+  router.push("/settings/account-deletion");
+};
 </script>
 
 <template>
@@ -67,7 +71,7 @@ const goToInquiry = () => {
           <div class="menu" @click="handleLogout">
             <p id="logout-btn">로그아웃</p>
           </div>
-          <div class="menu">
+          <div class="menu" @click="goToAccountDeletion">
             <p>계정삭제</p>
           </div>
         </div>

@@ -2,13 +2,15 @@
 import { ref, onMounted } from 'vue'
 import Loader from '../../components/Loader.vue'
 import { useRouter } from 'vue-router'
-import { getMe } from '../../api/auth'
+import { getMe, isBirthDateRequiredError } from '../../api/auth'
 import { api } from '../../api/client'
 import { getMyTerms } from '../../api/terms'
+import { useToast } from '../../composables/useToast'
 import axios from 'axios'
 
 const router = useRouter()
 const loading = ref(true)
+const { showToast } = useToast()
 
 const redirectAfterLogin = async () => {
     const terms = await getMyTerms()
@@ -17,6 +19,19 @@ const redirectAfterLogin = async () => {
     )
 
     router.replace(hasRequiredTermsToAgree ? '/terms' : '/')
+}
+
+const handleLoginFailure = async (error: unknown) => {
+    if (isBirthDateRequiredError(error)) {
+        loading.value = false
+        await router.replace('/birth-date')
+        return
+    }
+
+    console.error("로그인 실패", error)
+    loading.value = false
+    showToast("로그인에 실패했습니다. 다시 시도해 주세요.", "error")
+    await router.replace('/login')
 }
 
 onMounted(async () => {
@@ -29,14 +44,12 @@ onMounted(async () => {
                 await api.post('/api/refresh')
                 await getMe()
                 await redirectAfterLogin()
-            } catch {
-                // router.replace('/')
-                console.log("로그인 연장 실패", error)
+                return
+            } catch (refreshError) {
+                await handleLoginFailure(refreshError)
             }
         } else {
-            // router.replace('/')
-            console.log("로그인 실패", error)
-
+            await handleLoginFailure(error)
         }
     }
 })
