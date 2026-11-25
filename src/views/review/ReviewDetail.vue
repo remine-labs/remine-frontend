@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { api } from "../../api/client";
 import {
   createTags,
   deleteReview,
+  getReviewDetail,
   submitAiTagFeedback,
 } from "../../api/review";
 import type { AiTagFeedbackPayload } from "../../api/review";
@@ -24,7 +24,11 @@ const router = useRouter();
 const { setHeaderTitle } = useHeaderTitle();
 const reviewId = Number(route.params.reviewId);
 
-let pollTimer: ReturnType<typeof setTimeout> | null = null;
+const POLL_INTERVAL_MS = 4_000;
+const POLL_TIMEOUT_MS = 3 * 60_000;
+let activePoll: AbortController | null = null;
+const isRetryingTags = ref(false);
+const pollingMessage = ref("");
 
 interface Tag {
   label: string;
@@ -111,80 +115,73 @@ const formatDisplayDate = (date: string | Date | null) => {
   return `${yy}.${mm}.${dd}`;
 };
 
-const pollReview = async () => {
-  try {
-    const reviewId = route.params.reviewId;
-    const res = await api.get(`/api/reviews/${reviewId}`);
+const startPolling = (retryTags = false) => {
+  if (activePoll) return;
 
-    const reviewData = res.data.data;
-
-    review.value = reviewData;
-    setHeaderTitle(reviewData.workTitle);
-
-    if (
-      reviewData.aiTagStatus === "PENDING" ||
-      reviewData.aiTagStatus === "PROCESSING"
-    ) {
-      pollTimer = setTimeout(pollReview, 4000);
-    } else {
-      pollTimer = null;
-    }
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-const fetchReviewDetail = async () => {
-  try {
-    isLoading.value = true;
-    errorMessage.value = "";
-
-    const reviewId = route.params.reviewId;
-    const res = await api.get(`/api/reviews/${reviewId}`);
-
-    const reviewData = res.data.data;
-
-    review.value = reviewData;
-
-    if (
-      reviewData.aiTagStatus === "PENDING" ||
-      reviewData.aiTagStatus === "PROCESSING"
-    ) {
-      pollReview();
-    }
-  } catch (err: any) {
-    if (err.response) {
-      errorMessage.value = `${err.response.status} - ${err.response.data?.message || "서버 오류"}`;
-    } else if (err.request) {
-      errorMessage.value = "서버 응답 없음 (네트워크 문제)";
-    } else {
-      errorMessage.value = err.message;
-    }
-
-    alert(`리뷰 조회 실패\n${errorMessage.value}`);
-  } finally {
+  const controller = new AbortController();
+  const { signal } = controller;
+  activePoll = controller;
+  isLoading.value = !review.value;
+  isRetryingTags.value = retryTags;
+  pollingMessage.value = "";
+  errorMessage.value = "";
+  let nextPoll: ReturnType<typeof setTimeout>;
+  const expiresAt = Date.now() + POLL_TIMEOUT_MS;
+  const expire = () => {
+    pollingMessage.value = "3분 동안 태그 상태를 확인하지 못했습니다. 다시 시도해 주세요.";
+    controller.abort();
+  };
+  const deadlineTimer = setTimeout(expire, POLL_TIMEOUT_MS);
+  signal.addEventListener("abort", () => {
+    clearTimeout(deadlineTimer);
+    clearTimeout(nextPoll);
+    activePoll = null;
+    isRetryingTags.value = false;
     isLoading.value = false;
-  }
-};
+  }, { once: true });
 
-const handleRetryTags = async () => {
-  if (review.value?.reviewId === undefined) return;
+  const isActive = () => {
+    if (!signal.aborted && Date.now() >= expiresAt) expire();
+    return !signal.aborted;
+  };
 
-  try {
-    await createTags(review.value.reviewId, {
-      tags: [],
-    });
+  const fetchReviewDetail = async (checkBeforeRetry = false) => {
+    if (!isActive()) return;
+    try {
+      const res = await getReviewDetail(reviewId, signal);
+      if (!isActive()) return;
+      const data: ReviewDetail = res.data.data;
+      review.value = data;
+      isLoading.value = false;
+      setHeaderTitle(data.workTitle);
 
-    await pollReview();
-  } catch (err) {
-    console.error(err);
-  }
+      const isGenerating = data.aiTagStatus === "PENDING" || data.aiTagStatus === "PROCESSING";
+      if (checkBeforeRetry && !data.tags?.length && !isGenerating) {
+        await createTags(reviewId, { tags: [] }, signal);
+        if (!isActive()) return;
+      } else if (!isGenerating || (checkBeforeRetry && data.tags?.length)) {
+        controller.abort();
+        return;
+      }
+      nextPoll = setTimeout(fetchReviewDetail, POLL_INTERVAL_MS);
+    } catch (err: any) {
+      if (!isActive()) return;
+      if (review.value) {
+        pollingMessage.value = "AI 태그 상태를 확인할 수 없습니다. 다시 시도해 주세요.";
+      } else {
+        errorMessage.value = err.response?.data?.message || err.message || "리뷰 조회에 실패했습니다.";
+      }
+      controller.abort();
+    }
+  };
+  void fetchReviewDetail(retryTags);
 };
 
 const handleSubmitFeedback = async () => {
-  if (feedbackRating.value === null) return;
+  if (feedbackRating.value === null || !review.value) return;
 
   const rating = feedbackRating.value;
+  const feedbackReviewId = review.value.reviewId;
 
   try {
     const payload: AiTagFeedbackPayload = {
@@ -203,8 +200,9 @@ const handleSubmitFeedback = async () => {
       }
     }
 
-    await submitAiTagFeedback(reviewId, payload);
-    await pollReview();
+    await submitAiTagFeedback(feedbackReviewId, payload);
+    if (review.value?.reviewId !== feedbackReviewId) return;
+    review.value.aiTagFeedbackPending = false;
     isTagSurveyOpen.value = false;
   } catch (err) {
     console.error(err);
@@ -249,21 +247,21 @@ const handleDeleteReview = async () => {
 
 onMounted(() => {
   setHeaderTitle(history.state.headerTitle ?? null);
-  fetchReviewDetail();
+  startPolling();
 });
 
-onUnmounted(() => {
-  if (pollTimer) {
-    clearTimeout(pollTimer);
-    pollTimer = null;
-  }
+onBeforeUnmount(() => {
+  activePoll?.abort();
 });
 </script>
 
 <template>
   <main class="review-detail">
     <div v-if="isLoading">로딩 중...</div>
-    <div v-else-if="errorMessage">{{ errorMessage }}</div>
+    <div v-else-if="!review && (errorMessage || pollingMessage)">
+      <p>{{ errorMessage || pollingMessage }}</p>
+      <button class="active-btn" @click="startPolling()">다시 조회</button>
+    </div>
 
     <template v-else-if="review">
       <div class="work-info-container relative">
@@ -375,10 +373,10 @@ onUnmounted(() => {
             </template>
           </div>
           <div class="retry">
-            <template v-if="review.aiTagStatus === 'FAILED'">
-              <p>AI 태그 생성에 실패했습니다.</p>
+            <template v-if="pollingMessage || isRetryingTags || (review.aiTagStatus === 'FAILED' && !review.tags?.length)">
+              <p>{{ pollingMessage || (isRetryingTags ? "AI 태그 상태를 확인하고 있습니다." : "AI 태그 생성에 실패했습니다.") }}</p>
               <div class="btn-box">
-                <button class="active-btn" @click="handleRetryTags">
+                <button class="active-btn" :disabled="isRetryingTags" @click="startPolling(true)">
                   재시도
                 </button>
               </div>
@@ -387,8 +385,8 @@ onUnmounted(() => {
           <div class="tags-box chips">
             <template
               v-if="
-                review.aiTagStatus === 'PENDING' ||
-                review.aiTagStatus === 'PROCESSING'
+                !pollingMessage && !review.tags?.length &&
+                (review.aiTagStatus === 'PENDING' || review.aiTagStatus === 'PROCESSING')
               "
             >
               <span class="skeleton"></span>

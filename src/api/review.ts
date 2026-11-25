@@ -1,7 +1,7 @@
 import { api } from "./client";
 
-export const getReviewDetail = (reviewId: number) => {
-  return api.get(`/api/reviews/${reviewId}`);
+export const getReviewDetail = (reviewId: number, signal?: AbortSignal) => {
+  return api.get(`/api/reviews/${reviewId}`, { signal });
 };
 
 export type ReviewPayload = {
@@ -47,8 +47,8 @@ export type CreateTagsPayload = {
   }[];
 };
 
-export const createTags = (reviewId: number, payload?: CreateTagsPayload) => {
-  return api.post(`/api/reviews/${reviewId}/tags`, payload);
+export const createTags = (reviewId: number, payload?: CreateTagsPayload, signal?: AbortSignal) => {
+  return api.post(`/api/reviews/${reviewId}/tags`, payload, { signal });
 };
 
 export const getMyReviewByWork = (mediaType: string, workId: number) => {
