@@ -304,6 +304,10 @@ router.beforeEach(async (to) => {
     return true;
   }
 
+  if (getCurrentUser()) {
+    return true;
+  }
+
   try {
     await getMe();
     return true;

@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import Loader from "../../components/Loader.vue";
 import { agreeToTerms, getMyTerms } from "../../api/terms";
 import type { TermsItem } from "../../api/terms";
+import { getCurrentUser } from "../../composables/useAuthState";
 
 const router = useRouter();
 const terms = ref<TermsItem[]>([]);

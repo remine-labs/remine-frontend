@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { getMe, type MeResponse } from "../api/auth";
+import { getCurrentUser } from "../composables/useAuthState";
 import { api } from "../api/client";
 import { PhPencil, PhStar } from "@phosphor-icons/vue";
 import WorkCard from "../components/WorkCard.vue";
@@ -115,12 +116,14 @@ const goToReviewDetail = (reviewId: number, workTitle: string) => {
 };
 
 const loadHome = async () => {
-  try {
-    user.value = await getMe();
-    console.log("user:", user.value);
-  } catch (error) {
-    console.log("getMe 실패:", error);
-    user.value = null;
+  user.value = getCurrentUser();
+
+  if (!user.value) {
+    try {
+      user.value = await getMe();
+    } catch (error) {
+      console.log("getMe 실패:", error);
+    }
   }
 
   try {
