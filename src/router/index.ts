@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import Home from "../views/Home.vue";
 import Login from "../views/auth/Login.vue";
+import BirthDate from "../views/auth/BirthDate.vue";
 import OAuthCallback from "../views/auth/OAuthCallback.vue";
 import Terms from "../views/auth/Terms.vue";
 import Search from "../views/Search.vue";
@@ -20,13 +21,15 @@ import CustomWork from "../views/CustomWork.vue";
 import Discover from "../views/Discover.vue";
 import Settings from "../views/settings/Settings.vue";
 import InquiryBoard from "../views/settings/InquiryBoard.vue";
-import { getMe } from "../api/auth.ts";
+import AccountDeletion from "../views/settings/AccountDeletion.vue";
+import { getMe, isBirthDateRequiredError } from "../api/auth.ts";
 
 const publicRoutes = [
   "home",
   "homeLegacy",
   "login",
   "oauthCallback",
+  "birthDate",
   "settings",
   "inquiry",
   "serviceTerms",
@@ -223,6 +226,17 @@ const router = createRouter({
           },
         },
         {
+          path: "settings/account-deletion",
+          name: "accountDeletion",
+          component: AccountDeletion,
+          meta: {
+            header: {
+              title: "계정 탈퇴",
+              showBack: true,
+            },
+          },
+        },
+        {
           path: "inquiry",
           name: "inquiry",
           component: InquiryBoard,
@@ -241,6 +255,17 @@ const router = createRouter({
           meta: {
             header: {
               title: "약관 동의",
+              showBack: false,
+            },
+          },
+        },
+        {
+          path: "birth-date",
+          name: "birthDate",
+          component: BirthDate,
+          meta: {
+            header: {
+              title: "생년월일 입력",
               showBack: false,
             },
           },
@@ -282,7 +307,11 @@ router.beforeEach(async (to) => {
   try {
     await getMe();
     return true;
-  } catch {
+  } catch (error) {
+    if (isBirthDateRequiredError(error)) {
+      return to.name === "birthDate" ? true : { name: "birthDate" };
+    }
+
     return {
       name: "login",
       query: {
