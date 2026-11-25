@@ -23,6 +23,7 @@ import Settings from "../views/settings/Settings.vue";
 import InquiryBoard from "../views/settings/InquiryBoard.vue";
 import AccountDeletion from "../views/settings/AccountDeletion.vue";
 import { getMe, isBirthDateRequiredError } from "../api/auth.ts";
+import { getCurrentUser } from "../composables/useAuthState";
 
 const publicRoutes = [
   "home",
